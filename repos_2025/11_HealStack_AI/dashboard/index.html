@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server — Self-Healing Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <span class="logo-icon">🐳</span>
+            <span class="logo-text">Server DR</span>
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+        </header>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🐳</span>
+                <span class="logo-text">Server DR</span>
+            </div>
+            <div class="nav-items">
+                <div class="nav-item active" data-tab="topology" onclick="switchTab('topology')">📊 Topology</div>
+                <div class="nav-item" data-tab="timeline" onclick="switchTab('timeline')">📋 Timeline</div>
+                <div class="nav-item" data-tab="logs" onclick="switchTab('logs')">📂 Logs</div>
+                <div class="nav-item" data-tab="deploy" onclick="switchTab('deploy')">🚀 Deploy</div>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot online" id="status-dot"></div>
+                <span id="cluster-status">Monitoring...</span>
+            </div>
+        </nav>
+
+        <main class="content">
+            <!-- Metrics Bar -->
+            <div class="metrics-bar">
+                <div class="metric-pill">
+                    <span class="metric-label">Services</span>
+                    <span class="metric-value" id="m-services">0</span>
+                </div>
+                <div class="metric-pill">
+                    <span class="metric-label">Containers</span>
+                    <span class="metric-value" id="m-containers">0</span>
+                </div>
+                <div class="metric-pill healthy">
+                    <span class="metric-label">Health</span>
+                    <span class="metric-value" id="m-health">100%</span>
+                </div>
+                <div class="metric-pill">
+                    <span class="metric-label">Recovered</span>
+                    <span class="metric-value" id="m-recovered">0</span>
+                </div>
+                <div class="metric-pill danger" id="m-fail-pill">
+                    <span class="metric-label">Failures</span>
+                    <span class="metric-value" id="m-failures">0</span>
+                </div>
+            </div>
+
+            <!-- TAB: Topology -->
+            <div class="tab-content active" id="tab-topology">
+                <div class="grid-main">
+                    <!-- Topology Canvas -->
+                    <section class="card topology-card">
+                        <div class="card-header">
+                            <h2>Live Container Topology</h2>
+                            <div class="legend">
+                                <span class="legend-item"><i class="dot green"></i>Healthy</span>
+                                <span class="legend-item"><i class="dot red"></i>Failed</span>
+                                <span class="legend-item"><i class="dot yellow"></i>Restarting</span>
+                                <span class="legend-item"><i class="dot blue"></i>Deploying</span>
+                            </div>
+                        </div>
+                        <div id="topology-canvas"></div>
+                    </section>
+
+                    <!-- Side Panels -->
+                    <div class="side-panels">
+                        <!-- Simulation -->
+                        <section class="card">
+                            <div class="card-header">
+                                <h2>⚡ Disaster Simulation</h2>
+                            </div>
+                            <div class="card-body sim-grid">
+                                <button class="btn" onclick="simKill('healstack_api-gateway')">💀 Kill Gateway</button>
+                                <button class="btn" onclick="simKill('healstack_auth-service')">💀 Kill Auth</button>
+                                <button class="btn" onclick="simKill('healstack_data-service')">💀 Kill Data</button>
+                                <button class="btn warn" onclick="simCrash(9001)">💥 Crash Gateway</button>
+                                <button class="btn danger" onclick="simToggle(9001)">🔀 Toggle Health</button>
+                                <button class="btn danger" onclick="simDisaster()">🌪️ Disaster Test</button>
+                            </div>
+                        </section>
+
+                        <!-- AI Analysis -->
+                        <section class="card ai-card">
+                            <div class="card-header">
+                                <h2>🤖 AI Analysis</h2>
+                                <span class="pill" id="ai-count">0</span>
+                            </div>
+                            <div class="card-body scroll" id="ai-panel">
+                                <div class="empty-state">Waiting for failures to analyze...</div>
+                            </div>
+                        </section>
+
+                        <!-- Event Stream -->
+                        <section class="card">
+                            <div class="card-header">
+                                <h2>📡 Events</h2>
+                                <span class="pill" id="event-count">0</span>
+                            </div>
+                            <div class="card-body scroll mono" id="event-log"></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Timeline -->
+            <div class="tab-content" id="tab-timeline">
+                <section class="card full-card">
+                    <div class="card-header">
+                        <h2>📋 Event Timeline — Self-Healing Lifecycle</h2>
+                    </div>
+                    <div class="card-body scroll" id="timeline-panel">
+                        <div class="empty-state">No events yet. Trigger a failure to see the full lifecycle.</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TAB: Logs -->
+            <div class="tab-content" id="tab-logs">
+                <section class="card full-card">
+                    <div class="card-header">
+                        <h2>📂 Logs Explorer — Live Docker Logs</h2>
+                        <div class="log-controls">
+                            <select id="log-target" onchange="loadLogs()">
+                                <option value="healstack_api-gateway">api-gateway</option>
+                                <option value="healstack_auth-service">auth-service</option>
+                                <option value="healstack_data-service">data-service</option>
+                            </select>
+                            <button class="btn" onclick="loadLogs()">🔄 Refresh Logs</button>
+                        </div>
+                    </div>
+                    <div class="card-body log-terminal scroll mono" id="log-viewer">
+                        <div class="empty-state">Select a service to view logs...</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TAB: Deploy -->
+            <div class="tab-content" id="tab-deploy">
+                <section class="card full-card">
+                    <div class="card-header">
+                        <h2>🚀 Blue-Green Deployment Engine</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="deploy-form">
+                            <div class="form-row">
+                                <label>Service</label>
+                                <select id="deploy-service">
+                                    <option value="healstack_api-gateway">api-gateway</option>
+                                    <option value="healstack_auth-service">auth-service</option>
+                                    <option value="healstack_data-service">data-service</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <label>New Image</label>
+                                <input type="text" id="deploy-image" placeholder="e.g. healstack-api-gateway:v2">
+                            </div>
+                            <button class="btn deploy-btn" onclick="startDeploy()">🚀 Deploy (Blue-Green)</button>
+                        </div>
+                        <div class="deploy-info">
+                            <h3>How it works</h3>
+                            <div class="deploy-steps">
+                                <div class="step"><span class="step-num">1</span> Deploy green alongside blue</div>
+                                <div class="step"><span class="step-num">2</span> Wait 5 seconds for startup</div>
+                                <div class="step"><span class="step-num">3</span> Run 3 health checks</div>
+                                <div class="step"><span class="step-num">4</span> If 2/3 pass → route to green</div>
+                                <div class="step"><span class="step-num">5</span> If fail → rollback to blue</div>
+                            </div>
+                        </div>
+                        <div id="deploy-status"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
