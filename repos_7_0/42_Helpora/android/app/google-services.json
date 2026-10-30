@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "410900759850",
+    "project_id": "helpora-b466a",
+    "storage_bucket": "helpora-b466a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410900759850:android:31d4891a596b0b23a24a53",
+        "android_client_info": {
+          "package_name": "com.example.helpora_v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBre0ymjAe1ll7Oemn9VDTQt7LLSYxNRK0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
