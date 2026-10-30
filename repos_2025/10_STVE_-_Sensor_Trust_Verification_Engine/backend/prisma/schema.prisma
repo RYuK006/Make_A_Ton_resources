@@ -1,0 +1,111 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Sensor {
+  id          String   @id @default(cuid())
+  sensorId    String   @unique
+  zone        String
+  type        String
+  latitude    Float?
+  longitude   Float?
+  installedAt DateTime @default(now())
+
+  readings    Reading[]
+  trustScores TrustScore[]
+  tickets     Ticket[]
+
+  @@index([zone])
+}
+
+model Reading {
+  id          String   @id @default(cuid())
+  sensorId    String
+  timestamp   DateTime @default(now())
+
+  // Core sensor parameters
+  moisture    Float?
+  temperature Float?
+  ec          Float?
+  ph          Float?   // ← NEW: was missing from original schema
+
+  // Environmental context (used by physical plausibility check)
+  airTemp          Float?   // air temperature at time of reading
+  isRaining        Boolean  @default(false)
+  irrigationActive Boolean  @default(false)
+
+  sensor      Sensor   @relation(fields: [sensorId], references: [id])
+
+  @@index([sensorId, timestamp])
+}
+
+model TrustScore {
+  id            String   @id @default(cuid())
+  sensorId      String
+  lastEvaluated DateTime @default(now())
+
+  // ── Core score (0.0 – 1.0) ──
+  score         Float    @default(1.0)
+  status        String   @default("Healthy")   // Healthy | Warning | Anomalous
+  label         String   @default("Reliable")  // Highly Reliable | Reliable | Uncertain | Unreliable | Anomaly
+
+  // ── Per-parameter trust scores (0.0 – 1.0) ──
+  paramMoisture     Float?
+  paramTemperature  Float?
+  paramEc           Float?
+  paramPh           Float?
+
+  // ── Fault flags ──
+  lowVariance   Boolean  @default(false)   // static/frozen sensor
+  spikeDetected Boolean  @default(false)   // sudden spike
+  zoneAnomaly   Boolean  @default(false)   // isolated zone deviation
+
+  // ── Diagnostic engine outputs ──
+  rootCauses    String[] @default([])      // SPIKE | STATIC | DRIFT | ZONE_MISMATCH | etc.
+  severity      String   @default("None")  // Critical | High | Medium | Low | None
+  diagnostic    String?                    // human-readable diagnosis message
+  flags         String[] @default([])      // detailed flag messages
+
+  // ── Health trend tracking ──
+  healthTrend   String   @default("stable")   // improving | stable | degrading
+  healthSlope   Float    @default(0)           // regression slope of recent scores
+  anomalyRate   Float    @default(0)           // fraction of recent scores that were anomalous
+
+  // ── Intelligence outputs (v3.0) ──
+  failurePrediction     String?                 // predictive maintenance insight
+  irrigationSafe        Boolean  @default(true) // irrigation safety guard
+  confidenceLevel       Float    @default(0)    // confidence in diagnosis (0-1)
+  zoneReliability       Float    @default(0)    // zone sensor reliability score (0-1)
+  sustainabilityInsight String?                 // water saving / sustainability insight
+  alertTag              String?                 // alert priority tag
+
+  sensor        Sensor   @relation(fields: [sensorId], references: [id])
+
+  @@index([sensorId])
+  @@index([lastEvaluated])
+  @@index([status])
+}
+
+model Ticket {
+  id         String    @id @default(cuid())
+  sensorId   String
+  issue      String
+  severity   String
+  status     String    @default("OPEN")   // OPEN | IN_PROGRESS | RESOLVED
+  trustScore Float     @default(0)        // trust score at time of ticket creation (0-1)
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  sensor     Sensor    @relation(fields: [sensorId], references: [id])
+
+  @@index([status])
+  @@index([sensorId])
+  @@index([severity])
+}
