@@ -1,60 +1,53 @@
-# Make-A-Ton 2025: In-Depth Project Analysis & Code Review
+# Make-a-Ton 2025 - Project Analysis & Repository Breakdown
+**Source**: [Make-a-Ton 2025 Showcase](https://2025.makeaton.in/projects)
+**Total Projects Analyzed**: 27
+---
+## Executive Summary
+Make-a-Ton 2025 brought together top engineering and technology talent across South India. The solutions in this edition demonstrated high technical ambition, deeply integrating generative AI, edge computing, computer vision, geospatial intelligence (Sentinel-2, ESA WorldCover), decentralized identity, Web3 smart contract auditing, and healthcare IoT telemetry.
 
-> **Official Event**: South India's Flagship Hackathon - Make-A-Ton (Organized by CITTIC CUSAT)
-> **Showcase URL**: [https://2025.makeaton.in/projects](https://2025.makeaton.in/projects)
-> **Total Projects Documented**: 27
+### Project Index
+1. [Tinkerbluds - Cultivated Land Validation Platform](#project-1-tinkerbluds---cultivated-land-) - *tinkerbluds* (CUSAT,RSET)
+2. [AI-Powered Farm Management & Decision Support System](#project-2-ai-powered-farm-management---d) - *Stardust Crusaders* (St Aloysius (Deemed to be University))
+3. [Secure.sol](#project-3-secure-sol) - *HackWaters* (Cochin University College of Engineering Kuttanad,CUSAT)
+4. [RiskRank](#project-4-riskrank) - *Samurai* (APJ abdul kalam technological university)
+5. [Traq](#project-5-traq) - *Parallax* (School of Engineering CUSAT)
+6. [Cusatify](#project-6-cusatify) - *freshers.exe* (School of engineering,Cusat)
+7. [Trust Score Engine](#project-7-trust-score-engine) - *Codequest* (Cochin University of science and technology)
+8. [COG AI](#project-8-cog-ai) - *EQUINOX* (SAHRDAYA COLLEGE OF ENGINEERING AND TECHNOLOGY)
+9. [Mudra](#project-9-mudra) - *Yukti* (Nehru Arts and Science College)
+10. [STVE - Sensor Trust Verification Engine](#project-10-stve---sensor-trust-verificati) - *Nexus* (Govt. Model Engineering College)
+11. [HealStack AI](#project-11-healstack-ai) - *BitCode* (CUSAT)
+12. [An AI Voice Assistant Application Optimised For Local Farmers](#project-12-an-ai-voice-assistant-applicat) - *HackOverflow* (Amrita Vishwa Vidyapeetham)
+13. [VigilX: Smart Anti-Sleep Safety System for Drivers](#project-13-vigilx--smart-anti-sleep-safet) - *Ton Kanakkinu Byte* (College of Engineering Trivandrum)
+14. [OPTIMA – Optimization Protocol for Traffic Intelligence & Management Architecture](#project-14-optima---optimization-protocol) - *Binary.exe* (AMRITA VISWA VIDYAPEETHAM , NAGERCOIL)
+15. [PCO-US](#project-15-pco-us) - *Optimus Prime* (Muthoot Institute of Technology and Science)
+16. [KOLPAY](#project-16-kolpay) - *Kolon* (Christ College of Engineering)
+17. [Wiki Cusat](#project-17-wiki-cusat) - *Nexus Connect* (School of Engineering , CUSAT)
+18. [NEUROMOTION: AI ASSISTIVE REHABILITATION](#project-18-neuromotion--ai-assistive-reha) - *KAIZEN* (Mar Athanasius College of Engineering Kothamangalam)
+19. [Ravana](#project-19-ravana) - *BlueSteel* (Model Engineering College Thrikkakara)
+20. [DEFENDER](#project-20-defender) - *Sarvam IoT* (CUSAT)
+21. [SaveSense](#project-21-savesense) - *SaveSense* (SOE CUSAT)
+22. [Ready Classified Coconuts](#project-22-ready-classified-coconuts) - *Local Host* (College Of Engineering Trivandrum)
+23. [IGNIS](#project-23-ignis) - *Ignis* (School of Engineering,CUSAT)
+24. [TRNDO](#project-24-trndo) - *Powerpuff Girls* (Christ College of Engineering, Irinjalakuda)
+25. [QuantumRoute](#project-25-quantumroute) - *StrawHats* (SOE,CUSAT)
+26. [Clinical Action and Response Engine](#project-26-clinical-action-and-response-e) - *DarkLead!* (SRM Institute of Science and Technology)
+27. [AGNI](#project-27-agni) - *Lakshyaas* (School of Engineer, CUSAT)
 
 ---
-
-## Executive Table of Projects
-
-| # | Project Name | Team Name | Domain / Track | GitHub Repository |
-|---|---|---|---|---|
-| 1 | [Tinkerbluds - Cultivated Land Validation Platform](#project-1) | `tinkerbluds` | kireap | [Shaan-Shoukath/Tinkerbluds](https://github.com/Shaan-Shoukath/Tinkerbluds) |
-| 2 | [AI-Powered Farm Management & Decision Support System](#project-2) | `Stardust Crusaders` | software | [Alston2006/CropIntel](https://github.com/Alston2006/CropIntel) |
-| 3 | [Secure.sol](#project-3) | `HackWaters` | software | [Noel9907/secure-sol](https://github.com/Noel9907/secure-sol) |
-| 4 | [RiskRank](#project-4) | `Samurai` | kireap | [orgs/make-a-ton-samurai/repositories](https://github.com/orgs/make-a-ton-samurai/repositories) |
-| 5 | [Traq](#project-5) | `Parallax` | hardware | [Sangeeth62880/Traq.git](https://github.com/Sangeeth62880/Traq.git) |
-| 6 | [Cusatify](#project-6) | `freshers.exe` | software | [uditya22-flux/cusatify](https://github.com/uditya22-flux/cusatify) |
-| 7 | [Trust Score Engine](#project-7) | `Codequest` | software | [vishnupvenmany/trustscore](https://github.com/vishnupvenmany/trustscore) |
-| 8 | [COG AI](#project-8) | `EQUINOX` | software | [anugrahks19/Cog-AI-main](https://github.com/anugrahks19/Cog-AI-main) |
-| 9 | [Mudra](#project-9) | `Yukti` | hardware | [Ranger-NF/Mudra](https://github.com/Ranger-NF/Mudra) |
-| 10 | [STVE - Sensor Trust Verification Engine](#project-10) | `Nexus` | kireap | [HashimCodeDev/STVE](https://github.com/HashimCodeDev/STVE) |
-| 11 | [HealStack AI](#project-11) | `BitCode` | kireap | [benadictjacob/Adaptive-routing-algorithm](https://github.com/benadictjacob/Adaptive-routing-algorithm) |
-| 12 | [An AI Voice Assistant Application Optimised For Local Farmers](#project-12) | `HackOverflow` | kireap | [devangdileep/make-a-ton.git](https://github.com/devangdileep/make-a-ton.git) |
-| 13 | [VigilX: Smart Anti-Sleep Safety System for Drivers](#project-13) | `Ton Kanakkinu Byte` | kireap | [Meegitty/VigilX](https://github.com/Meegitty/VigilX) |
-| 14 | [OPTIMA – Optimization Protocol for Traffic Intelligence & Management Architecture](#project-14) | `Binary.exe` | software | [Adhwu/Optima](https://github.com/Adhwu/Optima) |
-| 15 | [PCO-US](#project-15) | `Optimus Prime` | hardware | [JoanneKoshy/PCOUS](https://github.com/JoanneKoshy/PCOUS) |
-| 16 | [KOLPAY](#project-16) | `Kolon` | software | [Bharath-Krishna-AB/ledger](https://github.com/Bharath-Krishna-AB/ledger) |
-| 17 | [Wiki Cusat](#project-17) | `Nexus Connect` | software | [philip-thomas-12/Wiki-Cusat/tree/main](https://github.com/philip-thomas-12/Wiki-Cusat/tree/main) |
-| 18 | [NEUROMOTION: AI ASSISTIVE REHABILITATION](#project-18) | `KAIZEN` | hardware | [alfi30-bat/kaizen-robotics](https://github.com/alfi30-bat/kaizen-robotics) |
-| 19 | [Ravana](#project-19) | `BlueSteel` | software | [github.com/simonknowsstuff/ravana](github.com/simonknowsstuff/ravana) |
-| 20 | [DEFENDER](#project-20) | `Sarvam IoT` | hardware | [Meenakshimkumar/DEFENDER-WEBSITE](https://github.com/Meenakshimkumar/DEFENDER-WEBSITE) |
-| 21 | [SaveSense](#project-21) | `SaveSense` | software | [roqcodes/SaveSense](https://github.com/roqcodes/SaveSense) |
-| 22 | [Ready Classified Coconuts](#project-22) | `Local Host` | hardware | [saad-latheef/ready-classified-coconut](https://github.com/saad-latheef/ready-classified-coconut) |
-| 23 | [IGNIS](#project-23) | `Ignis` | kireap | [Catherin-j/AgroHunt](https://github.com/Catherin-j/AgroHunt) |
-| 24 | [TRNDO](#project-24) | `Powerpuff Girls` | software | [A56-A5/make-a-ton](https://github.com/A56-A5/make-a-ton) |
-| 25 | [QuantumRoute](#project-25) | `StrawHats` | kireap | [GowrishankarSMenon/makeaton](https://github.com/GowrishankarSMenon/makeaton) |
-| 26 | [Clinical Action and Response Engine](#project-26) | `DarkLead!` | software | [DarkLead-Hub/C.A.R.E.](https://github.com/DarkLead-Hub/C.A.R.E.) |
-| 27 | [AGNI](#project-27) | `Lakshyaas` | kireap | [DilshanCheerangan/agni-main](https://github.com/DilshanCheerangan/agni-main) |
-
----
-
-## Detailed Project Descriptions
-
-### <a id="project-1"></a>1. Tinkerbluds - Cultivated Land Validation Platform
-
-- **Team**: `tinkerbluds`
+## <a id="project-1-tinkerbluds---cultivated-land-"></a>1. Tinkerbluds - Cultivated Land Validation Platform
+- **Team Name**: `tinkerbluds`
 - **Institution**: CUSAT,RSET
 - **Track**: kireap
 - **Tagline**: *Instant Plot Validation & Crop Suitability Service with Satellite Intelligence*
-- **Repository**: [https://github.com/Shaan-Shoukath/Tinkerbluds](https://github.com/Shaan-Shoukath/Tinkerbluds)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/lmnmKAbwiO4)
+- **GitHub Repository**: [https://github.com/Shaan-Shoukath/Tinkerbluds](https://github.com/Shaan-Shoukath/Tinkerbluds)
+- **Demo Video**: [Watch Demo](https://youtu.be/lmnmKAbwiO4)
+- **Local Code Directory**: `repos_2025\1_Tinkerbluds_-_Cultivated_Land_Validati` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Automated Plot Validation and Ownership Plausibility
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Tinkerbluds is an automated, API‑ready platform designed to validate farmer‑submitted plot polygons against real satellite imagery and environmental data to determine if:
 1. The plot physically exists
 2. It is genuine agricultural land
@@ -80,26 +73,35 @@ Users upload a KML polygon defining a farm plot. The service then:
 
 This system is built for automation, scalability, auditability, and explainability which is crucial for reducing fraud and incorrect submissions across diverse agricultural contexts.
 
-#### Technologies & Tools Used
-- **Core Stack**: FastAPI, Google Earth Engine, HTML, Python, Supabase
-- **Package Dependencies**: `geopandas, shapely, requests, python-dotenv, fastapi, uvicorn[standard], earthengine-api, pydantic, python-multipart, supabase, xgboost, scikit-learn`
-- **Codebase Scale**: ~25 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python
+- **Frameworks & Libraries**: FastAPI
+- **Key Dependencies / Packages**: `geopandas, shapely, requests, python-dotenv, fastapi, uvicorn[standard], earthengine-api, pydantic, python-multipart, supabase`
+- **Core Technologies Identified**: FastAPI, Python, Supabase
+
+> **Repository README Excerpt**:
+> # Tinkerbluds — Cultivated Land Validation Platform
+> 
+> An **API-ready plot validation service** powered by **Google Earth Engine**, **Sentinel-2** optical imagery, **Sentinel-1 SAR** radar, **SRTM DEM** terrain data, **ESA WorldCover** land classification, **XGBoost ML** classifier, **Open-Meteo** weather & soil data, and **Supabase** for persistent farmer/plot storage.
+> 
+> Upload a KML polygon → get an instant validation score covering plot existence, agricultural land classification, crop plausibil
+
 
 ---
 
-### <a id="project-2"></a>2. AI-Powered Farm Management & Decision Support System
-
-- **Team**: `Stardust Crusaders`
+## <a id="project-2-ai-powered-farm-management---d"></a>2. AI-Powered Farm Management & Decision Support System
+- **Team Name**: `Stardust Crusaders`
 - **Institution**: St Aloysius (Deemed to be University)
 - **Track**: software
 - **Tagline**: *This project proposes an AI-powered farm management assistant that uses Retrieval-Augmented Generation (RAG)*
-- **Repository**: [https://github.com/Alston2006/CropIntel](https://github.com/Alston2006/CropIntel)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/wW4c1d0cIY0?si=JLyYulasOPDZ-AdY)
+- **GitHub Repository**: [https://github.com/Alston2006/CropIntel](https://github.com/Alston2006/CropIntel)
+- **Demo Video**: [Watch Demo](https://youtu.be/wW4c1d0cIY0?si=JLyYulasOPDZ-AdY)
+- **Local Code Directory**: `repos_2025\2_AI-Powered_Farm_Management_&_Decision_` (Failed / Private / Unavailable)
 
-#### Problem Statement
+### 1. Problem Statement
 AI-Powered Farm Management & Decision Support System
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Project Description: CropIntel
 CropIntel is a next-generation Agricultural Intelligence Platform that leverages Local Large Language Models (LLMs) and hyper-local data fusion to empower farmers and merchants. By bridging the gap between raw data and actionable insights, CropIntel provides a "digital brain" for the modern farm, ensuring food security and economic stability through AI-driven decision-making.
 
@@ -109,52 +111,63 @@ Unlike standard agricultural apps, CropIntel utilizes Retrieval-Augmented Genera
 Impact Goal
 CropIntel aims to transform agriculture from a reactive industry into a predictive one. By providing 500m-resolution weather data and real-time market transparency, the platform reduces crop waste, optimizes resource usage, and stabilizes the agricultural economy.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, FastAPI, HTML, JavaScript, Python, React
-- **Package Dependencies**: `fastapi, uvicorn, requests, numpy`
-- **Codebase Scale**: ~45 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Core Technologies Identified**: React
 
 ---
 
-### <a id="project-3"></a>3. Secure.sol
-
-- **Team**: `HackWaters`
+## <a id="project-3-secure-sol"></a>3. Secure.sol
+- **Team Name**: `HackWaters`
 - **Institution**: Cochin University College of Engineering Kuttanad,CUSAT
 - **Track**: software
 - **Tagline**: *Protector of Smart Contracts, Savior of Developers*
-- **Repository**: [https://github.com/Noel9907/secure-sol](https://github.com/Noel9907/secure-sol)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/MKiGrbRsF44?si=TTYwOkmvACOtA42T)
+- **GitHub Repository**: [https://github.com/Noel9907/secure-sol](https://github.com/Noel9907/secure-sol)
+- **Demo Video**: [Watch Demo](https://youtu.be/MKiGrbRsF44?si=TTYwOkmvACOtA42T)
+- **Local Code Directory**: `repos_2025\3_Secure.sol` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Security Issues in Smart Contract unchecked leading to Millions in losses.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Secure.sol is a smart contract  security platform designed to help developers identify vulnerabilities in their smart contracts before deploying them to real blockchain networks. Smart contracts control large amounts of digital assets, and even a small mistake in the code can lead to severe financial losses.It addresses the problem by providing a safe environment where developers can simulate real-world attacks and analyze contract security.
 
 The platform allows users to upload their smart contracts, which are then compiled and deployed on a local blockchain environment using Hardhat. Running the system locally ensures that all attack simulations are performed in a completely isolated and safe environment, meaning no real assets or live blockchain networks are affected
 
 Once the contract is deployed locally, the system automatically executes multiple attack scripts that replicate common smart contract vulnerabilities. These simulated attacks include scenarios such as reentrancy attacks, access control vulnerabilities, integer overflows, input validation flaws. Each attack script interacts with the deployed contract exactly the way a real attacker would, allowing the system to test whether the contract is vulnerable.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, Express, JavaScript, Next.js, React, Solidity, Tailwind CSS, TypeScript, Web3/Ethers
-- **Package Dependencies**: `@radix-ui/react-slot, lucide-react, @google/generative-ai, cors, dotenv, express, multer, openai, @inquirer/password, @openzeppelin/contracts, @typechain/ethers-v6, envfile`
-- **Codebase Scale**: ~191 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: Solidity, TypeScript, HTML/CSS, JavaScript
+- **Frameworks & Libraries**: React, Express.js, Web3/Ethers, Next.js, TailwindCSS
+- **Key Dependencies / Packages**: `@radix-ui/react-slot, lucide-react, husky, lint-staged, @google/generative-ai, cors, dotenv, express, multer, openai`
+- **Core Technologies Identified**: JavaScript, Next.js, React, Solidity, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> <div align="center">
+> 
+> ```
+>  ███████╗███████╗ ██████╗██╗   ██╗██████╗ ███████╗   ███████╗ ██████╗ ██╗     
+>  ██╔════╝██╔════╝██╔════╝██║   ██║██╔══██╗██╔════╝   ██╔════╝██╔═══██╗██║     
+>  ███████╗█████╗  ██║     ██║   ██║██████╔╝█████╗     ███████╗██║   ██║██║     
+>  ╚════██║██╔══╝  ██║     ██║   ██║██╔══██╗██╔══╝     ╚════██║██║   ██║██║     
+>  ███████║███████╗╚██████╗╚██████╔╝██║  ██║███████╗   ███████║╚██████╔╝███████╗
+>  ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚══════╝ ╚═════╝ ╚══════╝
+
 
 ---
 
-### <a id="project-4"></a>4. RiskRank
-
-- **Team**: `Samurai`
+## <a id="project-4-riskrank"></a>4. RiskRank
+- **Team Name**: `Samurai`
 - **Institution**: APJ abdul kalam technological university
 - **Track**: kireap
 - **Tagline**: *Prioritize What Breaks the Business*
-- **Repository**: [https://github.com/orgs/make-a-ton-samurai/repositories](https://github.com/orgs/make-a-ton-samurai/repositories)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/4C8BS3kJTek?si=L2PglnKbQI6Z2Dcg)
+- **GitHub Repository**: [https://github.com/orgs/make-a-ton-samurai/repositories](https://github.com/orgs/make-a-ton-samurai/repositories)
+- **Demo Video**: [Watch Demo](https://youtu.be/4C8BS3kJTek?si=L2PglnKbQI6Z2Dcg)
+- **Local Code Directory**: `repos_2025\4_RiskRank` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Developer-Friendly Security
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Abstract
 
 RiskRank is a business-first vulnerability prioritization engine designed to address the growing problem of alert fatigue and ineffective vulnerability triage in modern security operations. While existing security tools generate thousands of alerts and rely heavily on static CVSS severity scores, they lack business context, leading teams to focus on low-impact issues while critical vulnerabilities remain unpatched.
@@ -163,26 +176,51 @@ RiskRank transforms traditional vulnerability management by analyzing security f
 
 By reducing alert noise and accelerating the identification of high-impact threats, RiskRank helps organizations align security efforts with business priorities. The platform integrates seamlessly into existing DevSecOps workflows via CLI and CI/CD pipelines, ensuring minimal disruption while maximizing risk visibility and response efficiency.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, Next.js, React, Tailwind CSS, Three.js, TypeScript
-- **Package Dependencies**: `@types/bcryptjs, @types/three, bcryptjs, clsx, dotenv, framer-motion, html2canvas, jose, jspdf, lucide-react, mongoose, next`
-- **Codebase Scale**: ~64 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: TypeScript, HTML/CSS
+- **Frameworks & Libraries**: Three.js, React, Next.js, TailwindCSS
+- **Key Dependencies / Packages**: `@types/bcryptjs, @types/three, bcryptjs, clsx, dotenv, framer-motion, html2canvas, jose, jspdf, lucide-react`
+- **Core Technologies Identified**: Next.js, React, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+> 
+> ## Getting Started
+> 
+> First, run the development server:
+> 
+> ```bash
+> npm run dev
+> # or
+> yarn dev
+> # or
+> pnpm dev
+> # or
+> bun dev
+> ```
+> 
+> Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> 
+> You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> 
+> This project uses [`next/font`](
+
 
 ---
 
-### <a id="project-5"></a>5. Traq
-
-- **Team**: `Parallax`
+## <a id="project-5-traq"></a>5. Traq
+- **Team Name**: `Parallax`
 - **Institution**: School of Engineering CUSAT
 - **Track**: hardware
 - **Tagline**: *Know before you go*
-- **Repository**: [https://github.com/Sangeeth62880/Traq.git](https://github.com/Sangeeth62880/Traq.git)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/cb7obwuuN-Q)
+- **GitHub Repository**: [https://github.com/Sangeeth62880/Traq.git](https://github.com/Sangeeth62880/Traq.git)
+- **Demo Video**: [Watch Demo](https://youtu.be/cb7obwuuN-Q)
+- **Local Code Directory**: `repos_2025\5_Traq` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Crowd management and ticket validation in railway
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Traq – Intelligent Crowd & Ticket Analytics System for Railways
 Project Overview
 
@@ -372,25 +410,34 @@ Provides density trends and predictive insights
 Traq is not just a ticket system.
 It is a railway intelligence and crowd analytics platform designed for large-scale, high-density public transportation systems.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, HTML, JavaScript, React
-- **Package Dependencies**: `firebase, lucide-react, react, react-dom, react-router-dom`
-- **Codebase Scale**: ~34 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: TypeScript, HTML/CSS, JavaScript
+- **Frameworks & Libraries**: React, TailwindCSS, Express.js, Vue.js
+- **Key Dependencies / Packages**: `firebase, lucide-react, react, react-dom, react-router-dom, @types/react, @types/react-dom, @vitejs/plugin-react, autoprefixer, postcss`
+- **Core Technologies Identified**: JavaScript, React, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> # Traq 🚆 | Next-Gen Smart Railway Ecosystem
+> 
+> [![React](https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+> [![Firebase](https://img.shields.io/badge/Backend-Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
+> [![Web Bluetooth](https://img.shields.io/badge/Hardware-Web_Bluetooth-2F80ED?style=for-the-badge&logo=bluetooth&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/
+
 
 ---
 
-### <a id="project-6"></a>6. Cusatify
-
-- **Team**: `freshers.exe`
+## <a id="project-6-cusatify"></a>6. Cusatify
+- **Team Name**: `freshers.exe`
 - **Institution**: School of engineering,Cusat
 - **Track**: software
 - **Tagline**: *Digital Solutions for Real Campus Problems*
-- **Repository**: [https://github.com/uditya22-flux/cusatify](https://github.com/uditya22-flux/cusatify)
+- **GitHub Repository**: [https://github.com/uditya22-flux/cusatify](https://github.com/uditya22-flux/cusatify)
+- **Local Code Directory**: `repos_2025\6_Cusatify` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 CUSAT students currently navigate a fragmented academic experience, manually checking library seat availability, tracking book due dates, and monitoring attendance across different platforms or physical logs. During high-pressure exam seasons, this lack of a unified system leads to "seat-squatting" in libraries, forgotten book renewals resulting in fines, and the constant anxiety of falling below the required attendance percentage.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 📘 CUSATIFY
 
 A Unified Digital Platform for Students and Faculty
@@ -711,25 +758,40 @@ Multi-campus scalability
 
 AI-based usage analytics
 
-#### Technologies & Tools Used
-- **Core Stack**: C/C++ / Arduino, Flutter / Dart, HTML, Python
-- **Codebase Scale**: ~158 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Swift, Python, C/C++ / Arduino, Kotlin, Dart / Flutter
+- **Core Technologies Identified**: Python
+
+> **Repository README Excerpt**:
+> # CUSATIFY
+> ### Digital Library Seat Management System
+> 
+> ---
+> 
+> ##  Project Overview
+> 
+> CUSATIFY is a Flutter-based mobile application designed to optimize library seat management at Cochin University of Science and Technology (CUSAT).
+> 
+> The application enables students to scan a QR code inside the library, reserve available seats, and automatically start a timed session. Once the session expires, the system automatically checks out the student and releases the seat.
+> 
+> This ensures fair usage, prevents
+
 
 ---
 
-### <a id="project-7"></a>7. Trust Score Engine
-
-- **Team**: `Codequest`
+## <a id="project-7-trust-score-engine"></a>7. Trust Score Engine
+- **Team Name**: `Codequest`
 - **Institution**: Cochin University of science and technology
 - **Track**: software
 - **Tagline**: *Trust Score Engine for Real-World Data*
-- **Repository**: [https://github.com/vishnupvenmany/trustscore](https://github.com/vishnupvenmany/trustscore)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/JgA558YwoVk)
+- **GitHub Repository**: [https://github.com/vishnupvenmany/trustscore](https://github.com/vishnupvenmany/trustscore)
+- **Demo Video**: [Watch Demo](https://youtu.be/JgA558YwoVk)
+- **Local Code Directory**: `repos_2025\7_Trust_Score_Engine` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Trust Score Engine for Real-World Data
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 TrustLayer is a domain-agnostic statistical trust engine that dynamically assigns confidence scores to incoming data streams.
 
 Instead of relying on machine learning black boxes, TrustLayer uses explainable statistical methods to:
@@ -868,67 +930,94 @@ TrustLayer transforms raw multi-source data into quantified, explainable trust d
 
 In environments where incorrect data can lead to critical failures, TrustLayer provides a structured, transparent framework for automated trust management.
 
-#### Technologies & Tools Used
-- **Core Stack**: FastAPI, Python
-- **Package Dependencies**: `pandas, numpy, plotly, streamlit, requests, fastapi, uvicorn`
-- **Codebase Scale**: ~19 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: Python
+- **Frameworks & Libraries**: FastAPI
+- **Key Dependencies / Packages**: `pandas, numpy, plotly, streamlit, requests, fastapi, uvicorn`
+- **Core Technologies Identified**: FastAPI, Python
+
+> **Repository README Excerpt**:
+> # 🛡️ TrustLayer Lab – Statistical Multi-Source Data Trust Engine
+> 
+> > A real-time data reliability analysis laboratory. No machine learning — pure statistics.
+> 
+> ---
+> 
+> ## What Is TrustLayer?
+> 
+> TrustLayer evaluates the reliability of multiple data sources using statistical trust scoring. It cross-references three independent data streams, detects statistical drift and anomalies, computes consensus values, and isolates untrustworthy sources — all in real time.
+> 
+> Built during a 20-hour hackathon. No ML. P
+
 
 ---
 
-### <a id="project-8"></a>8. COG AI
-
-- **Team**: `EQUINOX`
+## <a id="project-8-cog-ai"></a>8. COG AI
+- **Team Name**: `EQUINOX`
 - **Institution**: SAHRDAYA COLLEGE OF ENGINEERING AND TECHNOLOGY
 - **Track**: software
 - **Tagline**: *COG AI - EARLY DEMENTIA DETECTOR*
-- **Repository**: [https://github.com/anugrahks19/Cog-AI-main](https://github.com/anugrahks19/Cog-AI-main)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/8uuwnBZ5ia8)
+- **GitHub Repository**: [https://github.com/anugrahks19/Cog-AI-main](https://github.com/anugrahks19/Cog-AI-main)
+- **Demo Video**: [Watch Demo](https://youtu.be/8uuwnBZ5ia8)
+- **Local Code Directory**: `repos_2025\8_COG_AI` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 COG AI - EARLY DEMENTIA DETECTOR
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Cog.ai is a multilingual, AI-powered mobile/web application designed to screen for early signs of dementia using speech analysis, simple cognitive games, behavioral tracking, and facial pattern observations. It uses cloud-based machine learning models along with lightweight on-device processing to work even in low-connectivity regions. The tool generates a personalized risk score and suggests clinical referrals for high-risk users. It features a clinician dashboard, making it useful for hospitals, NGOs, and old-age homes. This solution is affordable, scalable, and user-friendly for rural and urban settings.
 
-#### Technologies & Tools Used
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- Specialized APIs, cloud services, and web frameworks as outlined in the repository.
 
 ---
 
-### <a id="project-9"></a>9. Mudra
-
-- **Team**: `Yukti`
+## <a id="project-9-mudra"></a>9. Mudra
+- **Team Name**: `Yukti`
 - **Institution**: Nehru Arts and Science College
 - **Track**: hardware
 - **Tagline**: *Turning Motion into Meaning — Real-Time Gesture Intelligence.*
-- **Repository**: [https://github.com/Ranger-NF/Mudra](https://github.com/Ranger-NF/Mudra)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/22E3ZvSfUuE)
+- **GitHub Repository**: [https://github.com/Ranger-NF/Mudra](https://github.com/Ranger-NF/Mudra)
+- **Demo Video**: [Watch Demo](https://youtu.be/22E3ZvSfUuE)
+- **Local Code Directory**: `repos_2025\9_Mudra` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Current human-computer interaction methods rely heavily on manual interaction, limiting mobility, accessibility, and seamless control in modern digital environments
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 A multi-purpose wearable input device that combines EMG and IMU signals to recognize gestures in real time. By fusing muscle activity and motion data, our system achieves more robust and accurate gesture recognition compared to camera-based systems. The predictions are streamed instantly to a live interface via WebSockets, enabling low-latency, privacy-friendly, and hardware-efficient human–computer interaction.
 
-#### Technologies & Tools Used
-- **Core Stack**: C/C++ / Arduino, CSS, HTML, Next.js, Python, React, TypeScript
-- **Package Dependencies**: `next, react, react-dom, socket.io-client, ws`
-- **Codebase Scale**: ~49 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, TypeScript, Python, C/C++ / Arduino
+- **Frameworks & Libraries**: Next.js, React, TailwindCSS
+- **Key Dependencies / Packages**: `next, react, react-dom, socket.io-client, ws, @tailwindcss/postcss, @types/node, @types/react, @types/react-dom, eslint`
+- **Core Technologies Identified**: Next.js, Python, React, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> # 👌 Mudra
+> 
+> **Next-generation human–computer interaction through biophysical intelligence.**
+> 
+> Mudra is a multi-purpose wearable input device that combines **EMG** (muscle activity) and **IMU** (motion) signals to recognize gestures in real time. By fusing these data streams, Mudra achieves more robust and accurate gesture recognition compared to traditional camera-based systems, which are often limited by line-of-sight and lighting conditions.
+> 
+> The predictions are streamed instantly to a live, re
+
 
 ---
 
-### <a id="project-10"></a>10. STVE - Sensor Trust Verification Engine
-
-- **Team**: `Nexus`
+## <a id="project-10-stve---sensor-trust-verificati"></a>10. STVE - Sensor Trust Verification Engine
+- **Team Name**: `Nexus`
 - **Institution**: Govt. Model Engineering College
 - **Track**: kireap
 - **Tagline**: *A time-series data analysis engine that scores, validates, and filters agricultural sensor data based on real-world behavior.*
-- **Repository**: [https://github.com/HashimCodeDev/STVE](https://github.com/HashimCodeDev/STVE)
-- **Demo Link**: [Watch Video Demo](https://drive.google.com/file/d/1lcxJ9gV8EYVFe8XHUktqadJ79G14YciO/view?usp=drive_link)
+- **GitHub Repository**: [https://github.com/HashimCodeDev/STVE](https://github.com/HashimCodeDev/STVE)
+- **Demo Video**: [Watch Demo](https://drive.google.com/file/d/1lcxJ9gV8EYVFe8XHUktqadJ79G14YciO/view?usp=drive_link)
+- **Local Code Directory**: `repos_2025\10_STVE_-_Sensor_Trust_Verification_Engi` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Trust Score Engine for Real-World Data
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 STVE (Sensor Trust Verification Engine) is a sensor trust verification system designed for precision agriculture, where large networks of soil sensors directly influence automated irrigation and fertilization decisions. These sensors often suffer from silent failures such as frozen readings, calibration drift, sudden spikes, or complete data loss, which can lead to incorrect actions and resource waste. STVE addresses this problem by ensuring that only reliable sensor data is trusted and used for automation.
 
 The system works as an intelligent trust layer between sensors and decision-making systems. Sensor readings such as soil moisture, temperature, electrical conductivity, and pH are continuously ingested and stored as time-series data. Each new reading triggers an immediate evaluation of sensor behavior, allowing the system to detect faults in near real time.
@@ -937,67 +1026,101 @@ STVE analyzes temporal patterns in sensor data to identify abnormal behavior, in
 
 Based on these analyses, STVE assigns each sensor a dynamic trust score and classifies it as healthy, warning, or anomalous. When a sensor becomes anomalous, the system automatically generates a maintenance ticket and presents the issue through a real-time dashboard. By filtering out unreliable data and enabling rapid maintenance, STVE improves decision accuracy, reduces resource waste, and increases the reliability of automated agricultural systems.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, Express, JavaScript, Next.js, Python, React, TypeScript
-- **Package Dependencies**: `@prisma/client, cors, dotenv, express, framer-motion, next, react, react-dom, recharts`
-- **Codebase Scale**: ~81 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, TypeScript, Python, JavaScript
+- **Frameworks & Libraries**: Express.js, Next.js, React, TailwindCSS
+- **Key Dependencies / Packages**: `@prisma/client, cors, dotenv, express, prisma, framer-motion, next, react, react-dom, recharts`
+- **Core Technologies Identified**: JavaScript, Next.js, Python, React, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> # STVE - Sensor Trust Verification Engine
+> 
+> **A confidence-scoring trust layer for IoT soil-sensor networks in precision agriculture — detects silent sensor failures before they corrupt automated irrigation decisions.**
+> 
+> ## Quick Links
+> 
+> - **Quick start**: `QUICK_START.md`
+> - **Backend**: `backend/`
+> - **Frontend dashboard**: `frontend/`
+> - **License**: `LICENSE`
+> 
+> ---
+> 
+> ## Problem Statement
+> 
+> Large-scale precision agriculture deployments rely on networks of thousands of soil sensors to measure critical
+
 
 ---
 
-### <a id="project-11"></a>11. HealStack AI
-
-- **Team**: `BitCode`
+## <a id="project-11-healstack-ai"></a>11. HealStack AI
+- **Team Name**: `BitCode`
 - **Institution**: CUSAT
 - **Track**: kireap
 - **Tagline**: *Autonomus  Ai instance  response and sandbox validation platform*
-- **Repository**: [https://github.com/benadictjacob/Adaptive-routing-algorithm](https://github.com/benadictjacob/Adaptive-routing-algorithm)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/pX3vMn0YWp8)
+- **GitHub Repository**: [https://github.com/benadictjacob/Adaptive-routing-algorithm](https://github.com/benadictjacob/Adaptive-routing-algorithm)
+- **Demo Video**: [Watch Demo](https://youtu.be/pX3vMn0YWp8)
+- **Local Code Directory**: `repos_2025\11_HealStack_AI` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Self-Healing Data Pipeline Framework
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 This project is an autonomous self-healing platform that monitors microservice clusters to detect, diagnose, and resolve infrastructure failures in real-time. When a crash occurs, the system orchestrates multiple AI models to "reason" through logs and source code, identifying root causes that traditional monitoring tools would miss. Every proposed fix is automatically validated within an isolated sandbox environment to ensure safety before being presented to a human operator for one-click approval. The centralized dashboard provides a rich visual timeline of incidents, integrated chat for collaborative analysis, and multi-session persistence for tracking long-term system health. Ultimately, it transforms passive observability into a proactive "safe-to-fail" ecosystem that significantly reduces downtime and operational burden.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, Flask, HTML, JavaScript, Python
-- **Package Dependencies**: `flask>=2.0.0, flask-cors>=3.0.0, numpy>=1.21.0, scipy>=1.7.0, flask`
-- **Codebase Scale**: ~400 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python, JavaScript
+- **Frameworks & Libraries**: Flask
+- **Key Dependencies / Packages**: `flask, flask-cors, numpy, scipy`
+- **Core Technologies Identified**: Flask, JavaScript, Python
+- **Containerization**: Dockerfile included
+
+> **Repository README Excerpt**:
+> # AVRS — Adaptive Vector Routing System
+> 
+> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+> [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+> [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+> [![Architecture: Decentralized](https://img.shields.io/badge/Architecture-Decentralized-brightgreen.svg)]()
+> 
+> AVRS is a next-generation routing
+
 
 ---
 
-### <a id="project-12"></a>12. An AI Voice Assistant Application Optimised For Local Farmers
-
-- **Team**: `HackOverflow`
+## <a id="project-12-an-ai-voice-assistant-applicat"></a>12. An AI Voice Assistant Application Optimised For Local Farmers
+- **Team Name**: `HackOverflow`
 - **Institution**: Amrita Vishwa Vidyapeetham
 - **Track**: kireap
 - **Tagline**: *Krishi Mithra*
-- **Repository**: [https://github.com/devangdileep/make-a-ton.git](https://github.com/devangdileep/make-a-ton.git)
-- **Demo Link**: [Watch Video Demo](https://youtube.com/shorts/TmNVQ9vevCs?si=o-lG9ivOHZvZcu-z)
+- **GitHub Repository**: [https://github.com/devangdileep/make-a-ton.git](https://github.com/devangdileep/make-a-ton.git)
+- **Demo Video**: [Watch Demo](https://youtube.com/shorts/TmNVQ9vevCs?si=o-lG9ivOHZvZcu-z)
+- **Local Code Directory**: `repos_2025\12_An_AI_Voice_Assistant_Application_Opt` (Failed / Private / Unavailable)
 
-#### Problem Statement
+### 1. Problem Statement
 AI-Powered Voice Assistant for Farmers
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Smart Krishi Mitra is an AI-powered agricultural assistant designed for rural farmers in low-connectivity areas. It features a multilingual voice assistant that provides accessible, localized agronomic advice. The platform generates dynamic, AI-driven farmland sustainability reports and precision action schedules by analyzing real-time weather and crop data
 
-#### Technologies & Tools Used
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- Specialized APIs, cloud services, and web frameworks as outlined in the repository.
 
 ---
 
-### <a id="project-13"></a>13. VigilX: Smart Anti-Sleep Safety System for Drivers
-
-- **Team**: `Ton Kanakkinu Byte`
+## <a id="project-13-vigilx--smart-anti-sleep-safet"></a>13. VigilX: Smart Anti-Sleep Safety System for Drivers
+- **Team Name**: `Ton Kanakkinu Byte`
 - **Institution**: College of Engineering Trivandrum
 - **Track**: kireap
 - **Tagline**: *Smarter Sensing. Safer Driving.*
-- **Repository**: [https://github.com/Meegitty/VigilX](https://github.com/Meegitty/VigilX)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/uLXb6wsypCk?si=rAECbspeE4T8QT9M)
+- **GitHub Repository**: [https://github.com/Meegitty/VigilX](https://github.com/Meegitty/VigilX)
+- **Demo Video**: [Watch Demo](https://youtu.be/uLXb6wsypCk?si=rAECbspeE4T8QT9M)
+- **Local Code Directory**: `repos_2025\13_VigilX_Smart_Anti-Sleep_Safety_System` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Trust Score Engine for Real-World Data
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Our project is a smart helmet-based safety system that doesn’t just monitor the driver, it protects them. Using an eye blink sensor and head movement tracking, the system detects early signs of drowsiness in real time. But instead of blindly trusting raw data, we built a Trust Score Engine that continuously evaluates how reliable each sensor reading is. If a sensor becomes noisy or inconsistent, its influence is reduced automatically, ensuring smarter and more accurate fatigue detection.
 
 If drowsiness is detected, the helmet immediately triggers vibration and sound alerts to wake the driver. In case of a severe impact, the built-in crash detection system identifies abnormal acceleration patterns and activates emergency protocols.
@@ -1007,50 +1130,64 @@ The helmet connects to our mobile app via Bluetooth, enabling instant SOS alerts
 In short:
 It watches. It evaluates. It reacts. And when needed — it calls for help.
 
-#### Technologies & Tools Used
-- **Core Stack**: C/C++ / Arduino, Flutter / Dart, HTML, React
-- **Codebase Scale**: ~161 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Swift, C/C++ / Arduino, Kotlin, Dart / Flutter
+- **Core Technologies Identified**: React
+
+> **Repository README Excerpt**:
+> # VigilX
+> ## An ESP32 based Accident & Drowsiness Monitoring System
+> 
+> An **ESP32-based smart safety system** that detects accidents, falls, and drowsiness by fusing **eye-blink detection**, **tilt angle**, and **angular speed**. The system provides **local alerts (buzzer + vibration)** and sends **BLE emergency notifications** with severity classification.
+> 
+> ---
+> 
+> ## 📌 Features
+> 
+> - 👁️ **Eye Blink / Drowsiness Detection** using IR sensor  
+> - 📐 **Tilt Angle Estimation** using MPU6050 (Complementary Fi
+
 
 ---
 
-### <a id="project-14"></a>14. OPTIMA – Optimization Protocol for Traffic Intelligence & Management Architecture
-
-- **Team**: `Binary.exe`
+## <a id="project-14-optima---optimization-protocol"></a>14. OPTIMA – Optimization Protocol for Traffic Intelligence & Management Architecture
+- **Team Name**: `Binary.exe`
 - **Institution**: AMRITA VISWA VIDYAPEETHAM , NAGERCOIL
 - **Track**: software
 - **Tagline**: *A Swarm-Based AI Traffic System for Real-Time Adaptive Signal Optimization*
-- **Repository**: [https://github.com/Adhwu/Optima](https://github.com/Adhwu/Optima)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/odmx0Ed020o)
+- **GitHub Repository**: [https://github.com/Adhwu/Optima](https://github.com/Adhwu/Optima)
+- **Demo Video**: [Watch Demo](https://youtu.be/odmx0Ed020o)
+- **Local Code Directory**: `repos_2025\14_OPTIMA_–_Optimization_Protocol_for_Tr` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 OPTIMA - Optimization Protocol for Traffic Intelligence & Management Architecture
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 OPTIMA is an intelligent, swarm-based traffic management system designed to replace static fixed-time signal systems with real-time adaptive control. The system integrates AI-powered cameras, magnetometers, and acoustic sensors to monitor vehicle density and detect emergency vehicles at each junction. Data is processed locally using edge computing and shared with neighboring intersections through mesh networking to enable coordinated traffic flow.
 
 The swarm optimization engine dynamically adjusts green signal durations based on real-time traffic density, waiting time, and inter-junction flow conditions. In emergency scenarios, the system automatically overrides normal operation to create an instant green corridor, ensuring rapid and uninterrupted passage for ambulances, fire engines, and police vehicles. A built-in hardware watchdog ensures fail-safe operation during sensor or network failures.
 
 By combining multi-sensor fusion, decentralized swarm intelligence, and predictive traffic coordination, OPTIMA reduces congestion, minimizes fuel wastage, lowers emissions, improves emergency response time, and enhances overall urban mobility efficiency.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, HTML, JavaScript, Python
-- **Codebase Scale**: ~15 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: Python, HTML/CSS, JavaScript
+- **Core Technologies Identified**: JavaScript, Python
 
 ---
 
-### <a id="project-15"></a>15. PCO-US
-
-- **Team**: `Optimus Prime`
+## <a id="project-15-pco-us"></a>15. PCO-US
+- **Team Name**: `Optimus Prime`
 - **Institution**: Muthoot Institute of Technology and Science
 - **Track**: hardware
 - **Tagline**: *Multi‑Signal Ovulation Intelligence System for PCOD/PCOS Patients*
-- **Repository**: [https://github.com/JoanneKoshy/PCOUS](https://github.com/JoanneKoshy/PCOUS)
-- **Demo Link**: [Watch Video Demo](https://youtube.com/shorts/3g-hfvnyONI?si=GN4F4PbKuwX2ZbCg)
+- **GitHub Repository**: [https://github.com/JoanneKoshy/PCOUS](https://github.com/JoanneKoshy/PCOUS)
+- **Demo Video**: [Watch Demo](https://youtube.com/shorts/3g-hfvnyONI?si=GN4F4PbKuwX2ZbCg)
+- **Local Code Directory**: `repos_2025\15_PCO-US` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Women with PCOS lack a reliable, personalized, and explainable system to accurately detect ovulation and identify anovulatory cycles using multi-physiological signals.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 PCO‑US is a multi-signal ovulation intelligence system designed to improve menstrual phase detection and ovulation prediction for women, especially those with irregular cycles or PCOS.
 
 Traditional ovulation tracking methods rely heavily on calendar prediction or single-signal tracking such as LH strips. However, women with hormonal imbalances often experience inconsistent LH surges, irregular cycles, or stress-driven fluctuations that reduce prediction accuracy.
@@ -1087,26 +1224,36 @@ This multi-signal approach increases robustness compared to single-parameter tra
 
 PCO‑US demonstrates how affordable hardware, physiological analytics, and explainable AI logic can be combined to create an accessible reproductive health intelligence platform.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, ESP32, HTML, JavaScript, OpenCV, Python, React
-- **Package Dependencies**: `firebase, react, react-dom, react-router-dom`
-- **Codebase Scale**: ~23 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python, JavaScript
+- **Frameworks & Libraries**: React, TailwindCSS
+- **Key Dependencies / Packages**: `firebase, react, react-dom, react-router-dom, @eslint/js, @types/react, @types/react-dom, @vitejs/plugin-react, autoprefixer, eslint`
+- **Core Technologies Identified**: JavaScript, OpenCV, Python, React, TailwindCSS
+
+> **Repository README Excerpt**:
+> # 🌸PCO-US - Multi-Signal Ovulation Intelligence System
+> 
+> <img width="1536" height="696" alt="image" src="https://github.com/user-attachments/assets/20321ad3-d426-41eb-b0b5-e529ff993df7" />
+> 
+> ## 📍Problem Statement
+> The reliability of ovulation tracking is a critical issue for individuals and healthcare providers. Traditional methods often lack precision, leading to inaccurate predictions of fertile windows and difficulties in family planning. The PCO-US system addresses these challenges by providing
+
 
 ---
 
-### <a id="project-16"></a>16. KOLPAY
-
-- **Team**: `Kolon`
+## <a id="project-16-kolpay"></a>16. KOLPAY
+- **Team Name**: `Kolon`
 - **Institution**: Christ College of Engineering
 - **Track**: software
 - **Tagline**: *Payments are digital, but purchase details are disconnected from the payment.*
-- **Repository**: [https://github.com/Bharath-Krishna-AB/ledger](https://github.com/Bharath-Krishna-AB/ledger)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/-nWLorhYpRg)
+- **GitHub Repository**: [https://github.com/Bharath-Krishna-AB/ledger](https://github.com/Bharath-Krishna-AB/ledger)
+- **Demo Video**: [Watch Demo](https://youtu.be/-nWLorhYpRg)
+- **Local Code Directory**: `repos_2025\16_KOLPAY` (Failed / Private / Unavailable)
 
-#### Problem Statement
+### 1. Problem Statement
 Paper receipts are inconvenient to store and mobile number–based digital billing is privacy-invasive and restricted under India’s DPDP Act 2023, creating a need for a scalable, privacy-preserving digital billing alternative.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Paper receipts are inconvenient to store and mobile number–based digital billing is privacy-invasive and restricted under India’s DPDP Act 2023, creating a need for a scalable, privacy-preserving digital billing alternative.Consumers are required to retain physical bills for returns, warranties, and expense tracking. Storing these receipts long-term is inconvenient and unreliable. Some retailers send digital bills via SMS, but this requires customers to share their phone numbers.
 
 Under the Digital Personal Data Protection (DPDP) Act 2023, retailers cannot mandate collection of mobile numbers as a condition for billing or service. Customers must have a genuine option to refuse without loss of service. This limits the scalability of phone number–based digital billing systems.
@@ -1115,49 +1262,51 @@ At the same time, UPI QR codes are already widely used for payments. These codes
 
 If item-level bill data were included in the QR code, consumers could scan and pay as usual while simultaneously capturing a structured digital receipt. This would eliminate paper bills, avoid mandatory phone number collection, and create a searchable expense history without manual entry or screenshots.
 
-#### Technologies & Tools Used
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- Specialized APIs, cloud services, and web frameworks as outlined in the repository.
 
 ---
 
-### <a id="project-17"></a>17. Wiki Cusat
-
-- **Team**: `Nexus Connect`
+## <a id="project-17-wiki-cusat"></a>17. Wiki Cusat
+- **Team Name**: `Nexus Connect`
 - **Institution**: School of Engineering , CUSAT
 - **Track**: software
 - **Tagline**: *Unified Knowledge for a Smarter Campus.*
-- **Repository**: [https://github.com/philip-thomas-12/Wiki-Cusat/tree/main](https://github.com/philip-thomas-12/Wiki-Cusat/tree/main)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/qut30BQ0e8s)
+- **GitHub Repository**: [https://github.com/philip-thomas-12/Wiki-Cusat/tree/main](https://github.com/philip-thomas-12/Wiki-Cusat/tree/main)
+- **Demo Video**: [Watch Demo](https://youtu.be/qut30BQ0e8s)
+- **Local Code Directory**: `repos_2025\17_Wiki_Cusat` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Wiki cusat
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Navigating university ecosystems often presents a fragmented experience for students, researchers, and faculty seeking accurate institutional information. CUSAT Knowledge Nexus addresses this critical information silo by providing a centralized, AI-driven platform that aggregates department data, academic procedures, and campus resources into an accessible, structured wiki format.
 
 At the core of the platform is an intelligent conversational agent powered by advanced generative AI, which instantly retrieves relevant university data to answer complex student queries. The system features a robust, hierarchical wiki architecture with an intuitive search engine, enabling seamless exploration of campus knowledge. Institutional administrators benefit from secure access controls, allowing them to effectively manage, curate, and update platform content in real-time.
 
 Engineered for high availability and concurrent usage, the platform utilizes a decoupled architecture separating the modern frontend from the high-performance Python backend. This scalable infrastructure ensures rapid query resolution during peak university enrollment periods and provides a foundational template that can be readily adapted and deployed across other educational institutions seeking to modernize their digital campus experience.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, FastAPI, HTML, JavaScript, Python, React, Tailwind CSS, TypeScript
-- **Package Dependencies**: `@supabase/supabase-js, clsx, date-fns, lucide-react, react, react-dom, tailwind-merge, fastapi, uvicorn, sqlalchemy, psycopg2-binary, pydantic`
-- **Codebase Scale**: ~31 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: Python, TypeScript, HTML/CSS, JavaScript
+- **Frameworks & Libraries**: React, TailwindCSS, FastAPI
+- **Key Dependencies / Packages**: `@supabase/supabase-js, clsx, date-fns, lucide-react, react, react-dom, tailwind-merge, @types/react, @types/react-dom, @vitejs/plugin-react-swc`
+- **Core Technologies Identified**: FastAPI, JavaScript, Python, React, TailwindCSS, TypeScript
 
 ---
 
-### <a id="project-18"></a>18. NEUROMOTION: AI ASSISTIVE REHABILITATION
-
-- **Team**: `KAIZEN`
+## <a id="project-18-neuromotion--ai-assistive-reha"></a>18. NEUROMOTION: AI ASSISTIVE REHABILITATION
+- **Team Name**: `KAIZEN`
 - **Institution**: Mar Athanasius College of Engineering Kothamangalam
 - **Track**: hardware
 - **Tagline**: *Personalized Hybrid Mobile AI Therapist at your service!*
-- **Repository**: [https://github.com/alfi30-bat/kaizen-robotics](https://github.com/alfi30-bat/kaizen-robotics)
-- **Demo Link**: [Watch Video Demo](https://drive.google.com/file/d/1oOOY_zcKOkIAKqe7W6J_-_ZIVBc-aT36/view?usp=drivesdk)
+- **GitHub Repository**: [https://github.com/alfi30-bat/kaizen-robotics](https://github.com/alfi30-bat/kaizen-robotics)
+- **Demo Video**: [Watch Demo](https://drive.google.com/file/d/1oOOY_zcKOkIAKqe7W6J_-_ZIVBc-aT36/view?usp=drivesdk)
+- **Local Code Directory**: `repos_2025\18_NEUROMOTION_AI_ASSISTIVE_REHABILITATI` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Stroke is one of the leading causes of long-term disability worldwide, leaving millions of survivors with impaired upper-limb motor function. Effective recovery requires repetitive, structured rehabilitation exercises performed with correct posture, joint alignment, and controlled movement. However, once patients leave hospital-based physiotherapy, they often lack continuous supervision and real-time feedback. As a result, many perform exercises incorrectly, develop compensatory movement patterns, or discontinue therapy altogether, significantly slowing recovery and increasing long-term disability risk. Existing solutions such as generic exercise videos, fitness trackers, or camera-based monitoring systems either fail to provide movement-quality analysis or raise concerns related to cost, complexity, and privacy. There is a critical need for an accessible, accurate, and privacy-conscious rehabilitation support system that can guide patients during home-based therapy while maintaining clinical relevance.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 NeuroMotion is a hybrid rehabilitation platform designed to assist stroke survivors in performing upper-limb physiotherapy exercises accurately and consistently outside clinical environments. The system integrates wearable motion sensing, computer vision, and adaptive AI coaching to deliver real-time movement evaluation and personalized therapy recommendations.
 Stroke recovery heavily depends on repetitive, correct arm movements. However, once patients leave hospital-based supervision, many perform exercises incorrectly, develop compensatory patterns, or discontinue therapy due to lack of guidance. NeuroMotion addresses this gap by acting as a home-based intelligent rehabilitation coach that augments physiotherapy rather than replacing it.
 Core Objective
@@ -1239,115 +1388,148 @@ Privacy-preserving architecture
 Integrated hardware + software + AI ecosystem
 Unlike generic fitness trackers or object-detection systems, NeuroMotion evaluates rehabilitation quality and recovery progression rather than merely detecting motion
 
-#### Technologies & Tools Used
-- **Core Stack**: ESP32, Flask, HTML, JavaScript, Python
-- **Package Dependencies**: `f l a s k ,  `
-- **Codebase Scale**: ~17 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python
+- **Key Dependencies / Packages**: `f l a s k ,  `
+- **Core Technologies Identified**: Flask, JavaScript, Python
 
 ---
 
-### <a id="project-19"></a>19. Ravana
-
-- **Team**: `BlueSteel`
+## <a id="project-19-ravana"></a>19. Ravana
+- **Team Name**: `BlueSteel`
 - **Institution**: Model Engineering College Thrikkakara
 - **Track**: software
 - **Tagline**: *Democratizing Compute via the Browser*
-- **Repository**: [github.com/simonknowsstuff/ravana](github.com/simonknowsstuff/ravana)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/fAY8AfY40Nw)
+- **GitHub Repository**: [github.com/simonknowsstuff/ravana](github.com/simonknowsstuff/ravana)
+- **Demo Video**: [Watch Demo](https://youtu.be/fAY8AfY40Nw)
+- **Local Code Directory**: `repos_2025\19_Ravana` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Democratizing Compute via the Browser
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 The "Hardware Gap" often prevents students and independent creators from accessing high-fidelity 3D visuals due to the extreme computational demands of professional rendering. While traditional distributed systems exist, they typically require local software installations and complex network configurations. Ravana is a zero-install, browser-based compute farm. It utilizes a master-worker architecture to parse GLTF-exported Blender scenes, distribute intensive tile-based rendering tasks to mobile devices via WebGL, and stitch the results into a final high-resolution output. This approach demonstrates that a powerful rendering cluster can be formed instantly using the collective power of the devices already in our pockets.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, Express, HTML, JavaScript, React, Three.js, TypeScript
-- **Package Dependencies**: `@react-three/drei, @react-three/fiber, express, qrcode.react, react, react-dom, socket.io, socket.io-client, three, three-mesh-bvh`
-- **Codebase Scale**: ~32 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: TypeScript, HTML/CSS, JavaScript
+- **Frameworks & Libraries**: React, Three.js, Express.js, TailwindCSS
+- **Key Dependencies / Packages**: `@react-three/drei, @react-three/fiber, express, qrcode.react, react, react-dom, socket.io, socket.io-client, three, three-mesh-bvh`
+- **Core Technologies Identified**: JavaScript, React, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> # Ravana
+> 
+> The "Hardware Gap" often prevents students and independent creators from accessing high-fidelity 3D visuals due to the extreme computational demands of professional rendering. While traditional distributed systems exist, they typically require local software installations and complex network configurations. Ravana is a zero-install, browser-based compute farm. It utilizes a master-worker architecture to parse GLTF-exported Blender scenes, distribute intensive tile-based rendering tasks
+
 
 ---
 
-### <a id="project-20"></a>20. DEFENDER
-
-- **Team**: `Sarvam IoT`
+## <a id="project-20-defender"></a>20. DEFENDER
+- **Team Name**: `Sarvam IoT`
 - **Institution**: CUSAT
 - **Track**: hardware
 - **Tagline**: *Smart Intrusion Detection System*
-- **Repository**: [https://github.com/Meenakshimkumar/DEFENDER-WEBSITE](https://github.com/Meenakshimkumar/DEFENDER-WEBSITE)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/w5ID6pMG7Xk?si=ygMgU42DXx-RH4p-)
+- **GitHub Repository**: [https://github.com/Meenakshimkumar/DEFENDER-WEBSITE](https://github.com/Meenakshimkumar/DEFENDER-WEBSITE)
+- **Demo Video**: [Watch Demo](https://youtu.be/w5ID6pMG7Xk?si=ygMgU42DXx-RH4p-)
+- **Local Code Directory**: `repos_2025\20_DEFENDER` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Open-field agriculture faces significant crop losses due to wild animal intrusions, necessitating an automated, real-time detection and deterrent system that can reliably identify species and notify farmers across diverse environmental conditions.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 DEFENDER is a smart web-based monitoring system designed to detect, track, and manage animal intrusion or movement through a centralized dashboard. It works by collecting detection data from connected monitoring devices, sending the data to a backend server where it is processed, stored, and analyzed, and then displaying real-time detections, alerts, and device status through an interactive web interface. The system automatically generates alerts when specific events are detected, allowing users to monitor activities, manage devices, and adjust system settings efficiently from one platform. The main problem it solves is the lack of intelligent, centralized monitoring for wildlife or intrusion detection, which often leads to delayed responses and manual supervision; DEFENDER provides an automated, real-time solution that improves safety, monitoring efficiency, and decision-making.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, Flask, HTML, JavaScript, Next.js, OpenCV, PyTorch, Python, React, Tailwind CSS, TypeScript
-- **Package Dependencies**: `flask, flask-cors, ultralytics, opencv-python, Pillow, werkzeug, transformers>=4.30.0, torch, soundfile, @hookform/resolvers, @radix-ui/react-accordion, @radix-ui/react-alert-dialog`
-- **Codebase Scale**: ~97 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, TypeScript, Python, JavaScript
+- **Frameworks & Libraries**: Flask, OpenCV, PyTorch, React, Next.js, TailwindCSS
+- **Key Dependencies / Packages**: `flask, flask-cors, ultralytics, opencv-python, Pillow, werkzeug, transformers, torch, soundfile, @hookform/resolvers`
+- **Core Technologies Identified**: Flask, JavaScript, Next.js, OpenCV, PyTorch, Python, React, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> # 🦁 DEFENDER: Intelligent Animal Intrusion Detection & Deterrent System
+> 
+> DEFENDER is a comprehensive, AI-powered Edge computing architecture designed to monitor live video/audio feeds, accurately detect physical wildlife intrusions using optimized neural networks, and provide real-time reporting and alerts.
+> 
+> ## 🚀 Key Features
+> 
+> - **Decoupled Edge AI Streaming Architecture**:
+>   - The heavy lifting (YOLOv8 Inference) occurs entirely on edge devices (like a Raspberry Pi 5).
+>   - High-performance, low
+
 
 ---
 
-### <a id="project-21"></a>21. SaveSense
-
-- **Team**: `SaveSense`
+## <a id="project-21-savesense"></a>21. SaveSense
+- **Team Name**: `SaveSense`
 - **Institution**: SOE CUSAT
 - **Track**: software
 - **Tagline**: *Make Sense of your Saves*
-- **Repository**: [https://github.com/roqcodes/SaveSense](https://github.com/roqcodes/SaveSense)
-- **Demo Link**: [Watch Video Demo](https://youtube.com/shorts/FzTnYIWYrUM?si=nVuNfRPj2H6LzebM)
+- **GitHub Repository**: [https://github.com/roqcodes/SaveSense](https://github.com/roqcodes/SaveSense)
+- **Demo Video**: [Watch Demo](https://youtube.com/shorts/FzTnYIWYrUM?si=nVuNfRPj2H6LzebM)
+- **Local Code Directory**: `repos_2025\21_SaveSense` (Failed / Private / Unavailable)
 
-#### Problem Statement
+### 1. Problem Statement
 People frequently save content from platforms like Instagram, YouTube, Reddit, and websites with the intention of revisiting it later, but most of these saved items are never accessed again. Over time, these saves accumulate across multiple platforms without context, prioritization, or reminders, creating digital clutter and information overload. Since existing systems treat saved content as static bookmarks rather than indicators of user intent, the original purpose behind saving is lost, resulting in a growing gap between intention and action.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 People save hundreds of Instagram reels, YouTube videos, tweets, Reddit posts, and articles every month, but almost never come back to them. These “saved” items silently overflow across platforms and lose their value because current systems treat them as static bookmarks instead of meaningful signals.
 
 Our idea is to build an AI-powered personal intent dashboard where users can send any content using native share buttons (or paste links/text), and the system intelligently understands why it was saved. The AI analyzes the content to extract topics, dates, events, deadlines, sales, and recurring interests, and then actively surfaces what matters at the right time.
 
 For example, if a reel mentions an upcoming event, it gets pinned until the event date. If multiple videos or posts relate to researching a product, the app infers buying intent. Time-sensitive or actionable content is highlighted, while irrelevant items can be dismissed. The goal is not to store content, but to convert scattered saves into timely reminders, insights, and actions—reducing digital clutter and helping users act on their intent instead of forgetting it.
 
-#### Technologies & Tools Used
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- Specialized APIs, cloud services, and web frameworks as outlined in the repository.
 
 ---
 
-### <a id="project-22"></a>22. Ready Classified Coconuts
-
-- **Team**: `Local Host`
+## <a id="project-22-ready-classified-coconuts"></a>22. Ready Classified Coconuts
+- **Team Name**: `Local Host`
 - **Institution**: College Of Engineering Trivandrum
 - **Track**: hardware
 - **Tagline**: *"Precision Grading for the Perfect Coconut — Where AI meets Hardware."*
-- **Repository**: [https://github.com/saad-latheef/ready-classified-coconut](https://github.com/saad-latheef/ready-classified-coconut)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/yKDovAzjHCs)
+- **GitHub Repository**: [https://github.com/saad-latheef/ready-classified-coconut](https://github.com/saad-latheef/ready-classified-coconut)
+- **Demo Video**: [Watch Demo](https://youtu.be/yKDovAzjHCs)
+- **Local Code Directory**: `repos_2025\22_Ready_Classified_Coconuts` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Automated Coconut classification in industries
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 The **Coconut Quality Checker** is a professional-grade industrial tool designed to standardize and accelerate the coconut grading process. By integrating high-speed hardware sensors with advanced computer vision and Generative AI, the system removes human subjectivity from quality control. It features a unique "throw-and-detect" workflow: simply place or throw a coconut onto the scale, and the system instantly captures dimensions, weight, and internal water level while performing a 360° visual health check for defects like mold, cracks, or holes.
 
-#### Technologies & Tools Used
-- **Core Stack**: C/C++ / Arduino, CSS, Next.js, Python, React, Tailwind CSS, TypeScript
-- **Package Dependencies**: `@hookform/resolvers, @radix-ui/react-accordion, @radix-ui/react-alert-dialog, @radix-ui/react-aspect-ratio, @radix-ui/react-avatar, @radix-ui/react-checkbox, @radix-ui/react-collapsible, @radix-ui/react-context-menu, @radix-ui/react-dialog, @radix-ui/react-dropdown-menu, @radix-ui/react-hover-card, @radix-ui/react-label`
-- **Codebase Scale**: ~124 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, TypeScript, Python, C/C++ / Arduino
+- **Frameworks & Libraries**: React, Next.js, TailwindCSS
+- **Key Dependencies / Packages**: `@hookform/resolvers, @radix-ui/react-accordion, @radix-ui/react-alert-dialog, @radix-ui/react-aspect-ratio, @radix-ui/react-avatar, @radix-ui/react-checkbox, @radix-ui/react-collapsible, @radix-ui/react-context-menu, @radix-ui/react-dialog, @radix-ui/react-dropdown-menu`
+- **Core Technologies Identified**: Next.js, Python, React, TailwindCSS, TypeScript
+
+> **Repository README Excerpt**:
+> # 🥥 Coconut Quality Checker
+> ### "Precision Grading for the Perfect Coconut — Where AI meets Hardware."
+> 
+> An AI-powered, multi-agent industrial automation system for real-time coconut grading, dimension measurement, and quality assessment.
+> 
+> ## 🌟 Overview
+> 
+> The **Coconut Quality Checker** is a professional-grade industrial tool designed to standardize and accelerate the coconut grading process. By integrating high-speed hardware sensors with advanced computer vision and Generative A   I, the system
+
 
 ---
 
-### <a id="project-23"></a>23. IGNIS
-
-- **Team**: `Ignis`
+## <a id="project-23-ignis"></a>23. IGNIS
+- **Team Name**: `Ignis`
 - **Institution**: School of Engineering,CUSAT
 - **Track**: kireap
 - **Tagline**: *Geospatial Validation for Agricultural Integrity*
-- **Repository**: [https://github.com/Catherin-j/AgroHunt](https://github.com/Catherin-j/AgroHunt)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/CJOvpyeTbpk)
+- **GitHub Repository**: [https://github.com/Catherin-j/AgroHunt](https://github.com/Catherin-j/AgroHunt)
+- **Demo Video**: [Watch Demo](https://youtu.be/CJOvpyeTbpk)
+- **Local Code Directory**: `repos_2025\23_IGNIS` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Automated Plot Validation and Ownership Plausibility
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 What This Project Does:
 The Agri Plot Validation System is an automated, explainable agricultural fraud-detection and validation engine that verifies whether:
 A submitted polygon represents a real agricultural land parcel.
@@ -1430,49 +1612,65 @@ Returns module-wise scores.
 Provides plain-language reasoning.
 Transparent and audit-ready.
 
-#### Technologies & Tools Used
-- **Core Stack**: CSS, HTML, JavaScript, Python, React, Sentinel-2
-- **Package Dependencies**: `a n n o t a t e d - d o c = = 0 . 0 . 4 ,  ,  a n n o t a t e d - t y p e s = = 0 . 7 . 0 ,  a n y i o = = 4 . 1 2 . 1 ,  a t t r s = = 2 5 . 4 . 0 ,  c a c h e t o o l s = = 6 . 2 . 6 ,  c e r t i f i = = 2 0 2 6 . 1 . 4 ,  c f f i = = 2 . 0 . 0 ,  c h a r s e t - n o r m a l i z e r = = 3 . 4 . 4 , @turf/turf, leaflet, lucide-react`
-- **Codebase Scale**: ~41 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python, JavaScript
+- **Frameworks & Libraries**: React
+- **Key Dependencies / Packages**: `a n n o t a t e d - d o c = = 0 . 0 . 4 ,  ,  a n n o t a t e d - t y p e s = = 0 . 7 . 0 ,  a n y i o = = 4 . 1 2 . 1 ,  a t t r s = = 2 5 . 4 . 0 ,  c a c h e t o o l s = = 6 . 2 . 6 ,  c e r t i f i = = 2 0 2 6 . 1 . 4 ,  c f f i = = 2 . 0 . 0 ,  c h a r s e t - n o r m a l i z e r = = 3 . 4 . 4 , @turf/turf`
+- **Core Technologies Identified**: JavaScript, Python, React
+
+> **Repository README Excerpt**:
+> # Agri Plot Validation System
+> 
+> Built for **Problem Statement 3**.
+> 
+> The system checks whether a submitted polygon is a real and plausible agricultural plot, evaluates whether the claimed crop fits location conditions, and returns an explainable decision for audits/disputes.
+> 
+> ## What this solves
+> 
+> - Reduces fraud, duplicate claims, and invalid plot submissions.
+> - Verifies if submitted geometry is likely a real agricultural parcel.
+> - Validates crop plausibility using climate + elevation + land evide
+
 
 ---
 
-### <a id="project-24"></a>24. TRNDO
-
-- **Team**: `Powerpuff Girls`
+## <a id="project-24-trndo"></a>24. TRNDO
+- **Team Name**: `Powerpuff Girls`
 - **Institution**: Christ College of Engineering, Irinjalakuda
 - **Track**: software
 - **Tagline**: *read the pulse*
-- **Repository**: [https://github.com/A56-A5/make-a-ton](https://github.com/A56-A5/make-a-ton)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/jEw8Ch5t3EU)
+- **GitHub Repository**: [https://github.com/A56-A5/make-a-ton](https://github.com/A56-A5/make-a-ton)
+- **Demo Video**: [Watch Demo](https://youtu.be/jEw8Ch5t3EU)
+- **Local Code Directory**: `repos_2025\24_TRNDO` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 The Local Retail "Blind Spot"
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Indian SMEs and D2C brands collect tons of customer chats and orders on WhatsApp every day, but they have no easy way to turn that real-time data into trending Instagram posts. They waste hours guessing trends, spend heavily on designers, and see low engagement because their content doesn’t connect back to actual sales.
 Our simple all-in-one AI platform fixes this completely: it reads your WhatsApp conversations, predicts the next hot trends, instantly creates beautiful brand-matching images and ready-to-post Instagram content in seconds, and sends customers straight back to WhatsApp to buy with UPI — giving you higher engagement, more sales, and up to 60% lower content costs with zero extra work.
 
-#### Technologies & Tools Used
-- **Core Stack**: Flask, HTML, Python
-- **Package Dependencies**: `Flask, Flask-CORS, reportlab, qrcode[pil], Pillow, marshmallow, python-dateutil, google-genai, python-dotenv, gunicorn, requests`
-- **Codebase Scale**: ~33 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python
+- **Frameworks & Libraries**: Flask
+- **Key Dependencies / Packages**: `Flask, Flask-CORS, reportlab, qrcode[pil], Pillow, marshmallow, python-dateutil, google-genai, python-dotenv, gunicorn`
+- **Core Technologies Identified**: Flask, Python
 
 ---
 
-### <a id="project-25"></a>25. QuantumRoute
-
-- **Team**: `StrawHats`
+## <a id="project-25-quantumroute"></a>25. QuantumRoute
+- **Team Name**: `StrawHats`
 - **Institution**: SOE,CUSAT
 - **Track**: kireap
 - **Tagline**: *Finding the optimal route quantamastically!*
-- **Repository**: [https://github.com/GowrishankarSMenon/makeaton](https://github.com/GowrishankarSMenon/makeaton)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/ocuBvLr5HCk)
+- **GitHub Repository**: [https://github.com/GowrishankarSMenon/makeaton](https://github.com/GowrishankarSMenon/makeaton)
+- **Demo Video**: [Watch Demo](https://youtu.be/ocuBvLr5HCk)
+- **Local Code Directory**: `repos_2025\25_QuantumRoute` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Quantum Optimal Delivery Path Optimization
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 Project Description
 Quantum-Hybrid Delivery Route Optimizer is a full-stack web application that solves the Travelling Salesman Problem (TSP) for last-mile delivery logistics. Users place delivery locations on an interactive map and the system computes the optimal route using a choice of classical, quantum, or hybrid solvers.
 
@@ -1490,26 +1688,37 @@ Road block avoidance uses multi-phase OSRM-based detection: route geometry check
 
 The UI features a warm cream/muted orange theme with the Nunito font, dark borders, bouncy micro-interactions, a collapsible sidebar with drag-to-reorder locations, an algorithm picker modal, fuel cost estimation, and a quantum overlay with circuit visualization metrics.
 
-#### Technologies & Tools Used
-- **Core Stack**: C/C++ / Arduino, CSS, Flask, JavaScript, Next.js, Python, React, TypeScript
-- **Package Dependencies**: `leaflet, next, react, react-dom, react-leaflet, qiskit>=1.0, qiskit-aer>=0.13, qiskit-algorithms>=0.3, qiskit-optimization>=0.6, qiskit-ibm-runtime>=0.20, python-dotenv>=1.0, flask>=3.0`
-- **Codebase Scale**: ~40 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python, C/C++ / Arduino, TypeScript, JavaScript
+- **Frameworks & Libraries**: Next.js, React, Flask
+- **Key Dependencies / Packages**: `leaflet, next, react, react-dom, react-leaflet, @types/leaflet, @types/node, @types/react, @types/react-dom, typescript`
+- **Core Technologies Identified**: Flask, JavaScript, Next.js, Python, React, TypeScript
+
+> **Repository README Excerpt**:
+> # Quantum Delivery Route Optimizer
+> 
+> ## Initial Concept
+> 
+> This project explores a **quantum computing approach** to solve the classic Vehicle Routing Problem (VRP) for a small number of delivery locations. The goal is to determine the **optimal delivery path** for a vehicle that minimizes total travel distance while visiting each location exactly once, starting from a fixed depot.
+> 
+> The solution leverages a **hybrid quantum-classical optimization** pipeline, combining the strengths of quantum compu
+
 
 ---
 
-### <a id="project-26"></a>26. Clinical Action and Response Engine
-
-- **Team**: `DarkLead!`
+## <a id="project-26-clinical-action-and-response-e"></a>26. Clinical Action and Response Engine
+- **Team Name**: `DarkLead!`
 - **Institution**: SRM Institute of Science and Technology
 - **Track**: software
 - **Tagline**: *A plug-and-play ecosystem for predictive, secure, consent-driven healthcare(short)*
-- **Repository**: [https://github.com/DarkLead-Hub/C.A.R.E.](https://github.com/DarkLead-Hub/C.A.R.E.)
-- **Demo Link**: [Watch Video Demo](https://youtu.be/eQdBxY_g3Qo)
+- **GitHub Repository**: [https://github.com/DarkLead-Hub/C.A.R.E.](https://github.com/DarkLead-Hub/C.A.R.E.)
+- **Demo Video**: [Watch Demo](https://youtu.be/eQdBxY_g3Qo)
+- **Local Code Directory**: `repos_2025\26_Clinical_Action_and_Response_Engine` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Bridging Lethal Information Gaps through a Decentralized, Privacy-Preserving  Blockchain based Healthcare Ecosystem.
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 1. The Problem: Subir and the "Plastic Cover" Predicament
 Meet Subir, a true Malayali living in Kochi. He loves his beef fry, his porotta, and unfortunately, his cholesterol is competing with the humidity levels.
 
@@ -1588,25 +1797,27 @@ Future Scaling: For the backend, we are migrating to a Layer 2 Rollup (like Poly
 Conclusion
 C.A.R.E. solves the "Data Silo" and "Delayed Response" problems by turning static health records into a live, consent-driven, and actionable data stream.
 
-#### Technologies & Tools Used
-- **Core Stack**: C/C++ / Arduino, CSS, Express, Flutter / Dart, HTML, JavaScript, Next.js, Python, React, Solidity, Tailwind CSS, TypeScript, Web3/Ethers
-- **Package Dependencies**: `@prisma/client, ethers, sqlite3, react, react-dom, @emotion/react, @emotion/styled, @mui/icons-material, @mui/material, @popperjs/core, @radix-ui/react-accordion, @radix-ui/react-alert-dialog`
-- **Codebase Scale**: ~8787 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: Solidity, HTML/CSS, Swift, Python, C/C++ / Arduino, Kotlin, Dart / Flutter, TypeScript, JavaScript
+- **Frameworks & Libraries**: Web3/Ethers, React, Next.js, TailwindCSS, Express.js
+- **Key Dependencies / Packages**: `@prisma/client, ethers, sqlite3, react, react-dom, @emotion/react, @emotion/styled, @mui/icons-material, @mui/material, @popperjs/core`
+- **Core Technologies Identified**: JavaScript, Next.js, Python, React, Solidity, TailwindCSS, TypeScript
+- **Containerization**: Dockerfile included
 
 ---
 
-### <a id="project-27"></a>27. AGNI
-
-- **Team**: `Lakshyaas`
+## <a id="project-27-agni"></a>27. AGNI
+- **Team Name**: `Lakshyaas`
 - **Institution**: School of Engineer, CUSAT
 - **Track**: kireap
 - **Tagline**: *Adaptive Geo-secured Network for Intelligent Agriculture*
-- **Repository**: [https://github.com/DilshanCheerangan/agni-main](https://github.com/DilshanCheerangan/agni-main)
+- **GitHub Repository**: [https://github.com/DilshanCheerangan/agni-main](https://github.com/DilshanCheerangan/agni-main)
+- **Local Code Directory**: `repos_2025\27_AGNI` (Success)
 
-#### Problem Statement
+### 1. Problem Statement
 Cultivated Land Masking from Multi-Resolution Imagery
 
-#### How Did They Solve It (Solution Architecture)
+### 2. How Did They Solve It (Solution Architecture)
 AGNI is a state-of-the-art precision agriculture platform designed to empower farmers, students, and researchers with AI-driven insights and advanced computer vision. It transforms raw field data into actionable intelligence, optimizing crop yields and livestock management while providing a deeply analytical view of farm health.
 
 
@@ -1651,10 +1862,24 @@ Frontend: HTML5/Vanilla JavaScript, CSS3 (Tailwind CSS), Font Awesome.
 Maps & GIS: Leaflet.js, OpenStreetMap, Leaflet Draw.
 AI: Gemini AI Integration for personalized agricultural strategy.
 
-#### Technologies & Tools Used
-- **Core Stack**: FastAPI, HTML, JavaScript, OpenCV, Python, Tailwind CSS
-- **Package Dependencies**: `fastapi, uvicorn, opencv-python-headless, numpy, pillow, python-multipart, python-jose[cryptography], requests`
-- **Codebase Scale**: ~63 source files inspected locally.
+### 3. What All Things They Have Used (Tech Stack & Tools)
+- **Programming Languages**: HTML/CSS, Python
+- **Frameworks & Libraries**: FastAPI, OpenCV
+- **Key Dependencies / Packages**: `fastapi, uvicorn, opencv-python-headless, numpy, pillow, python-multipart, python-jose[cryptography], requests`
+- **Core Technologies Identified**: FastAPI, JavaScript, OpenCV, Python
+
+> **Repository README Excerpt**:
+> # KRISHI – Knowledge-driven Real-time Intelligent System for Harvest Improvement
+> 
+> Production-style, hackathon-friendly MVP: login, image upload, OpenCV-based vegetation/stress analysis, trust score, and advisory.
+> 
+> ---
+> 
+> ## Hackathon-winning features
+> 
+> - **Demo mode** — In Image Analyzer, click **Try with sample image** to run a full analysis without uploading a file. Perfect for live demos and judges.
+> - **One-line Judge summary** — After analysis, the Dashboard shows *Your latest plot at a glance*
+
 
 ---
 
