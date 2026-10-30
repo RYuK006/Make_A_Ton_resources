@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F4F5F7;
+  /* Soft off-white for contrast against white cards */
+  --foreground: #111827;
+  /* Soft black for text */
+
+  /* Clean, muted, yet fresh accents */
+  --primary: #B026FF;
+  /* Fluorescent Purple */
+  --secondary: #00E5FF;
+  /* Fluorescent Blue / Cyan */
+  --accent: #CCFF00;
+  /* Lime Green */
+  --accent-light: #F4FFB8;
+
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --border: #E5E7EB;
+  /* Very light gray border */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+
+  /* Font mapping */
+  --font-sans: var(--font-proxima-nova);
+  --font-proxima: var(--font-proxima-nova);
+  --font-mono: var(--font-space-mono);
+  --font-anton: var(--font-anton);
+  --font-fatkat: var(--font-fatkat);
+  --font-kol: var(--font-kol-ranko);
+  --font-pixel: var(--font-pixel);
+}
+
+/* Soft elegant shadows for the clean pill UI */
+@utility shadow-soft {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+@utility shadow-soft-lg {
+  box-shadow: 0 10px 40px -4px rgba(0, 0, 0, 0.08);
+}
+
+@utility shadow-soft-inner {
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #F4F5F7;
+    --foreground: #111827;
+    --primary: #B026FF;
+    --secondary: #00E5FF;
+    --accent: #CCFF00;
+    --accent-light: #F4FFB8;
+    --card: #FFFFFF;
+    --card-foreground: #111827;
+    --border: #E5E7EB;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  /* Fallback to clean sans by default */
+}
