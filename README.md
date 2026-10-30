@@ -1,13 +1,35 @@
 # Make-A-Ton Hackathon Comprehensive Repository & Project Analysis
 
-This repository contains complete codebases, deep architectural analysis, and comparative evaluation for all projects across **Make-A-Ton 2025** and **Make-A-Ton 7.0**.
+This repository contains complete codebases, deep architectural analysis, and comparative evaluation for all projects across **Make-A-Ton 2025** (27 projects) and **Make-A-Ton 7.0** (50 projects), alongside the official **Make-A-Ton 9.0 Champion Playbooks and Co-Pilots**.
 
-## Navigation & Direct Links
+---
+
+## 🏆 Make-A-Ton 9.0 Champion Playbooks & Agents
+
+Built directly from empirical analysis of 77 historical hackathon submissions to give teams an unfair advantage at Make-A-Ton 9.0 (CITTIC CUSAT).
+
+### Set 1: Universal Grand-Prize Winning Playbook
+- **[SKILL.md](SKILL.md)**: Master 24-hour execution roadmap covering Idea Validation Gates, 15-Minute Scaffolding (React 19 + Vite + Tailwind + FastAPI + Supabase), Zero-Fail Offline Mock Architecture, and the 180-second stage pitch formula.
+- **[AGENT.md](AGENT.md)**: System prompt for the autonomous Hackathon Co-Pilot (`makeaton-universal-copilot`) with operational modes (`/ideate`, `/scaffold`, `/debug-demo`, `/pitch-deck`, `/audit-judging`).
+- **Registered Antigravity Files**:
+  - [`.agents/skills/makeaton-universal/SKILL.md`](.agents/skills/makeaton-universal/SKILL.md)
+  - [`.agents/agents/makeaton-universal.md`](.agents/agents/makeaton-universal.md)
+
+### Set 2: AI & Autonomous Agents Specialized Playbook (Odoo Track)
+- **[AI_AGENTS_SKILL.md](AI_AGENTS_SKILL.md)**: Deep multi-agent swarm engineering guide tailored for the Make-A-Ton 9.0 Odoo hiring challenge. Covers stateful LangGraph topologies, tool sandboxing, human-in-the-loop guardrails, and real-time visual streaming.
+- **[AI_AGENTS_AGENT.md](AI_AGENTS_AGENT.md)**: System prompt for the specialized Autonomous Agent Architect (`makeaton-agent-orchestrator`) with modes (`/swarm-plan`, `/scaffold-agents`, `/mock-tools`, `/hitl-modal`, `/pitch-agent`).
+- **Registered Antigravity Files**:
+  - [`.agents/skills/makeaton-ai-agents/SKILL.md`](.agents/skills/makeaton-ai-agents/SKILL.md)
+  - [`.agents/agents/makeaton-agent-orchestrator.md`](.agents/agents/makeaton-agent-orchestrator.md)
+
+---
+
+## 📂 Navigation & Project Analyses
 - [Make-A-Ton 2025 Project Analysis (27 Projects)](MAKEATON_2025_ANALYSIS.md)
 - [Make-A-Ton 7.0 Devpost Gallery Analysis (50 Projects)](MAKEATON_7_0_ANALYSIS.md)
-- Cloned source code directories:
-  - `repos_2025/`: Cloned repositories for Make-a-Ton 2025 projects
-  - `repos_7_0/`: Cloned repositories for Make-a-Ton 7.0 projects
+- Cloned Source Code Directories:
+  - `repos_2025/`: Cloned repositories for Make-A-Ton 2025 projects
+  - `repos_7_0/`: Cloned repositories for Make-A-Ton 7.0 projects
 
 ## Overview Statistics
 | Metric | Make-A-Ton 2025 | Make-A-Ton 7.0 | Combined Total |
@@ -15,6 +37,9 @@ This repository contains complete codebases, deep architectural analysis, and co
 | Total Projects Analyzed | 27 | 50 | 77 |
 | Showcase Source | [2025.makeaton.in/projects](https://2025.makeaton.in/projects) | [make-a-ton-7-0.devpost.com](https://make-a-ton-7-0.devpost.com/project-gallery) | Official Platforms |
 | Cloned Code Repositories | ~27 Target Repos | ~37 Target Repos | ~64 Repositories |
+| Total Git Commits | Granular step-by-step history | Granular step-by-step history | 80+ Commits |
+
+---
 
 ## Key Innovation Themes & Domain Taxonomy
 
@@ -39,9 +64,22 @@ This repository contains complete codebases, deep architectural analysis, and co
 - **Traq**: Railway crowd management and digital ticket verification.
 - **Pothole Detection & Repair**: Automated vehicle combining computer vision obstacle detection with automated asphalt filler dispensing.
 
+---
+
 ## Repository Structure
 ```
 Make_a_Ton/
+├── SKILL.md                    # Universal Grand-Prize 24-hour hackathon playbook
+├── AGENT.md                    # Universal Hackathon Co-Pilot system prompt
+├── AI_AGENTS_SKILL.md          # Multi-agent swarm & Odoo enterprise track playbook
+├── AI_AGENTS_AGENT.md          # Autonomous agent orchestrator system prompt
+├── .agents/
+│   ├── skills/
+│   │   ├── makeaton-universal/SKILL.md
+│   │   └── makeaton-ai-agents/SKILL.md
+│   └── agents/
+│       ├── makeaton-universal.md
+│       └── makeaton-agent-orchestrator.md
 ├── MAKEATON_2025_ANALYSIS.md   # Exhaustive breakdown of all 27 projects from 2025
 ├── MAKEATON_7_0_ANALYSIS.md    # Exhaustive breakdown of all 50 projects from 7.0
 ├── README.md                   # Master index, architectural synthesis, and taxonomy
