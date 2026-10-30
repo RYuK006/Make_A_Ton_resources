@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147315509833",
+    "project_id": "makeathon7-0",
+    "storage_bucket": "makeathon7-0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147315509833:android:807464696481698b6ccd98",
+        "android_client_info": {
+          "package_name": "com.example.goodwillshare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB64fEK-BivTV9J-Ildv1fFOKa7nT_ZThs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
