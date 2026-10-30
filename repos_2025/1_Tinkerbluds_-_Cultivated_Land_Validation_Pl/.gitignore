@@ -1,0 +1,9 @@
+venv
+data
+.env
+*.pth
+__pycache__
+image.png
+plot.kml
+
+*.kml
