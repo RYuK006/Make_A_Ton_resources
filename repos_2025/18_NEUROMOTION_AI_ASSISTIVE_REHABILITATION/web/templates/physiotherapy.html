@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block title %}{{ exercise.title }} - Kaizen{% endblock %}
+
+{% block content %}
+<!-- Full Screen Split View (No padding to edges, maximizing space) -->
+<div class="flex-grow flex flex-col bg-slate-900 h-full overflow-hidden relative items-center justify-center">
+
+    <!-- Top Overlay Dashboard (Floating) -->
+    <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 w-11/12 max-w-5xl bg-slate-900/80 backdrop-blur-lg border border-slate-700/50 p-4 rounded-2xl flex items-center justify-between shadow-2xl">
+        <div class="flex flex-col">
+            <h2 class="text-xl font-bold text-white">{{ exercise.title }}</h2>
+            <p class="text-sm text-slate-400">Hardware & Computer Vision Sync Active</p>
+        </div>
+
+        <div class="flex items-center space-x-6">
+            <!-- Performance Label (Given a fixed minimum width so it doesn't jump around) -->
+            <div class="text-center min-w-[160px]">
+                <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Performance</p>
+                <div id="similarityValue" class="text-3xl font-extrabold text-slate-500 transition-all duration-500 whitespace-nowrap">
+                    --
+                </div>
+            </div>
+            
+            <div class="text-center hidden sm:block">
+                <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Status</p>
+                <div id="statusMsg" class="text-sm font-semibold text-slate-300">--</div>
+            </div>
+
+            <div class="text-center hidden sm:block">
+                <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Level</p>
+                {% set level_colors = {1: 'text-emerald-400', 2: 'text-blue-400', 3: 'text-yellow-400', 4: 'text-red-400'} %}
+                {% set level_names  = {1: 'Beginner', 2: 'Easy', 3: 'Moderate', 4: 'Advanced'} %}
+                <div class="text-lg font-bold {{ level_colors[exercise.level] }}">
+                    L{{ exercise.level }} <span class="text-sm font-normal text-slate-400">{{ level_names[exercise.level] }}</span>
+                </div>
+            </div>
+
+            <!-- Calibration & Reset Buttons -->
+            <div class="flex items-center space-x-2">
+                <button onclick="calibrateOffset()"
+                    class="px-4 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 font-semibold rounded-lg transition-all border border-blue-500/30 text-sm">
+                    🎯 Calibrate
+                </button>
+                <button onclick="resetOffset()"
+                    class="px-4 py-2 bg-slate-600/40 hover:bg-slate-600/60 text-slate-300 font-semibold rounded-lg transition-all border border-slate-500/30 text-sm">
+                    ↩ Reset
+                </button>
+            </div>
+
+            <button onclick="forceEnd()"
+                class="px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-500 font-semibold rounded-lg transition-all border border-red-500/30">
+                Cancel Session
+            </button>
+        </div>
+    </div>
+
+    <!-- Active Stream Center Display -->
+    <div class="absolute inset-0 z-10 p-0 flex items-center justify-center">
+        <div class="relative w-full max-w-6xl aspect-video bg-black/80 rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl flex items-center justify-center mt-20">
+            <!-- Web Stream Receiver directly from Python OpenCV Generator -->
+            <img id="mjpegStream" class="w-full h-full object-contain" src="/stream_exercise/{{ exercise.id }}"
+                alt="Python Vision Engine Streaming">
+
+            <!-- Connection Lost Overlay -->
+            <div id="connLost" class="absolute inset-0 bg-black/80 flex-col items-center justify-center hidden backdrop-blur-sm transition-opacity">
+                <svg class="w-16 h-16 text-slate-500 mb-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238L5.636 5.636">
+                    </path>
+                </svg>
+                <h3 class="text-xl font-bold text-white mb-2">Stream Disconnected</h3>
+                <p class="text-slate-400">Waiting for backend engine...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Decor -->
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay pointer-events-none"></div>
+</div>
+
+<!-- Completion Rating Modal -->
+<div id="completionModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl shadow-2xl max-w-sm w-full transform scale-95 transition-all text-center">
+        <h3 class="text-2xl font-bold text-white mb-2">Great Job!</h3>
+        <p class="text-slate-400 mb-6 flex flex-col items-center">
+            <span>Overall Performance:</span>
+            <span id="finalAccuracy" class="text-3xl font-extrabold text-emerald-400 mt-3 px-4 py-2 bg-slate-900/50 rounded-xl shadow-inner">--</span>
+        </p>
+
+        <p class="text-sm font-medium text-slate-300 mb-4">How easy was this exercise?</p>
+
+        <div class="flex justify-center space-x-2 mb-8" id="starRating">
+            <button onclick="setRating(1)" class="star-btn w-10 h-10 rounded-full bg-slate-700 text-slate-400 hover:text-yellow-400 hover:bg-slate-600 transition-colors focus:outline-none flex items-center justify-center">1</button>
+            <button onclick="setRating(2)" class="star-btn w-10 h-10 rounded-full bg-slate-700 text-slate-400 hover:text-yellow-400 hover:bg-slate-600 transition-colors focus:outline-none flex items-center justify-center">2</button>
+            <button onclick="setRating(3)" class="star-btn w-10 h-10 rounded-full bg-slate-700 text-slate-400 hover:text-yellow-400 hover:bg-slate-600 transition-colors focus:outline-none flex items-center justify-center">3</button>
+            <button onclick="setRating(4)" class="star-btn w-10 h-10 rounded-full bg-slate-700 text-slate-400 hover:text-yellow-400 hover:bg-slate-600 transition-colors focus:outline-none flex items-center justify-center">4</button>
+            <button onclick="setRating(5)" class="star-btn w-10 h-10 rounded-full bg-slate-700 text-slate-400 hover:text-yellow-400 hover:bg-slate-600 transition-colors focus:outline-none flex items-center justify-center">5</button>
+        </div>
+
+        <button onclick="submitCompletion()"
+            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-blue-500/30 transition-all flex justify-center items-center">
+            <span id="submitCompletionBtnText">Save Progress</span> <span id="btnNext" class="ml-1 hidden">&rarr;</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    const isRoutine = {% if is_routine %}true{% else %}false{% endif %};
+    const nextExerciseId = {% if next_id %}{{ next_id }}{% else %}null{% endif %};
+    const currentExerciseId = {{ exercise.id }};
+
+    let totalSimilarity = 0.0;
+    let similarityFrames = 0;
+    let selectedRating = 3;
+    let pollInterval;
+    let smoothedSim = null; // Used for UI label smoothing
+
+    function startTelemetrySync() {
+        const simEl = document.getElementById('similarityValue');
+        const connLost = document.getElementById('connLost');
+
+        // Poll the Python global state asynchronously matching the CV Engine framerate
+        pollInterval = setInterval(async () => {
+            try {
+                const res = await fetch('/api/get_score');
+                const data = await res.json();
+
+                if (data.running === false) {
+                    forceEnd();
+                    return;
+                }
+
+                if (data.running) {
+                    connLost.classList.add('hidden');
+                    connLost.classList.remove('flex');
+
+                    document.getElementById('statusMsg').innerText = data.msg || "--";
+
+                    let sim = parseFloat(data.score);
+                    
+                    // We still keep the raw total for accurate final averages
+                    totalSimilarity += sim;
+                    similarityFrames++;
+
+                    // Apply Exponential Moving Average (EMA) for UI stability
+                    if (smoothedSim === null) {
+                        smoothedSim = sim; // Initialize on first frame
+                    } else {
+                        // 30% new value, 70% old value to prevent jumping too fast
+                        smoothedSim = (sim * 0.3) + (smoothedSim * 0.7); 
+                    }
+
+                    let label, colorClass;
+                    // Evaluate against the smoothed score instead of the raw score
+                    if (smoothedSim >= 80) {
+                        label = "Excellent";
+                        colorClass = "text-emerald-400 text-3xl";
+                    } else if (smoothedSim >= 45) {
+                        label = "Perfect";
+                        colorClass = "text-green-400 text-3xl";
+                    } else if (smoothedSim >= 30) {
+                        label = "Okay";
+                        colorClass = "text-yellow-400 text-3xl";
+                    } else if (smoothedSim >= 20) {
+                        label = "Try Out";
+                        colorClass = "text-orange-400 text-3xl";
+                    } else {
+                        label = "Watch Carefully";
+                        // Make text smaller and add letter spacing so it has breathing room
+                        colorClass = "text-red-500 text-2xl tracking-wide pt-1"; 
+                    }
+
+                    // Display the label dynamically
+                    simEl.innerText = label;
+                    simEl.className = `font-extrabold transition-all duration-500 whitespace-nowrap ${colorClass}`;
+                }
+            } catch (err) {
+                console.error("Telemetry Error:", err);
+                connLost.classList.remove('hidden');
+                connLost.classList.add('flex');
+            }
+        }, 500);
+    }
+
+    // Launch immediately on page load
+    window.onload = startTelemetrySync;
+
+    function forceEnd() {
+        clearInterval(pollInterval);
+
+        // Shut off Python CV Loop
+        fetch('/api/stop_play_stream', { method: 'POST' });
+
+        // Blank the stream explicitly
+        document.getElementById('mjpegStream').src = "";
+
+        openCompletionModal();
+    }
+
+    async function calibrateOffset() {
+        await fetch('/api/calibrate_offset', { method: 'POST' });
+    }
+
+    async function resetOffset() {
+        await fetch('/api/reset_offset', { method: 'POST' });
+    }
+
+    // Modal UI Functions
+    function openCompletionModal() {
+        const modal = document.getElementById('completionModal');
+        const finalAcc = document.getElementById('finalAccuracy');
+
+        let avg = similarityFrames > 0 ? (totalSimilarity / similarityFrames) : 0;
+        
+        // Calculate the final label for the modal
+        let finalLabel = "Watch Carefully";
+        let finalColor = "text-red-500 text-2xl tracking-wide";
+        if (avg >= 80) {
+            finalLabel = "Excellent";
+            finalColor = "text-emerald-400 text-3xl";
+        } else if (avg >= 45) {
+            finalLabel = "Perfect";
+            finalColor = "text-green-400 text-3xl";
+        } else if (avg >= 30) {
+            finalLabel = "Okay";
+            finalColor = "text-yellow-400 text-3xl";
+        } else if (avg >= 20) {
+            finalLabel = "Try Out";
+            finalColor = "text-orange-400 text-3xl";
+        }
+
+        finalAcc.innerText = finalLabel;
+        finalAcc.className = `font-extrabold mt-3 px-4 py-2 bg-slate-900/50 rounded-xl shadow-inner ${finalColor}`;
+
+        if (isRoutine && nextExerciseId) {
+            document.getElementById('submitCompletionBtnText').innerText = 'Next Routine ';
+            document.getElementById('btnNext').classList.remove('hidden');
+        } else {
+            document.getElementById('submitCompletionBtnText').innerText = 'Save Progress ';
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); }, 10);
+    }
+
+    function setRating(val) {
+        selectedRating = val;
+        const buttons = document.querySelectorAll('.star-btn');
+        buttons.forEach((btn, idx) => {
+            if (idx < val) {
+                btn.classList.add('bg-yellow-500', 'text-white');
+                btn.classList.remove('bg-slate-700', 'text-slate-400');
+            } else {
+                btn.classList.remove('bg-yellow-500', 'text-white');
+                btn.classList.add('bg-slate-700', 'text-slate-400');
+            }
+        });
+    }
+
+    setRating(3);
+
+    function submitCompletion() {
+        let avg = similarityFrames > 0 ? (totalSimilarity / similarityFrames) : 0;
+
+        fetch(`/complete_exercise/${currentExerciseId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                average_similarity: avg,
+                easiness_rating: selectedRating
+            })
+        }).then(() => {
+            if (isRoutine && nextExerciseId) {
+                window.location.href = `/routine_exercise/${nextExerciseId}`;
+            } else {
+                window.location.href = `/home`;
+            }
+        }).catch(err => {
+            console.error(err);
+            window.location.href = `/home`;
+        });
+    }
+</script>
+{% endblock %}

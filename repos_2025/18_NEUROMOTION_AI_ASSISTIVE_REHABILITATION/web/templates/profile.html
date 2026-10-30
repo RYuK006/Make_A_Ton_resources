@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Patient Profile - Kaizen{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+    <div class="bg-slate-800/50 rounded-2xl border border-slate-700 backdrop-blur-md shadow-2xl overflow-hidden">
+        <div class="p-8 border-b border-slate-700">
+            <h2 class="text-2xl font-bold text-white">Patient Profile</h2>
+            <p class="mt-2 text-sm text-slate-400">Manage your personal information and medical records.</p>
+        </div>
+
+        <div class="p-8 space-y-8">
+            <div>
+                <h3 class="text-lg font-medium text-white mb-2">Personal Information</h3>
+                <div
+                    class="bg-slate-900/50 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                    <div>
+                        <p class="text-sm text-slate-400">Full Name</p>
+                        <p class="text-lg font-medium text-white">{{ current_user.name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400">Email</p>
+                        <p class="text-lg font-medium text-white">{{ current_user.email }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-medium text-white mb-4">Medical Report</h3>
+
+                {% if current_user.medical_report_path %}
+                <div class="mb-6 flex items-center p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-xl">
+                    <svg class="h-8 w-8 text-emerald-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="text-sm font-medium text-emerald-300">File uploaded on record</p>
+                        <p class="text-xs text-slate-400">You have already submitted a medical report constraint
+                            mapping.</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="mb-6 flex items-center p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-xl">
+                    <svg class="h-8 w-8 text-yellow-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div>
+                        <p class="text-sm font-medium text-yellow-300">No report found</p>
+                        <p class="text-xs text-slate-400">Upload a report for deeper precision mapping.</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('profile') }}" enctype="multipart/form-data" class="space-y-4">
+                    <label class="block text-sm font-medium text-slate-300">Upload New Report</label>
+                    <div
+                        class="flex justify-center px-6 pt-5 pb-6 border-2 border-slate-600 border-dashed rounded-xl hover:border-blue-500 transition-colors bg-slate-900/30">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none"
+                                viewBox="0 0 48 48">
+                                <path
+                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-slate-400 justify-center">
+                                <label for="report"
+                                    class="relative cursor-pointer bg-slate-800 rounded-md font-medium text-blue-400 hover:text-blue-300 px-2 py-1">
+                                    <span>Select a file</span>
+                                    <input id="report" name="report" type="file" class="sr-only"
+                                        accept=".png,.jpg,.jpeg,.pdf">
+                                </label>
+                                <p class="pl-1 leading-loose">or drag and drop</p>
+                            </div>
+                            <p class="text-xs text-slate-500">PNG, JPG, PDF up to 10MB</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-2">
+                        <button type="submit"
+                            class="px-6 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/25 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-slate-900">
+                            Update Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('report').addEventListener('change', function (e) {
+        var fileName = e.target.files[0] ? e.target.files[0].name : "Select a file";
+        e.target.parentElement.querySelector('span').textContent = fileName;
+    });
+</script>
+{% endblock %}

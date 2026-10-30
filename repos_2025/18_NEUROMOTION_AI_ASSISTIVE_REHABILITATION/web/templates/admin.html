@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - Kaizen{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Admin Panel</h1>
+            <p class="text-slate-400">Manage the Physiotherapy database.</p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+            <div class="mb-4 px-4 py-3 bg-emerald-900/40 border border-emerald-500/30 text-emerald-300 rounded-xl text-sm">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Add Exercise Form -->
+        <div class="lg:col-span-1 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-xl">
+            <h3 class="text-xl font-semibold text-white mb-6">Create New Exercise</h3>
+
+            <form method="POST" action="{{ url_for('admin') }}" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300">Title</label>
+                    <input type="text" name="title" required
+                        class="mt-1 block w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300">Description</label>
+                    <textarea name="description" rows="3" required
+                        class="mt-1 block w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300">Duration (sec)</label>
+                        <input type="number" name="duration_seconds" value="60" min="1" required
+                            class="mt-1 block w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300">Target Reps</label>
+                        <input type="number" name="reps" value="10" min="1" required
+                            class="mt-1 block w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300">Difficulty Level</label>
+                    <select name="level" required
+                        class="mt-1 block w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="1">1 — Beginner</option>
+                        <option value="2">2 — Easy</option>
+                        <option value="3">3 — Moderate</option>
+                        <option value="4">4 — Advanced</option>
+                    </select>
+                </div>
+
+                <div class="mt-6 border-t border-slate-700 pt-4">
+                    <label class="block text-sm font-bold text-blue-400 mb-1">Video Base Name</label>
+                    <p class="text-xs text-slate-400 mb-3">Enter a base filename. Use the Studio to record it first, then save here.</p>
+
+                    <input type="text" id="video_base" name="video_base" placeholder="e.g. shoulder_raise" required
+                        class="block w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+
+                    <!-- Studio Launch Button -->
+                    <button type="button" onclick="openStudio()"
+                        class="w-full flex justify-center items-center bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-400 text-sm font-semibold py-2 px-4 rounded-lg transition-colors border border-indigo-500/30 mb-2">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Open Recording Studio
+                    </button>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-lg shadow-blue-500/25">
+                        Save to Database
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Exercise Database List -->
+        <div class="lg:col-span-2">
+            <div class="bg-slate-800/50 rounded-2xl border border-slate-700 shadow-xl overflow-hidden">
+                <table class="min-w-full divide-y divide-slate-700">
+                    <thead class="bg-slate-900/50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Exercise</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Metrics</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Files</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700 bg-slate-800/20">
+                        {% for ex in exercises %}
+                        <tr>
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-medium text-white">{{ ex.title }}</div>
+                                <div class="text-sm text-slate-500 truncate w-48">{{ ex.description }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-slate-300">{{ ex.duration_seconds }} sec</div>
+                                <div class="text-xs text-slate-500">{{ ex.reps }} reps</div>
+                                <div class="text-xs mt-1">
+                                    {% set level_labels = {1: ('Beginner', 'emerald'), 2: ('Easy', 'blue'), 3: ('Moderate', 'yellow'), 4: ('Advanced', 'red')} %}
+                                    {% set label, color = level_labels[ex.level] %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-{{ color }}-900/50 text-{{ color }}-400 border border-{{ color }}-500/30">
+                                        L{{ ex.level }} — {{ label }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
+                                <div class="flex flex-col space-y-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-700 text-slate-300">
+                                        VID: {{ ex.video_filename }}
+                                    </span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-700 text-slate-400">
+                                        Hardware Sync
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <!-- Delete button posts to delete route -->
+                                <form method="POST" action="{{ url_for('delete_exercise', exercise_id=ex.id) }}"
+                                    onsubmit="return confirm('Delete {{ ex.title }}? This will also remove the video and CSV files.')">
+                                    <button type="submit"
+                                        class="inline-flex items-center px-3 py-1.5 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-xs font-semibold rounded-lg border border-red-500/30 transition-colors">
+                                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ====================================================================
+     FULLSCREEN STUDIO MODAL
+     ==================================================================== -->
+<div id="studioModal" class="fixed inset-0 z-50 hidden bg-black flex flex-col">
+
+    <!-- Studio Top Bar -->
+    <div class="flex items-center justify-between px-6 py-3 bg-slate-900/90 border-b border-slate-700 flex-shrink-0">
+        <div class="flex items-center space-x-4">
+            <h2 class="text-white font-bold text-lg">Recording Studio</h2>
+            <span id="studioBasenameLabel" class="text-slate-400 text-sm"></span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <!-- REC indicator -->
+            <div id="recIndicator" class="hidden flex items-center bg-black/60 border border-red-500/40 px-3 py-1 rounded-full">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse mr-2"></span>
+                <span class="text-xs font-bold text-red-400 tracking-widest uppercase">REC</span>
+            </div>
+
+            <button type="button" id="btnToggleRec" onclick="toggleRecording()"
+                class="px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-sm font-semibold rounded-lg border border-red-500/30 transition-colors">
+                ● Start Recording
+            </button>
+
+            <button type="button" onclick="stopStudio()"
+                class="px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 text-sm font-semibold rounded-lg border border-emerald-500/30 transition-colors">
+                ✓ Save & Close
+            </button>
+
+            <button type="button" onclick="closeStudioNoSave()"
+                class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm font-semibold rounded-lg transition-colors">
+                ✕ Discard
+            </button>
+        </div>
+    </div>
+
+    <!-- Studio Stream (fills remaining space) -->
+    <div class="flex-1 relative bg-black flex items-center justify-center overflow-hidden">
+        <img id="studioStream" src="" alt="Studio Feed"
+            class="w-full h-full object-contain">
+
+        <!-- Waiting overlay shown before stream loads -->
+        <div id="studioWaiting" class="absolute inset-0 flex flex-col items-center justify-center bg-black">
+            <svg class="w-16 h-16 text-slate-600 mb-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-slate-500 text-sm">Connecting to camera...</p>
+        </div>
+    </div>
+
+    <!-- Studio Bottom Bar -->
+    <div class="flex items-center justify-center px-6 py-3 bg-slate-900/90 border-t border-slate-700 flex-shrink-0">
+        <p class="text-slate-500 text-xs">
+            Click <span class="text-red-400 font-semibold">● Start Recording</span> when ready.
+            Click <span class="text-emerald-400 font-semibold">✓ Save & Close</span> to flush and save the .mp4 and _data.csv.
+            Files are saved to <span class="text-slate-300 font-mono">static/videos/</span>
+        </p>
+    </div>
+</div>
+
+<script>
+    let isRecording = false;
+
+    function openStudio() {
+        const base = document.getElementById('video_base').value.trim();
+        if (!base) {
+            alert("Please enter a Video Base Name in the form before opening the studio.");
+            return;
+        }
+
+        // Show modal
+        const modal = document.getElementById('studioModal');
+        modal.classList.remove('hidden');
+        document.getElementById('studioBasenameLabel').innerText = `→ ${base}.mp4 + ${base}_data.csv`;
+
+        // Start the MJPEG stream
+        const stream = document.getElementById('studioStream');
+        stream.src = `/record_feed/${base}`;
+        stream.onload = () => {
+            document.getElementById('studioWaiting').classList.add('hidden');
+        };
+
+        isRecording = false;
+        updateRecordUI();
+    }
+
+    function toggleRecording() {
+        isRecording = !isRecording;
+
+        fetch('/api/set_record_state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ is_recording: isRecording })
+        });
+
+        updateRecordUI();
+    }
+
+    function updateRecordUI() {
+        const btn = document.getElementById('btnToggleRec');
+        const indicator = document.getElementById('recIndicator');
+
+        if (isRecording) {
+            btn.innerText = "■ Stop Recording";
+            btn.className = "px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-red-500/30 transition-all";
+            indicator.classList.remove('hidden');
+            indicator.classList.add('flex');
+        } else {
+            btn.innerText = "● Start Recording";
+            btn.className = "px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-sm font-semibold rounded-lg border border-red-500/30 transition-colors";
+            indicator.classList.add('hidden');
+            indicator.classList.remove('flex');
+        }
+    }
+
+async function stopStudio() {
+    // Step 1: Tell Python to save — AWAIT this fully
+    await fetch('/api/finish_recording', { method: 'POST' });
+    
+    // Step 2: Only AFTER save confirmed, close modal
+    document.getElementById('studioStream').src = "";
+    document.getElementById('studioModal').classList.add('hidden');
+    document.getElementById('studioWaiting').classList.remove('hidden');
+    isRecording = false;
+
+    const base = document.getElementById('video_base').value;
+    alert(`✅ Saved!\nVideo: static/videos/${base}.mp4\nCSV: static/videos/${base}_data.csv\n\nNow click Save to Database.`);
+}
+
+    async function closeStudioNoSave() {
+        if (!confirm("Discard recording and close? Unsaved footage will be lost.")) return;
+
+        await fetch('/api/stop_record_stream', { method: 'POST' });
+
+        document.getElementById('studioStream').src = "";
+        document.getElementById('studioModal').classList.add('hidden');
+        document.getElementById('studioWaiting').classList.remove('hidden');
+        isRecording = false;
+    }
+</script>
+{% endblock %}
