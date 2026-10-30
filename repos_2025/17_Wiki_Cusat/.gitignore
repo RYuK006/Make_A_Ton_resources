@@ -1,0 +1,14 @@
+# Node modules
+**/node_modules/
+
+# Python virtualenvs
+**/.venv/
+**/venv/
+
+# Databases and uploads
+**/forum.db
+**/uploads/
+
+# IDE files
+.vscode/
+.idea/

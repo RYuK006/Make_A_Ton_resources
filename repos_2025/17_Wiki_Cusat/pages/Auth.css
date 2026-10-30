@@ -1,0 +1,192 @@
+/* Auth Pages Styling - Wiki CUSAT */
+
+.auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--bg-glass-heavy);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.signup-card {
+    max-width: 720px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.auth-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.multi-col-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--bg-surface-3);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-muted);
+}
+
+.input-icon-text {
+    position: absolute;
+    left: 1rem;
+    color: var(--color-brand-primary);
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.input-wrapper input,
+.input-wrapper select,
+.input-wrapper textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.9rem 1rem 0.9rem 3rem;
+    color: var(--text-pure);
+    font-size: 1rem;
+}
+
+.input-wrapper textarea {
+    min-height: 100px;
+    padding-left: 1rem;
+}
+
+.forgot-link,
+.auth-link {
+    color: var(--color-brand-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.auth-submit {
+    margin-top: 1rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Role Selector */
+.role-selector {
+    margin-bottom: 2rem;
+}
+
+.section-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.role-chips {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.role-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-strong);
+    color: var(--text-secondary);
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.role-chip:hover {
+    background: var(--bg-surface-3);
+    color: var(--text-pure);
+    border-color: var(--text-muted);
+}
+
+.role-chip.active {
+    background: var(--color-brand-primary);
+    color: white;
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+}
+
+@media (max-width: 600px) {
+    .multi-col-form {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+}
