@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Traffic System — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080c10;
+            --surface: #0e1520;
+            --border: #1e2d42;
+            --accent: #00e5ff;
+            --green: #00e676;
+            --red: #ff4757;
+            --text: #e8f0fe;
+            --muted: #4a6080;
+        }
+
+        /* ─ LIGHT MODE ─ */
+        body.light {
+            --bg: #f0f4f8;
+            --surface: #ffffff;
+            --border: #cbd5e0;
+            --accent: #0077b6;
+            --green: #2d6a4f;
+            --red: #c62828;
+            --text: #1a202c;
+            --muted: #718096;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body:not(.light)::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        body:not(.light)::after {
+            content: '';
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .scanline {
+            position: fixed;
+            top: -2px; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: scan 4s linear infinite;
+            opacity: 0.4;
+            z-index: 10;
+        }
+        @keyframes scan { 0% { top: -2px; } 100% { top: 100vh; } }
+
+        /* ─ THEME TOGGLE ─ */
+        .theme-toggle {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 200;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+        .login-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+            animation: fadeUp 0.8s ease forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .brand-badge {
+            display: inline-block;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--accent);
+            text-transform: uppercase;
+            border: 1px solid rgba(0,229,255,0.3);
+            padding: 4px 12px;
+            margin-bottom: 16px;
+            animation: pulseBorder 2s ease infinite;
+        }
+        @keyframes pulseBorder {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,255,0.2); }
+            50% { box-shadow: 0 0 0 6px rgba(0,229,255,0); }
+        }
+
+        .brand h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .brand h1 span { color: var(--accent); }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .card-header { margin-bottom: 28px; }
+
+        .card-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-header p {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 2px;
+        }
+
+        /* ─ ROLE SELECTOR ─ */
+        .role-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px;
+            background: var(--bg);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 8px 4px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .role-tab.active {
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: 500;
+        }
+
+        .role-tab:not(.active):hover {
+            color: var(--accent);
+        }
+
+        /* Role badge colors */
+        .role-tab[data-role="admin"].active { background: var(--red); }
+        .role-tab[data-role="operator"].active { background: var(--accent); }
+        .role-tab[data-role="viewer"].active { background: var(--green); }
+
+        .role-badge {
+            display: inline-block;
+            margin-bottom: 14px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            padding: 3px 10px;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+        .role-badge.admin { background: rgba(255,71,87,0.15); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+        .role-badge.operator { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
+        .role-badge.viewer { background: rgba(0,230,118,0.08); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+
+        .field { margin-bottom: 18px; }
+
+        .field label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .field input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 3px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .field input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+        }
+
+        .field input::placeholder { color: var(--muted); }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-top: 8px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            box-shadow: 0 0 30px rgba(0,229,255,0.3);
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+
+        .submit-btn:active { transform: translateY(0); }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+            animation: shimmer 0.8s infinite;
+        }
+        @keyframes shimmer {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+
+        .error-msg {
+            margin-top: 14px;
+            font-size: 11px;
+            color: var(--red);
+            letter-spacing: 1px;
+            min-height: 16px;
+            text-align: center;
+        }
+
+        .credentials-hint {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(0,229,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+            line-height: 1.7;
+        }
+        .credentials-hint strong { color: var(--accent); }
+
+        .hint {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-dot {
+            width: 6px; height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            box-shadow: 0 0 6px var(--green);
+            animation: blink 1.5s ease infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+        <span id="themeIcon">☀</span> <span id="themeLabel">LIGHT</span>
+    </button>
+
+    <div class="login-wrapper">
+        <div class="brand">
+            <div class="brand-badge">System v3.0.0</div>
+            <h1>AI Smart<br><span>Traffic</span> Control</h1>
+        </div>
+
+        <div class="card" id="loginCard">
+            <div class="card-header">
+                <h2>Operator Access</h2>
+                <p>AUTHENTICATED PERSONNEL ONLY</p>
+            </div>
+
+            <!-- Role Selector -->
+            <div class="role-tabs">
+                <button class="role-tab active" data-role="admin" onclick="selectRole('admin')">Admin</button>
+                <button class="role-tab" data-role="operator" onclick="selectRole('operator')">Operator</button>
+                <button class="role-tab" data-role="viewer" onclick="selectRole('viewer')">Viewer</button>
+            </div>
+
+            <div class="role-badge admin" id="roleBadge">● ADMIN — FULL SYSTEM ACCESS</div>
+
+            <div class="field">
+                <label>Operator ID</label>
+                <input type="text" id="username" placeholder="Enter username" required autocomplete="off">
+            </div>
+            <div class="field">
+                <label>Passkey</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            <button class="submit-btn" id="loginBtn" onclick="loginUser()">Authenticate →</button>
+
+            <p class="error-msg" id="error-msg"></p>
+
+            <div class="credentials-hint">
+                <strong>Demo Credentials:</strong><br>
+                admin / admin123 &nbsp;|&nbsp; operator / op456 &nbsp;|&nbsp; viewer / view789
+            </div>
+
+            <div class="hint">
+                <span><span class="status-dot"></span>SYSTEM ONLINE</span>
+                <span>SEC-LEVEL: RESTRICTED</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─ USERS DB (frontend demo; real auth via Flask backend) ─
+        const USERS = {
+            admin:    { pass: 'admin123',  role: 'admin',    name: 'System Admin'    },
+            operator: { pass: 'op456',     role: 'operator', name: 'Traffic Operator'},
+            viewer:   { pass: 'view789',   role: 'viewer',   name: 'Read-Only Viewer'},
+        };
+
+        let selectedRole = 'admin';
+
+        const ROLE_META = {
+            admin:    { label: '● ADMIN — FULL SYSTEM ACCESS',       cls: 'admin'    },
+            operator: { label: '● OPERATOR — SIGNAL CONTROL ACCESS', cls: 'operator' },
+            viewer:   { label: '● VIEWER — READ-ONLY ACCESS',        cls: 'viewer'   },
+        };
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-tab').forEach(t => t.classList.toggle('active', t.dataset.role === role));
+            const badge = document.getElementById('roleBadge');
+            badge.textContent = ROLE_META[role].label;
+            badge.className = `role-badge ${ROLE_META[role].cls}`;
+        }
+
+        function loginUser() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+            const btn  = document.getElementById('loginBtn');
+            const err  = document.getElementById('error-msg');
+
+            btn.classList.add('loading');
+            btn.textContent = 'Verifying...';
+            err.textContent = '';
+
+            setTimeout(() => {
+                const record = USERS[user];
+                if (record && record.pass === pass && record.role === selectedRole) {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userRole',  record.role);
+                    localStorage.setItem('userName',  record.name);
+                    btn.classList.remove('loading');
+                    btn.textContent = 'Access Granted ✓';
+                    btn.style.background = '#00e676';
+                    setTimeout(() => window.location.href = 'dashboard.html', 600);
+                } else {
+                    btn.classList.remove('loading');
+                    btn.textContent = 'Authenticate →';
+                    btn.style.background = '';
+                    err.textContent = record
+                        ? 'Role mismatch — select the correct access level'
+                        : 'Invalid credentials — access denied';
+                    shakeCard();
+                }
+            }, 800);
+        }
+
+        function shakeCard() {
+            const card = document.getElementById('loginCard');
+            const offsets = [-6, 6, -4, 4, -2, 0];
+            let i = 0;
+            const interval = setInterval(() => {
+                card.style.transform = `translateX(${offsets[i]}px)`;
+                i++;
+                if (i >= offsets.length) {
+                    clearInterval(interval);
+                    card.style.transform = '';
+                }
+            }, 70);
+        }
+
+        // Theme
+        function toggleTheme() {
+            const isDark = !document.body.classList.contains('light');
+            document.body.classList.toggle('light', isDark);
+            document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀';
+            document.getElementById('themeLabel').textContent = isDark ? 'DARK' : 'LIGHT';
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // Restore theme
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light');
+            document.getElementById('themeIcon').textContent = '🌙';
+            document.getElementById('themeLabel').textContent = 'DARK';
+        }
+
+        // Enter key
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') loginUser(); });
+    </script>
+</body>
+</html>
