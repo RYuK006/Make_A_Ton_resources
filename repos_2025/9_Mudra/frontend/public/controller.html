@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Controller</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #fdf6e3;
+            font-family: sans-serif;
+        }
+
+        button {
+            border: 4px solid black;
+            font-weight: 900;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 4px 4px 0px 0px black;
+        }
+
+        button:active {
+            transform: translate(0, 0);
+            box-shadow: none;
+        }
+    </style>
+</head>
+
+<body class="p-8 flex flex-col items-center gap-12 select-none">
+    <h1 class="text-4xl font-black italic uppercase tracking-tighter">Remote Controller</h1>
+
+    <div class="flex flex-col items-center gap-4">
+        <h2 class="text-xs font-black uppercase tracking-widest opacity-30">Shapes</h2>
+        <div class="flex gap-4">
+            <button onclick="send('setShape', 'circle')" class="px-6 py-2 bg-indigo-400">CIRCLE</button>
+            <button onclick="send('setShape', 'square')" class="px-6 py-2 bg-rose-400">SQUARE</button>
+            <button onclick="send('setShape', 'triangle')" class="px-6 py-2 bg-emerald-400">TRIANGLE</button>
+        </div>
+    </div>
+
+    <div class="flex flex-col items-center gap-4">
+        <h2 class="text-xs font-black uppercase tracking-widest opacity-30">Letters</h2>
+        <div class="flex gap-4">
+            <button onclick="send('setShape', 'A')" class="px-6 py-2 bg-yellow-400">A</button>
+            <button onclick="send('setShape', 'B')" class="px-6 py-2 bg-yellow-400">B</button>
+            <button onclick="send('setShape', 'C')" class="px-6 py-2 bg-yellow-400">C</button>
+        </div>
+    </div>
+
+    <div class="flex flex-col items-center gap-4">
+        <h2 class="text-xs font-black uppercase tracking-widest opacity-30">Numbers</h2>
+        <div class="flex gap-4">
+            <button onclick="send('setShape', 'ONE')" class="px-6 py-2 bg-yellow-400">ONE</button>
+            <button onclick="send('setShape', 'TWO')" class="px-6 py-2 bg-yellow-400">TWO</button>
+            <button onclick="send('setShape', 'THREE')" class="px-6 py-2 bg-yellow-400">THREE</button>
+        </div>
+    </div>
+
+    <div class="flex gap-4">
+        <button onclick="adjustSize(20)" class="px-8 py-2 bg-white">SIZE +</button>
+        <button onclick="adjustSize(-20)" class="px-8 py-2 bg-white">SIZE -</button>
+        <button onclick="toggleWebcam()" id="webcamBtn" class="px-8 py-2 bg-zinc-200">WEBCAM: OFF</button>
+    </div>
+
+    <div id="pad"
+        class="w-full max-w-lg h-64 border-8 border-dashed border-black/10 bg-white/50 rounded-3xl relative cursor-crosshair flex items-center justify-center font-black text-black/10 text-2xl uppercase tracking-widest">
+        Touch-pad
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        let state = { size: 150, position: { x: 0, y: 0 }, webcamEnabled: false };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'sync' || data.type === 'update') {
+                state = data.state;
+                updateWebcamButton();
+            }
+        };
+
+        function send(type, value) {
+            ws.send(JSON.stringify({ type, value }));
+        }
+
+        function toggleWebcam() {
+            send('setWebcam', !state.webcamEnabled);
+        }
+
+        function updateWebcamButton() {
+            const btn = document.getElementById('webcamBtn');
+            btn.innerText = `WEBCAM: ${state.webcamEnabled ? 'ON' : 'OFF'}`;
+            btn.style.background = state.webcamEnabled ? '#c7d2fe' : '#e4e4e7';
+        }
+
+        function adjustSize(delta) {
+            const newSize = Math.max(50, Math.min(state.size + delta, 400));
+            send('setSize', newSize);
+        }
+
+        const pad = document.getElementById('pad');
+        pad.onmousemove = (e) => {
+            if (e.buttons !== 1) return;
+            const rect = pad.getBoundingClientRect();
+            // Map pad coordinates to a reasonable screen space (approx 1920x1080 for demo)
+            const x = (e.clientX - rect.left) / rect.width * 1000;
+            const y = (e.clientY - rect.top) / rect.height * 1000;
+            send('setPosition', { x, y });
+        };
+
+        pad.onmousedown = () => send('setDragging', true);
+        pad.onmouseup = () => send('setDragging', false);
+    </script>
+</body>
+
+</html>

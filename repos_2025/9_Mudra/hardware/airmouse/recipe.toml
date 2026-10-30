@@ -1,0 +1,8 @@
+[env]
+AR_MON="ACM0"
+
+[build]
+cmd = """
+arduino-cli upload -p /dev/tty$AR_MON --fqbn esp32:esp32:XIAO_ESP32S3 . && \
+		arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32S3 .
+"""
