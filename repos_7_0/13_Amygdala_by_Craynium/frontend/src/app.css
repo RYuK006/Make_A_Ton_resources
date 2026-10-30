@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#app {
+  @apply min-h-full;
+}
+
+body {
+  @apply font-serif bg-amber-200;
+}
+
+::selection {
+  @apply bg-amber-950 text-amber-200;
+}
+
+h3 {
+  @apply text-2xl font-bold mt-4 text-amber-950;
+}
+
+p {
+  @apply py-2 font-serif text-gray-900;
+}
+
+a {
+  @apply text-amber-800 hover:text-blue-600;
+}
+
+img {
+  max-width: 90%;
+  margin: auto;
+  @apply my-7;
+}

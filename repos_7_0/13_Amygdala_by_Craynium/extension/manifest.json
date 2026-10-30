@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "Amygdala by Cranium",
+    "version": "1.0",
+    "description": "Redirects to a new URL with the current website's URL.",
+    "permissions": [
+        "tabs"
+    ],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "./icon.png",
+            "48": "./icon.png",
+            "128": "./icon.png"
+        }
+    }
+}
