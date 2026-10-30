@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/practice.css"> 
+  <title>Quiz Topic Selection</title>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/updatedDash" class="navbar-brand">CusaQuest</a>
+    <div class="navbar-links">
+        <a href="/updatedDash">Home</a>
+        <a href="/practice">Practice</a>
+        <a href="https://ats-1-8ksl.vercel.app/">Resume ATS Checker</a>
+        <a href="/logout">Log Out</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Select Quiz Topic</h1>
+  
+  <div class="card">
+    <div class="card-body">
+      <form id="topicForm" action="/practice" method="POST">
+        <div class="mb-3">
+          <label for="topic" class="form-label">Enter the topic for your quiz:</label>
+          <input type="text" class="form-control" id="topic" name="topic" placeholder="e.g., Linked Lists" required>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-outline-secondary">Generate Quiz</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

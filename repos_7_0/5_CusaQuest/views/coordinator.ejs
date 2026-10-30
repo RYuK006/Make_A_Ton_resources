@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Carousel</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/coordinator.css">
+</head>
+<body>
+
+
+     <nav class="navbar">
+        <a href="#" class="navbar-brand">CusaQuest</a>
+
+        <div class="navbar-links">
+            <a href="/updatedDash">Company Listing</a>
+            <a href="/coordinator">Add New Company</a>
+            <a href="https://soft-pothos-ac2e9a.netlify.app/">Excel Automation</a>
+            <a href="https://darling-gumption-82cda2.netlify.app/">Statistics</a>
+            <a href="/logout">Log Out</a>
+        </div>
+    </nav>
+    
+   
+<div class="content-wrapper">
+        <h1>COORDINATOR DASHBOARD</h1>
+
+        <section class="dashboard-section">
+            <h2 class="section-title">Company Listings</h2>
+            <div class="company">
+                <div class="card" data-company="Cisco" data-package="15 LPA" data-role="Software Engineer" data-interview="2024-11-15">
+                    <img src="/media/cisco.png" alt="Cisco" class="company-imageC" />
+                    <h3>Cisco</h3>
+                    <p>Software Engineer</p>
+                    <button class="btn view-btn">View Details</button>
+                </div>
+                <div class="card" data-company="IBM" data-package="12 LPA" data-role="Data Analyst" data-interview="2024-12-01">
+                    <img src="/media/ibm.jpg" alt="IBM" class="company-image" />
+                    <h3>IBM</h3>
+                    <p>Data Analyst</p>
+                    <button class="btn view-btn">View Details</button>
+                </div>
+                <div class="card" data-company="EY" data-package="14 LPA" data-role="Consultant" data-interview="2024-11-20">
+                    <img src="/media/ey.png" alt="EY" class="company-image" />
+                    <h3>EY</h3>
+                    <p>Consultant</p>
+                    <button class="btn view-btn">View Details</button>
+                </div>
+            </div>
+        </section>
+
+    <section class = "dashboard-section">
+    <h2 class="section-title">Add a Company</h2>
+        <div class="form-container">
+            <form id="jobForm" action="/coordinator" method="post">
+                <h2>Add a Company</h2>
+                <label for="company">Company Name:</label>
+                <input type="text" name="name" id="company" required>
+                <label for="package">Package Offered:</label>
+                <input type="text" name="base" id="package" required>
+                <label for="role">CGPA:</label>
+                <input type="number" name="cgpa" id="role" required>
+                <label for="role">Job Role:</label>
+                <input type="text" name="role" id="package" required>
+               
+                <button class="btn">Submit</button>
+                
+                
+            </form>
+        </div>
+    </section>
+
+    <section class="dashboard-section">
+
+            
+            <h2 class="section-title">Automate Excel Sheet</h2>
+            <p>Make yourself ready for the Interview.</p>
+            <a href="https://soft-pothos-ac2e9a.netlify.app/" class="btn">Automate Excel</a>
+        </section>
+
+        <section class="dashboard-section">
+            <h2 class="section-title">View Placement Statistics</h2>
+            <p>Create your own Customize Quizes</p>
+
+            <a href="https://darling-gumption-82cda2.netlify.app/" class="btn">View Placement Statistics</a>
+        </section>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modalImage" class="modal-image" src="" alt="Modal Image">
+            <div class="job-details">
+                <p id="jobRole"></p>
+                <p id="packageOffered"></p>
+                <p id="interviewDate"></p>
+            </div>
+        </div>
+    </div>
+<script>
+        // JavaScript for modal functionality
+        const modal = document.getElementById('modal');
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const closeButton = document.querySelector('.close');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const card = this.closest('.card');
+                const company = card.dataset.company;
+                const role = card.dataset.role;
+                const package = card.dataset.package;
+                const interview = card.dataset.interview;
+                const img = card.querySelector('img').src;
+                document.getElementById('companyName').textContent = company;
+                document.getElementById('jobRole').textContent = `Role: ${role}`;
+                document.getElementById('packageOffered').textContent = `Package: ${package}`;
+                document.getElementById('interviewDate').textContent = `Interview Date: ${interview}`;
+                document.getElementById('modalImage').src = img;
+
+                modal.style.display = 'block';
+            });
+        });
+
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+
+    <script src="/js/coordinator.js"></script>
+</body>
+</html>

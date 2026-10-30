@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff8c6b;
+            --light: #FFF5F2;
+            --dark: #3D3D3D;
+        }
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-brand {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .navbar-links a {
+            color: var(--dark);
+            text-decoration: none;
+            margin-left: 1rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+         .dashboard-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .dashboar-container {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+        }
+        .navbar-links a:hover {
+            color: var(--primary);
+        }
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .dashboard-section {
+            background-color: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            color: #075e79;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        .profile-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .profile-summary-row-2 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        .profile-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .event-item {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .modal-header, .modal-footer {
+            border: none;
+        }
+        .modal-dialog {
+            margin: 0;
+            position: absolute;
+            top: 20px; /* Adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .profile-items {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-top: 1.5rem;
+        }
+        .profile-item input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: var(--dark);
+            background-color: var(--light);
+            box-sizing: border-box;
+        }
+        .update-button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.1s;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #ff7a54;
+            transform: translateY(-2px);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">CusaQuest</a>
+        <div class="navbar-links">
+            <a href="/updatedDash">Home</a>
+            <a href="/practice">Practice</a>
+            <a href="https://ats-1-8ksl.vercel.app/">Resume ATS Checker</a>
+            <a href="/logout">Log Out</a>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <section class="dashboard-section">
+            <h2 class="section-title">Profile Summary</h2>
+            <form id="profile-form" action="/updatedDash?_method=PUT" method="post">
+                <input type="hidden" >
+                <div class="profile-summary">
+                    <div class="profile-item">
+                        <label for="name"><strong>Name:</strong></label>
+                        <input type="text" id="name" name="name" value="<%= user ? user.name : '' %>">
+                    </div>
+                    <div class="profile-item">
+                        <label for="course"><strong>Course:</strong></label>
+                        <input type="text" id="course" name="course" value="<%= profile && profile.course ? profile.course : '' %>">
+                    </div>
+                </div>
+                
+                <div class="profile-summary-row-2">
+                    <div class="profile-item">
+                        <label for="year"><strong>Year:</strong></label>
+                        <input type="text" id="year" name="year" value="<%= profile && profile.year ? profile.year : '' %>">
+                    </div>
+                    <div class="profile-item">
+                        <label for="cgpa"><strong>CGPA:</strong></label>
+                        <input type="text" id="cgpa" name="cgpa" value="<%= profile && profile.cgpa ? profile.cgpa : '' %>">
+                    </div>
+                    <div class="profile-item">
+                        <label for="backlogs"><strong>No of Backlogs:</strong></label>
+                        <input type="text" id="backlogs" name="backlog" value="<%= profile && profile.backlog ? profile.backlog : '' %>">
+                    </div>
+                    <div class="profile-item">
+                        <label for="resumeLink"><strong>Resume Link:</strong></label>
+                        <input type="text" id="resumeLink" name="resume" value="<%= profile && profile.resume ? profile.resume : '' %>">
+                    </div>
+                </div>
+
+                <div class="profile-items">
+                    <strong>Profile Completion:</strong> <span id="profile-completion">{{ profile.profileCompletion }}%</span>
+                </div>
+
+                <div class="update-button-container">
+                    <button type="submit" class="btn">Update</button>
+                </div>
+            </form>
+        </section>
+
+        <div class="dashboard-container">
+        <section class="dashboard-section">
+            <h2 class="section-title">Upcoming Events</h2>
+            
+            <div class="event-item">
+                <h3>Job Fair</h3>
+                <p>Date: October 15, 2024</p>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#rsvpModal" data-event="Job Fair">RSVP</button>
+                <button class="btn btn-secondary" data-toggle="modal" data-target="#detailsModal" data-event="Job Fair" data-details="Join us for a job fair where you can meet potential employers and explore job opportunities.">View Details</button>
+            </div>
+        
+            <div class="event-item">
+                <h3>Workshop: Interview Skills</h3>
+                <p>Date: October 20, 2024</p>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#rsvpModal" data-event="Workshop: Interview Skills">RSVP</button>
+                <button class="btn btn-secondary" data-toggle="modal" data-target="#detailsModal" data-event="Workshop: Interview Skills" data-details="Enhance your interview skills with our workshop that covers techniques and tips for success.">View Details</button>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2 class="section-title">My Applications</h2>
+            <div class="application-item">
+                <h3>Software Developer Intern - Tech Innovators Inc.</h3>
+                <p>Status: Application Under Review</p>
+            </div>
+            <div class="application-item">
+                <h3>Data Analyst - DataCrunch Solutions</h3>
+                <p>Status: Interview Scheduled</p>
+            </div>
+        </section>
+        <section class="dashboard-section">
+            <h2 class="section-title">Notifications and Alerts</h2>
+            <div class="notification-item">Application Status Updated</div>
+            <div class="notification-item">New Job Posting Alert</div>
+        </section>
+        </div>
+
+
+        <section class="dashboard-section">
+            <h2 class="section-title">Job and Internship Listings</h2>
+            <input type="text" class="search-bar" placeholder="Search for jobs...">
+            
+            <% company.forEach(function(comp) { %>
+                <div class="job-listing">
+                    <div>
+                        <h3>Software Engineer : <%= comp.role %></h3>
+                        <p>Company: <%= comp.name %></p>
+                        <p>Required CGPA: <%= comp.cgpa %></p>
+                    </div>
+                    <div>
+                        <% if (profile.cgpa >= comp.cgpa) { %>
+                            <button class="btn">Apply</button>
+                        <% } else { %>
+                            <p>You are <b>Not Eligible </b></p>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        </section>
+        
+
+       <div class="dashboar-container">
+        <section class="dashboard-section">
+            <h2 class="section-title">Interview Preparation</h2>
+            <div class="interview-item">
+                <p>Make yourself ready for the Interview.</p>
+                <button class="btn">Prepare</button>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2 class="section-title">Test & Quizes</h2>
+            <div class="interview-item">
+                <p>Create your own Customize Quizes </p>
+                
+                <a href="/practice" class="btn">Start</a>
+                
+            </div>
+        </section>
+</div>
+ <section class="dashboard-section">
+            <h2 class="section-title">Resume</h2>
+           
+            <div class="resource-item">
+                <h3>ATS Score</h3>
+                <a href="https://ats-1-8ksl.vercel.app/" class="btn">Calculate ATS</a>
+                
+            </div>
+        </section>
+        <div class="dashboard-container">
+        <section class="dashboard-section">
+            <h2 class="section-title">Feedback and Reviews</h2>
+            <button class="btn">View Company Feedback</button>
+            <button class="btn">View Peer Reviews</button>
+        </section>
+
+      
+
+        <section class="dashboard-section">
+            <h2 class="section-title">Support and FAQs</h2>
+            <button class="btn">Help Center</button>
+            <button class="btn">Contact Support</button>
+        </section>
+
+        <section class="dashboard-section">
+            <h2 class="section-title">Networking and Collaboration</h2>
+            <button class="btn">Join Discussion Forum</button>
+            <button class="btn">View Mentorship Opportunities</button>
+        </section>
+    </div>
+    </div>  
+    
+
+    <script>
+        
+      
+        function calculateProfileCompletion() {
+    const fields = ['name', 'course', 'year', 'cgpa', 'backlogs', 'resumeLink'];
+    let filledFields = 0;
+
+    fields.forEach(field => {
+        const value = document.getElementById(field).value;
+        if (value.trim() !== '') {
+            filledFields++;
+        }
+    });
+
+    // Calculate completion percentage
+    const completionPercentage = Math.round((filledFields / fields.length) * 100);
+    document.getElementById('profile-completion').textContent = `${completionPercentage}%`;
+}
+
+// Attach event listeners to inputs to recalculate on change
+document.querySelectorAll('.profile-item input').forEach(input => {
+    input.addEventListener('input', calculateProfileCompletion);
+});
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', () => {
+    calculateProfileCompletion();
+});
+    </script>
+</body>
+</html>
