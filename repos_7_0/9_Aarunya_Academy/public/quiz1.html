@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Literacy Quiz</title>
+  <style>
+    body {
+      font-family: 'Urbanist', sans-serif;
+      color: hsl(247, 35%, 19%);
+      background-color: #fef4eb;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .quiz-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      max-width: 700px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      color: hsl(247, 35%, 19%);
+    }
+    .question {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .options {
+      list-style-type: none;
+      padding: 0;
+    }
+    .options li {
+      margin-bottom: 10px;
+    }
+    .options input {
+      margin-right: 10px;
+    }
+    .btn {
+      background-color: hsl(247, 35%, 19%);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 16px;
+      width: 100%;
+      text-align: center;
+    }
+    .btn:hover {
+      background-color: hsl(247, 35%, 29%);
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    .progress {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    #loader {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .loader-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid hsl(247, 35%, 19%);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2>Digital Literacy Quiz</h2>
+    <div class="progress" id="progress"></div>
+    <div id="quiz"></div>
+    <button class="btn" id="nextBtn">Next</button>
+    <div class="result" id="result"></div>
+    <div id="loader" class="hidden">
+      <div class="loader-spinner"></div>
+      <p>Loading quiz data... This may take a while.</p>
+    </div>
+  </div>
+
+  <script>
+    let quizData = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizContainer = document.getElementById('quiz');
+    const progressContainer = document.getElementById('progress');
+    const resultContainer = document.getElementById('result');
+    const nextButton = document.getElementById('nextBtn');
+    const loaderElement = document.getElementById('loader');
+
+    async function fetchQuizData() {
+      showLoader();
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5-minute timeout
+
+        const response = await fetch('http://127.0.0.1:5000/mcq/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            topics: ['Introduction to Digital literacy','Introduction to Devices and Hardware','Basic Internet and Connectivity','Communicating Online',' Introduction to Digital Payments'],
+            num_questions: 1
+          }),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        quizData = data.questions;
+        
+        if (!quizData || quizData.length === 0) {
+          throw new Error('No quiz questions received');
+        }
+        
+        hideLoader();
+        loadQuiz();
+      } catch (error) {
+        console.error('Error fetching quiz data:', error);
+        hideLoader();
+        if (error.name === 'AbortError') {
+          showError('The quiz is taking too long to load. Please try again later.');
+        } else {
+          showError('Error loading quiz. Please try again later.');
+        }
+      }
+    }
+
+    function showLoader() {
+      loaderElement.classList.remove('hidden');
+      quizContainer.classList.add('hidden');
+      nextButton.classList.add('hidden');
+      progressContainer.classList.add('hidden');
+      resultContainer.classList.add('hidden');
+    }
+
+    function hideLoader() {
+      loaderElement.classList.add('hidden');
+      quizContainer.classList.remove('hidden');
+      nextButton.classList.remove('hidden');
+      progressContainer.classList.remove('hidden');
+    }
+
+    function showError(message) {
+      quizContainer.innerHTML = `<p class="error">${message}</p>`;
+      quizContainer.classList.remove('hidden');
+      progressContainer.classList.add('hidden');
+      nextButton.classList.add('hidden');
+    }
+
+    function loadQuiz() {
+      if (currentQuestionIndex >= quizData.length) {
+        showResult();
+        return;
+      }
+
+      quizContainer.innerHTML = '';
+      const quizItem = quizData[currentQuestionIndex];
+
+      const questionDiv = document.createElement('div');
+      questionDiv.classList.add('question');
+      questionDiv.innerHTML = `<p>${currentQuestionIndex + 1}. ${quizItem.question}</p>`;
+
+      const optionsList = document.createElement('ul');
+      optionsList.classList.add('options');
+
+      quizItem.options.forEach((option, optionIndex) => {
+        const optionItem = document.createElement('li');
+        optionItem.innerHTML = `
+          <label>
+            <input type="radio" name="question${currentQuestionIndex}" value="${option}">
+            ${option}
+          </label>
+        `;
+        optionsList.appendChild(optionItem);
+      });
+
+      questionDiv.appendChild(optionsList);
+      quizContainer.appendChild(questionDiv);
+      progressContainer.innerHTML = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+    }
+
+    function nextQuestion() {
+      const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+
+      if (selectedOption) {
+        if (selectedOption.value === quizData[currentQuestionIndex].correct_answer) {
+          score++;
+        }
+
+        currentQuestionIndex++;
+        loadQuiz();
+      } else {
+        alert('Please select an answer before proceeding.');
+      }
+    }
+
+    async function showResult() {
+  quizContainer.classList.add('hidden');
+  nextButton.classList.add('hidden');
+  progressContainer.classList.add('hidden');
+  resultContainer.classList.add('hidden');
+  loaderElement.classList.remove('hidden');
+
+  const quizResponse = {
+    quiz_response: {
+      questions: quizData.map((quizItem, index) => {
+        const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+        return {
+          correct_answer: quizItem.correct_answer,
+          user_answer: selectedOption ? selectedOption.value : null,
+          options: quizItem.options,
+          question: quizItem.question,
+          topic: quizItem.topic
+        };
+      })
+    },
+    topics_covered: ["Basics of Digital literacy"]
+  };
+
+  console.log("Quiz Response Sent:", JSON.stringify(quizResponse)); // Debug log
+
+  try {
+    const response = await fetch('http://127.0.0.1:5000/mcq/evaluate-quiz', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(quizResponse),
+    });
+
+    const result = await response.json();
+    console.log("Response from Backend:", result); // Debug log
+
+    if (response.ok) {
+      loaderElement.classList.add('hidden');
+      resultContainer.classList.remove('hidden');
+
+      let resultHTML = `<p>You scored ${result.score} out of ${quizData.length}</p>`;
+      resultHTML += `<p>Evaluation Comment: ${result.comment}</p>`;
+
+      if (result.weak_topics && result.weak_topics.length > 0) {
+        resultHTML += `<p>Weak Topics: ${result.weak_topics.join(', ')}</p>`;
+      }
+
+      resultContainer.innerHTML = resultHTML;
+    } else {
+      resultContainer.innerHTML = `<p class="error">Error evaluating quiz: ${result.error}</p>`;
+    }
+  } catch (error) {
+    console.error('Error sending quiz response:', error);
+    resultContainer.innerHTML = `<p class="error">Error sending quiz response. Please try again later.</p>`;
+  } finally {
+    loaderElement.classList.add('hidden');
+    resultContainer.classList.remove('hidden');
+  }
+}
+
+
+
+    // Start the quiz by fetching data
+    fetchQuizData();
+
+    // Update the onclick event for the next button
+    nextButton.onclick = nextQuestion;
+  </script>
+</body>
+</html>
