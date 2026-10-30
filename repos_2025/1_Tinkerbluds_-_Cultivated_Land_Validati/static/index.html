@@ -1,0 +1,2312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cultivated Land Validator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #0a0e1a;
+        color: #e0e6f0;
+        min-height: 100vh;
+      }
+
+      /* ── Header ── */
+      .header {
+        background: linear-gradient(135deg, #0f1629 0%, #1a1f3a 100%);
+        border-bottom: 1px solid rgba(99, 179, 237, 0.15);
+        padding: 1.2rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .header svg {
+        width: 28px;
+        height: 28px;
+        fill: #63b3ed;
+      }
+      .header h1 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #63b3ed, #68d391);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+      }
+
+      /* ── Upload Card ── */
+      .upload-card {
+        background: linear-gradient(145deg, #141a2e, #1a2040);
+        border: 1px solid rgba(99, 179, 237, 0.12);
+        border-radius: 16px;
+        padding: 2.5rem;
+        text-align: center;
+        transition: border-color 0.3s;
+      }
+      .upload-card:hover {
+        border-color: rgba(99, 179, 237, 0.3);
+      }
+      .upload-zone {
+        border: 2px dashed rgba(99, 179, 237, 0.25);
+        border-radius: 12px;
+        padding: 3rem 2rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+      }
+      .upload-zone:hover,
+      .upload-zone.dragover {
+        border-color: #63b3ed;
+        background: rgba(99, 179, 237, 0.05);
+      }
+      .upload-zone svg {
+        width: 48px;
+        height: 48px;
+        fill: #4a5568;
+        margin-bottom: 1rem;
+      }
+      .upload-zone p {
+        color: #718096;
+        font-size: 0.95rem;
+      }
+      .upload-zone .filename {
+        color: #68d391;
+        font-weight: 500;
+        margin-top: 0.5rem;
+      }
+      .upload-zone input {
+        display: none;
+      }
+
+      .options-row {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .option-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+      .option-group label {
+        font-size: 0.75rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .option-group input,
+      .option-group select {
+        background: #0d1225;
+        border: 1px solid rgba(99, 179, 237, 0.2);
+        border-radius: 8px;
+        padding: 0.5rem 0.8rem;
+        color: #e0e6f0;
+        font-family: inherit;
+        font-size: 0.9rem;
+        width: 120px;
+      }
+      .option-group input:focus,
+      .option-group select:focus {
+        outline: none;
+        border-color: #63b3ed;
+      }
+
+      .submit-btn {
+        margin-top: 1.5rem;
+        padding: 0.75rem 2.5rem;
+        background: linear-gradient(135deg, #2b6cb0, #3182ce);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: inherit;
+      }
+      .submit-btn:hover:not(:disabled) {
+        background: linear-gradient(135deg, #3182ce, #4299e1);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(49, 130, 206, 0.4);
+      }
+      .submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ── Processing ── */
+      .processing {
+        margin-top: 2rem;
+        display: none;
+      }
+      .processing.active {
+        display: block;
+      }
+      .progress-bar-bg {
+        background: #1a2040;
+        border-radius: 8px;
+        height: 6px;
+        overflow: hidden;
+        margin-top: 1rem;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #63b3ed, #68d391);
+        border-radius: 8px;
+        width: 0%;
+        animation: indeterminate 1.8s ease-in-out infinite;
+      }
+      @keyframes indeterminate {
+        0% {
+          width: 0%;
+          margin-left: 0;
+        }
+        50% {
+          width: 60%;
+          margin-left: 20%;
+        }
+        100% {
+          width: 0%;
+          margin-left: 100%;
+        }
+      }
+      .step-list {
+        text-align: left;
+        margin-top: 1.2rem;
+        list-style: none;
+      }
+      .step-list li {
+        padding: 0.4rem 0;
+        font-size: 0.85rem;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 0.3s;
+      }
+      .step-list li.active {
+        color: #63b3ed;
+      }
+      .step-list li.done {
+        color: #68d391;
+      }
+      .step-list li .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #2d3748;
+        flex-shrink: 0;
+      }
+      .step-list li.active .dot {
+        background: #63b3ed;
+        box-shadow: 0 0 8px rgba(99, 179, 237, 0.6);
+        animation: pulse 1.2s infinite;
+      }
+      .step-list li.done .dot {
+        background: #68d391;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.4);
+        }
+      }
+
+      /* ── Results ── */
+      .results {
+        margin-top: 2rem;
+        display: none;
+      }
+      .results.active {
+        display: block;
+      }
+      .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+      .result-header h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .badge {
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+      }
+      .badge.pass {
+        background: rgba(72, 187, 120, 0.15);
+        color: #68d391;
+        border: 1px solid rgba(72, 187, 120, 0.3);
+      }
+      .badge.review {
+        background: rgba(237, 137, 54, 0.15);
+        color: #ed8936;
+        border: 1px solid rgba(237, 137, 54, 0.3);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .stat-card {
+        background: linear-gradient(145deg, #141a2e, #1a2040);
+        border: 1px solid rgba(99, 179, 237, 0.08);
+        border-radius: 12px;
+        padding: 1.2rem;
+      }
+      .stat-card .label {
+        font-size: 0.72rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.2rem;
+      }
+      .stat-card .desc {
+        font-size: 0.7rem;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+      }
+      .stat-card .value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #e2e8f0;
+      }
+      .stat-card .unit {
+        font-size: 0.8rem;
+        color: #718096;
+        font-weight: 400;
+      }
+
+      /* Confidence bar */
+      .confidence-track {
+        margin-top: 1.5rem;
+        background: #141a2e;
+        border: 1px solid rgba(99, 179, 237, 0.08);
+        border-radius: 12px;
+        padding: 1.2rem;
+      }
+      .confidence-track .label {
+        font-size: 0.72rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.8rem;
+      }
+      .conf-bar-bg {
+        background: #0d1225;
+        border-radius: 8px;
+        height: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+      .conf-bar {
+        height: 100%;
+        border-radius: 8px;
+        transition: width 1s ease;
+      }
+      .conf-bar.high {
+        background: linear-gradient(90deg, #48bb78, #68d391);
+      }
+      .conf-bar.medium {
+        background: linear-gradient(90deg, #ed8936, #f6ad55);
+      }
+      .conf-bar.low {
+        background: linear-gradient(90deg, #e53e3e, #fc8181);
+      }
+      .conf-value {
+        text-align: right;
+        margin-top: 0.3rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* ── Land Classes ── */
+      .land-classes {
+        margin-top: 1.5rem;
+        background: linear-gradient(145deg, #141a2e, #1a2040);
+        border: 1px solid rgba(99, 179, 237, 0.08);
+        border-radius: 12px;
+        padding: 1.2rem;
+      }
+      .land-classes .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+      .land-classes .label {
+        font-size: 0.72rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .dominant-badge {
+        padding: 0.25rem 0.8rem;
+        border-radius: 16px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: rgba(99, 179, 237, 0.12);
+        color: #63b3ed;
+        border: 1px solid rgba(99, 179, 237, 0.25);
+      }
+      .class-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.5rem;
+      }
+      .class-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        flex-shrink: 0;
+      }
+      .class-name {
+        font-size: 0.78rem;
+        color: #a0aec0;
+        width: 140px;
+        flex-shrink: 0;
+      }
+      .class-bar-bg {
+        flex: 1;
+        background: #0d1225;
+        border-radius: 4px;
+        height: 8px;
+        overflow: hidden;
+      }
+      .class-bar {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.8s ease;
+      }
+      .class-pct {
+        font-size: 0.75rem;
+        color: #718096;
+        width: 50px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .class-acres {
+        font-size: 0.68rem;
+        color: #4a5568;
+        width: 65px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      /* ── Error ── */
+      .error-box {
+        margin-top: 2rem;
+        background: rgba(229, 62, 62, 0.1);
+        border: 1px solid rgba(229, 62, 62, 0.3);
+        border-radius: 12px;
+        padding: 1.2rem;
+        color: #fc8181;
+        display: none;
+      }
+      .error-box.active {
+        display: block;
+      }
+      .error-box strong {
+        display: block;
+        margin-bottom: 0.3rem;
+      }
+
+      /* ── How It Works ── */
+      .explanation {
+        margin-top: 2.5rem;
+        background: linear-gradient(145deg, #141a2e, #1a2040);
+        border: 1px solid rgba(99, 179, 237, 0.08);
+        border-radius: 16px;
+        padding: 2rem;
+        display: none;
+      }
+      .explanation.active {
+        display: block;
+      }
+      .explanation h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #63b3ed;
+      }
+
+      .pipeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .pipe-step {
+        display: flex;
+        gap: 1rem;
+        position: relative;
+        padding-bottom: 1.5rem;
+      }
+      .pipe-step:last-child {
+        padding-bottom: 0;
+      }
+
+      /* Vertical connector line */
+      .pipe-step::before {
+        content: "";
+        position: absolute;
+        left: 17px;
+        top: 36px;
+        width: 2px;
+        height: calc(100% - 36px);
+        background: linear-gradient(
+          180deg,
+          rgba(99, 179, 237, 0.3),
+          rgba(99, 179, 237, 0.05)
+        );
+      }
+      .pipe-step:last-child::before {
+        display: none;
+      }
+
+      .pipe-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .pipe-icon.blue {
+        background: rgba(99, 179, 237, 0.15);
+      }
+      .pipe-icon.green {
+        background: rgba(72, 187, 120, 0.15);
+      }
+      .pipe-icon.orange {
+        background: rgba(237, 137, 54, 0.15);
+      }
+      .pipe-icon.purple {
+        background: rgba(159, 122, 234, 0.15);
+      }
+
+      .pipe-content {
+        flex: 1;
+      }
+      .pipe-content h3 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 0.3rem;
+      }
+      .pipe-content p {
+        font-size: 0.78rem;
+        color: #718096;
+        line-height: 1.5;
+      }
+      .pipe-content .tag {
+        display: inline-block;
+        margin-top: 0.4rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .tag.sentinel {
+        background: rgba(99, 179, 237, 0.12);
+        color: #63b3ed;
+      }
+      .tag.esa {
+        background: rgba(72, 187, 120, 0.12);
+        color: #68d391;
+      }
+      .tag.formula {
+        background: rgba(237, 137, 54, 0.12);
+        color: #ed8936;
+      }
+
+      .decision-explain {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(99, 179, 237, 0.08);
+      }
+      .decision-explain h3 {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+      }
+      .decision-explain p {
+        font-size: 0.78rem;
+        color: #718096;
+        line-height: 1.5;
+      }
+      .formula-box {
+        background: #0d1225;
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        margin: 0.5rem 0;
+        font-family: "Courier New", monospace;
+        font-size: 0.78rem;
+        color: #ed8936;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      </svg>
+      <h1>Cultivated Land Validator</h1>
+    </div>
+
+    <div class="container">
+      <!-- Upload Card -->
+      <div class="upload-card">
+        <div class="upload-zone" id="dropZone">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="12" y1="18" x2="12" y2="12" />
+            <polyline points="9 15 12 12 15 15" />
+          </svg>
+          <p>Drop your <strong>.kml</strong> file here or click to browse</p>
+          <p class="filename" id="fileName"></p>
+          <input type="file" id="fileInput" accept=".kml" />
+        </div>
+        <div class="options-row">
+          <div class="option-group">
+            <label>Start Year</label>
+            <input
+              type="number"
+              id="startYearInput"
+              value="2025"
+              min="2015"
+              max="2026"
+            />
+          </div>
+          <div class="option-group">
+            <label>From</label>
+            <select id="startMonth">
+              <option value="1" selected>Jan</option>
+              <option value="2">Feb</option>
+              <option value="3">Mar</option>
+              <option value="4">Apr</option>
+              <option value="5">May</option>
+              <option value="6">Jun</option>
+              <option value="7">Jul</option>
+              <option value="8">Aug</option>
+              <option value="9">Sep</option>
+              <option value="10">Oct</option>
+              <option value="11">Nov</option>
+              <option value="12">Dec</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label>End Year</label>
+            <input
+              type="number"
+              id="endYearInput"
+              value="2025"
+              min="2015"
+              max="2026"
+            />
+          </div>
+          <div class="option-group">
+            <label>To</label>
+            <select id="endMonth">
+              <option value="1">Jan</option>
+              <option value="2">Feb</option>
+              <option value="3">Mar</option>
+              <option value="4">Apr</option>
+              <option value="5">May</option>
+              <option value="6">Jun</option>
+              <option value="7">Jul</option>
+              <option value="8">Aug</option>
+              <option value="9">Sep</option>
+              <option value="10">Oct</option>
+              <option value="11">Nov</option>
+              <option value="12" selected>Dec</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label>Cloud %</label>
+            <input type="number" id="cloudInput" value="20" min="1" max="100" />
+          </div>
+          <div class="option-group">
+            <label>Claimed Crop</label>
+            <select id="cropInput">
+              <option value="">— None —</option>
+              <option value="rice">Rice</option>
+              <option value="wheat">Wheat</option>
+              <option value="maize">Maize</option>
+              <option value="sugarcane">Sugarcane</option>
+              <option value="cotton">Cotton</option>
+              <option value="coconut">Coconut</option>
+              <option value="rubber">Rubber</option>
+              <option value="tea">Tea</option>
+              <option value="coffee">Coffee</option>
+              <option value="banana">Banana</option>
+              <option value="potato">Potato</option>
+              <option value="soybean">Soybean</option>
+              <option value="groundnut">Groundnut</option>
+              <option value="mustard">Mustard</option>
+              <option value="onion">Onion</option>
+              <option value="tomato">Tomato</option>
+              <option value="pepper">Pepper</option>
+              <option value="cardamom">Cardamom</option>
+              <option value="turmeric">Turmeric</option>
+              <option value="ginger">Ginger</option>
+            </select>
+          </div>
+        </div>
+        <button class="submit-btn" id="submitBtn" disabled>
+          Validate Plot
+        </button>
+      </div>
+
+      <!-- Processing -->
+      <div class="processing" id="processing">
+        <div class="progress-bar-bg"><div class="progress-bar"></div></div>
+        <ul class="step-list" id="stepList">
+          <li><span class="dot"></span> Parsing KML geometry</li>
+          <li><span class="dot"></span> Validating polygon boundaries</li>
+          <li><span class="dot"></span> Fetching Sentinel-2 optical imagery</li>
+          <li>
+            <span class="dot"></span> Fetching Sentinel-1 radar (SAR) data
+          </li>
+          <li><span class="dot"></span> Computing NDVI + SAR statistics</li>
+          <li>
+            <span class="dot"></span> Analysing terrain & WorldCover classes
+          </li>
+          <li><span class="dot"></span> Running ML crop classifier</li>
+          <li><span class="dot"></span> Generating thumbnails</li>
+        </ul>
+      </div>
+
+      <!-- Error -->
+      <div class="error-box" id="errorBox">
+        <strong>⚠ Validation Error</strong>
+        <span id="errorMsg"></span>
+      </div>
+
+      <!-- Map Preview -->
+      <div id="mapSection" style="margin-top: 2rem; display: none">
+        <div
+          style="
+            background: linear-gradient(145deg, #141a2e, #1a2040);
+            border: 1px solid rgba(99, 179, 237, 0.08);
+            border-radius: 12px;
+            padding: 1.2rem;
+          "
+        >
+          <div
+            style="
+              font-size: 0.72rem;
+              color: #718096;
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              margin-bottom: 0.8rem;
+            "
+          >
+            Plot Location
+          </div>
+          <div id="map" style="height: 350px; border-radius: 8px"></div>
+        </div>
+      </div>
+
+      <!-- Satellite & Green Mask Preview -->
+      <div id="previewSection" style="margin-top: 2rem; display: none">
+        <div
+          style="
+            background: linear-gradient(145deg, #141a2e, #1a2040);
+            border: 1px solid rgba(99, 179, 237, 0.08);
+            border-radius: 12px;
+            padding: 1.2rem;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 0.8rem;
+            "
+          >
+            <div
+              style="
+                font-size: 0.72rem;
+                color: #718096;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+              "
+            >
+              Satellite Preview
+            </div>
+            <div
+              id="greenAreaBadge"
+              style="
+                background: rgba(72, 187, 120, 0.15);
+                color: #68d391;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+              "
+            ></div>
+          </div>
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem"
+          >
+            <div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: #a0aec0;
+                  margin-bottom: 0.4rem;
+                  text-align: center;
+                "
+              >
+                True Color
+              </div>
+              <img
+                id="satelliteImg"
+                style="
+                  width: 100%;
+                  border-radius: 8px;
+                  border: 1px solid rgba(99, 179, 237, 0.1);
+                "
+                alt="Satellite view"
+              />
+            </div>
+            <div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: #68d391;
+                  margin-bottom: 0.4rem;
+                  text-align: center;
+                "
+              >
+                NDVI Green Mask
+              </div>
+              <img
+                id="greenMaskImg"
+                style="
+                  width: 100%;
+                  border-radius: 8px;
+                  border: 1px solid rgba(104, 211, 145, 0.2);
+                "
+                alt="Green mask"
+              />
+            </div>
+            <div id="sarThumbDiv" style="display: none">
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: #f6ad55;
+                  margin-bottom: 0.4rem;
+                  text-align: center;
+                "
+              >
+                SAR Radar (S1)
+              </div>
+              <img
+                id="sarImg"
+                style="
+                  width: 100%;
+                  border-radius: 8px;
+                  border: 1px solid rgba(246, 173, 85, 0.2);
+                "
+                alt="SAR radar view"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="results" id="results">
+        <div class="result-header">
+          <h2>Validation Results</h2>
+          <span class="badge" id="decisionBadge">—</span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="label">Total Plot Area</div>
+            <div class="desc">
+              Total area of the uploaded KML polygon boundary
+            </div>
+            <div class="value" id="plotArea">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">ESA Cropland</div>
+            <div class="desc">
+              Area classified as farmland by ESA WorldCover satellite ML model
+              (class 40)
+            </div>
+            <div class="value" id="cropArea">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Active Vegetation</div>
+            <div class="desc">
+              Land with active crop cover detected via Sentinel-2 NDVI and
+              Sentinel-1 SAR radar backscatter
+            </div>
+            <div class="value" id="vegArea">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Cultivated Land</div>
+            <div class="desc">
+              ESA WorldCover ML-classified farmland — trained on multi-year
+              Sentinel-1 &amp; Sentinel-2 data
+            </div>
+            <div class="value" id="cultPct">—</div>
+          </div>
+        </div>
+
+        <div class="confidence-track">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 0.4rem;
+            "
+          >
+            <div class="label">Confidence Score</div>
+            <div
+              id="mlBadge"
+              style="
+                display: none;
+                padding: 0.25rem 0.7rem;
+                border-radius: 20px;
+                font-size: 0.7rem;
+                font-weight: 600;
+              "
+            ></div>
+          </div>
+          <div class="conf-bar-bg">
+            <div class="conf-bar" id="confBar" style="width: 0%"></div>
+          </div>
+          <div class="conf-value" id="confValue">—</div>
+        </div>
+
+        <!-- SAR Stats -->
+        <div id="sarStatsSection" style="display: none; margin-top: 1rem">
+          <div
+            style="
+              background: rgba(246, 173, 85, 0.06);
+              border: 1px solid rgba(246, 173, 85, 0.15);
+              border-radius: 10px;
+              padding: 0.8rem 1rem;
+            "
+          >
+            <div
+              style="
+                font-size: 0.72rem;
+                color: #f6ad55;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                margin-bottom: 0.6rem;
+              "
+            >
+              🛰️ SAR Radar Analysis (Sentinel-1)
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.8rem;
+                text-align: center;
+              "
+            >
+              <div>
+                <div style="font-size: 0.6rem; color: #718096">SAR Score</div>
+                <div
+                  id="sarScore"
+                  style="font-size: 1.1rem; font-weight: 700; color: #f6ad55"
+                >
+                  —
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 0.6rem; color: #718096">VH/VV Ratio</div>
+                <div
+                  id="vhvvRatio"
+                  style="font-size: 1.1rem; font-weight: 700; color: #e2e8f0"
+                >
+                  —
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 0.6rem; color: #718096">Elevation</div>
+                <div
+                  id="elevationVal"
+                  style="font-size: 1.1rem; font-weight: 700; color: #e2e8f0"
+                >
+                  —
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 0.6rem; color: #718096">Slope</div>
+                <div
+                  id="slopeVal"
+                  style="font-size: 1.1rem; font-weight: 700; color: #e2e8f0"
+                >
+                  —
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Land Class Breakdown -->
+        <div class="land-classes" id="landClasses" style="display: none">
+          <div class="section-header">
+            <div class="label">ESA WorldCover — Land Classification</div>
+            <span class="dominant-badge" id="dominantBadge">—</span>
+          </div>
+          <div id="classRows"></div>
+        </div>
+      </div>
+
+      <!-- Yield Feasibility -->
+      <div id="yieldSection" style="display: none; margin-top: 2rem">
+        <div
+          style="
+            background: linear-gradient(145deg, #141a2e, #1a2040);
+            border: 1px solid rgba(99, 179, 237, 0.08);
+            border-radius: 12px;
+            padding: 1.2rem;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 1rem;
+            "
+          >
+            <div
+              style="
+                font-size: 0.72rem;
+                color: #718096;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+              "
+            >
+              🌾 Yield Feasibility
+            </div>
+            <div
+              id="yieldConfBadge"
+              style="
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 700;
+              "
+            ></div>
+          </div>
+
+          <!-- Yield summary row -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr;
+              gap: 1rem;
+              margin-bottom: 1.2rem;
+            "
+          >
+            <div style="text-align: center">
+              <div
+                style="
+                  font-size: 0.6rem;
+                  color: #718096;
+                  text-transform: uppercase;
+                  margin-bottom: 0.3rem;
+                "
+              >
+                Crop
+              </div>
+              <div
+                id="yieldCrop"
+                style="
+                  font-size: 1.1rem;
+                  font-weight: 700;
+                  color: #f6e05e;
+                  text-transform: capitalize;
+                "
+              >
+                —
+              </div>
+            </div>
+            <div style="text-align: center">
+              <div
+                style="
+                  font-size: 0.6rem;
+                  color: #718096;
+                  text-transform: uppercase;
+                  margin-bottom: 0.3rem;
+                "
+              >
+                Est. Yield
+              </div>
+              <div
+                id="yieldEst"
+                style="font-size: 1.1rem; font-weight: 700; color: #e2e8f0"
+              >
+                —
+              </div>
+              <div style="font-size: 0.55rem; color: #718096">
+                ton / hectare
+              </div>
+            </div>
+            <div style="text-align: center">
+              <div
+                style="
+                  font-size: 0.6rem;
+                  color: #718096;
+                  text-transform: uppercase;
+                  margin-bottom: 0.3rem;
+                "
+              >
+                Total Yield
+              </div>
+              <div
+                id="yieldTotal"
+                style="font-size: 1.1rem; font-weight: 700; color: #e2e8f0"
+              >
+                —
+              </div>
+              <div style="font-size: 0.55rem; color: #718096">
+                tons (approx)
+              </div>
+            </div>
+          </div>
+
+          <!-- Weather comparison table -->
+          <div id="weatherComparison" style="display: none">
+            <div
+              style="
+                font-size: 0.65rem;
+                color: #718096;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 0.4rem;
+              "
+            >
+              Actual vs Ideal Conditions
+              <span id="weatherPeriodLabel">(Growing Season)</span>
+            </div>
+            <div
+              id="weatherPeriod"
+              style="font-size: 0.58rem; color: #4a5568; margin-bottom: 0.6rem"
+            ></div>
+            <div id="comparisonRows"></div>
+          </div>
+
+          <!-- Overall feasibility bar -->
+          <div style="margin-top: 1rem">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.7rem;
+                color: #a0aec0;
+                margin-bottom: 0.3rem;
+              "
+            >
+              <span>Overall Feasibility</span>
+              <span id="yieldFeasVal">0%</span>
+            </div>
+            <div
+              style="
+                height: 8px;
+                background: rgba(255, 255, 255, 0.06);
+                border-radius: 4px;
+                overflow: hidden;
+              "
+            >
+              <div
+                id="yieldFeasBar"
+                style="
+                  height: 100%;
+                  width: 0%;
+                  border-radius: 4px;
+                  transition: width 0.8s ease;
+                  background: linear-gradient(90deg, #ed8936, #48bb78);
+                "
+              ></div>
+            </div>
+          </div>
+          <div
+            style="
+              margin-top: 0.8rem;
+              font-size: 0.6rem;
+              color: #718096;
+              font-style: italic;
+            "
+          >
+            ⚠ Indicative estimate — actual yields depend on irrigation, soil,
+            farming practices. Weather: Open-Meteo API.
+          </div>
+        </div>
+      </div>
+
+      <!-- Crop Recommendations -->
+      <div id="recoSection" style="display: none; margin-top: 2rem">
+        <div
+          style="
+            background: linear-gradient(145deg, #141a2e, #1a2040);
+            border: 1px solid rgba(99, 179, 237, 0.08);
+            border-radius: 12px;
+            padding: 1.2rem;
+          "
+        >
+          <div
+            style="
+              font-size: 0.72rem;
+              color: #718096;
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              margin-bottom: 1rem;
+            "
+          >
+            🌾 Best Crops for This Location
+          </div>
+          <div
+            id="recoCards"
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+              gap: 0.8rem;
+            "
+          ></div>
+          <div
+            style="
+              margin-top: 0.8rem;
+              font-size: 0.6rem;
+              color: #718096;
+              font-style: italic;
+            "
+          >
+            Based on weather data from the crop's growing season. Scores use
+            temperature, rainfall, humidity, soil moisture, and vegetation
+            health.
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PLOT CONFIRMATION SECTION ═══ -->
+      <div id="confirmSection" style="display: none; margin-top: 2rem">
+        <div
+          style="
+            background: linear-gradient(
+              135deg,
+              rgba(26, 32, 64, 0.85),
+              rgba(20, 26, 46, 0.95)
+            );
+            border: 1px solid rgba(99, 179, 237, 0.15);
+            border-radius: 16px;
+            padding: 1.8rem;
+          "
+        >
+          <!-- Step 1: Ask user -->
+          <div id="confirmPrompt">
+            <div
+              style="
+                font-size: 0.75rem;
+                color: #718096;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                margin-bottom: 0.5rem;
+              "
+            >
+              📌 Plot Confirmation
+            </div>
+            <h3
+              style="color: #e2e8f0; margin-bottom: 0.8rem; font-size: 1.1rem"
+            >
+              Is this your proposed plot?
+            </h3>
+            <p
+              style="color: #a0aec0; font-size: 0.82rem; margin-bottom: 1.2rem"
+            >
+              If you confirm, your plot will be saved and registered to your
+              farmer profile.
+            </p>
+            <div style="display: flex; gap: 1rem">
+              <button
+                id="confirmYesBtn"
+                style="
+                  background: linear-gradient(135deg, #48bb78, #38a169);
+                  color: #fff;
+                  border: none;
+                  padding: 0.7rem 2rem;
+                  border-radius: 10px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  font-size: 0.85rem;
+                  transition:
+                    transform 0.2s,
+                    box-shadow 0.2s;
+                "
+                onmouseover="
+                  this.style.transform = 'translateY(-1px)';
+                  this.style.boxShadow = '0 4px 15px rgba(72,187,120,0.4)';
+                "
+                onmouseout="
+                  this.style.transform = '';
+                  this.style.boxShadow = '';
+                "
+              >
+                ✅ Yes, this is my plot
+              </button>
+              <button
+                id="confirmNoBtn"
+                style="
+                  background: rgba(255, 255, 255, 0.06);
+                  color: #a0aec0;
+                  border: 1px solid rgba(255, 255, 255, 0.1);
+                  padding: 0.7rem 2rem;
+                  border-radius: 10px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  font-size: 0.85rem;
+                  transition: transform 0.2s;
+                "
+                onmouseover="this.style.transform = 'translateY(-1px)'"
+                onmouseout="this.style.transform = ''"
+              >
+                ❌ No, analysis only
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Farmer form (hidden initially) -->
+          <div id="farmerForm" style="display: none">
+            <div
+              style="
+                font-size: 0.75rem;
+                color: #718096;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                margin-bottom: 0.5rem;
+              "
+            >
+              👤 Farmer Registration
+            </div>
+            <h3 style="color: #e2e8f0; margin-bottom: 1rem; font-size: 1.1rem">
+              Enter Your Details
+            </h3>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+                margin-bottom: 1rem;
+              "
+            >
+              <div>
+                <label
+                  style="
+                    color: #a0aec0;
+                    font-size: 0.72rem;
+                    display: block;
+                    margin-bottom: 0.3rem;
+                  "
+                  >Full Name *</label
+                >
+                <input
+                  id="farmerName"
+                  type="text"
+                  placeholder="Enter your name"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 0.6rem 0.8rem;
+                    background: rgba(255, 255, 255, 0.06);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    color: #e2e8f0;
+                    font-size: 0.85rem;
+                    outline: none;
+                    transition: border-color 0.2s;
+                  "
+                  onfocus="this.style.borderColor = 'rgba(99,179,237,0.5)'"
+                  onblur="this.style.borderColor = 'rgba(255,255,255,0.1)'"
+                />
+              </div>
+              <div>
+                <label
+                  style="
+                    color: #a0aec0;
+                    font-size: 0.72rem;
+                    display: block;
+                    margin-bottom: 0.3rem;
+                  "
+                  >Phone Number *</label
+                >
+                <input
+                  id="farmerPhone"
+                  type="tel"
+                  placeholder="+91 9876543210"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 0.6rem 0.8rem;
+                    background: rgba(255, 255, 255, 0.06);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    color: #e2e8f0;
+                    font-size: 0.85rem;
+                    outline: none;
+                    transition: border-color 0.2s;
+                  "
+                  onfocus="this.style.borderColor = 'rgba(99,179,237,0.5)'"
+                  onblur="this.style.borderColor = 'rgba(255,255,255,0.1)'"
+                />
+              </div>
+              <div>
+                <label
+                  style="
+                    color: #a0aec0;
+                    font-size: 0.72rem;
+                    display: block;
+                    margin-bottom: 0.3rem;
+                  "
+                  >Email (optional)</label
+                >
+                <input
+                  id="farmerEmail"
+                  type="email"
+                  placeholder="farmer@email.com"
+                  style="
+                    width: 100%;
+                    padding: 0.6rem 0.8rem;
+                    background: rgba(255, 255, 255, 0.06);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    color: #e2e8f0;
+                    font-size: 0.85rem;
+                    outline: none;
+                    transition: border-color 0.2s;
+                  "
+                  onfocus="this.style.borderColor = 'rgba(99,179,237,0.5)'"
+                  onblur="this.style.borderColor = 'rgba(255,255,255,0.1)'"
+                />
+              </div>
+              <div>
+                <label
+                  style="
+                    color: #a0aec0;
+                    font-size: 0.72rem;
+                    display: block;
+                    margin-bottom: 0.3rem;
+                  "
+                  >Plot Label (optional)</label
+                >
+                <input
+                  id="plotLabel"
+                  type="text"
+                  placeholder="e.g. Paddy Field North"
+                  style="
+                    width: 100%;
+                    padding: 0.6rem 0.8rem;
+                    background: rgba(255, 255, 255, 0.06);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    color: #e2e8f0;
+                    font-size: 0.85rem;
+                    outline: none;
+                    transition: border-color 0.2s;
+                  "
+                  onfocus="this.style.borderColor = 'rgba(99,179,237,0.5)'"
+                  onblur="this.style.borderColor = 'rgba(255,255,255,0.1)'"
+                />
+              </div>
+            </div>
+            <button
+              id="savePlotBtn"
+              style="
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: #fff;
+                border: none;
+                padding: 0.7rem 2.5rem;
+                border-radius: 10px;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 0.85rem;
+                transition:
+                  transform 0.2s,
+                  box-shadow 0.2s;
+              "
+              onmouseover="
+                this.style.transform = 'translateY(-1px)';
+                this.style.boxShadow = '0 4px 15px rgba(102,126,234,0.4)';
+              "
+              onmouseout="
+                this.style.transform = '';
+                this.style.boxShadow = '';
+              "
+            >
+              💾 Save & Register Plot
+            </button>
+            <span
+              id="savingSpinner"
+              style="
+                display: none;
+                color: #a0aec0;
+                font-size: 0.8rem;
+                margin-left: 1rem;
+              "
+              >⏳ Saving...</span
+            >
+          </div>
+
+          <!-- Step 3: Result message -->
+          <div id="confirmResult" style="display: none"></div>
+        </div>
+      </div>
+
+      <!-- How It Works (shown after results) -->
+      <div class="explanation" id="explanation">
+        <h2>🔬 How This Classification Works</h2>
+
+        <div class="pipeline">
+          <div class="pipe-step">
+            <div class="pipe-icon blue">📍</div>
+            <div class="pipe-content">
+              <h3>1. KML Polygon Parsing</h3>
+              <p>
+                Your KML file contains GPS coordinates defining the plot
+                boundary. We extract the polygon and compute its geographic
+                area.
+              </p>
+            </div>
+          </div>
+
+          <div class="pipe-step">
+            <div class="pipe-icon blue">🛰️</div>
+            <div class="pipe-content">
+              <h3>2. Sentinel-2 Satellite Imagery</h3>
+              <p>
+                ESA's Sentinel-2 satellite photographs the entire Earth every ~5
+                days at 10m resolution. We collect all cloud-free images from
+                the selected year and compute a
+                <strong>median composite</strong> — this removes temporary
+                artifacts like clouds and shadows.
+              </p>
+              <span class="tag sentinel">Sentinel-2 L2A · 10m resolution</span>
+            </div>
+          </div>
+
+          <div class="pipe-step">
+            <div class="pipe-icon green">🌿</div>
+            <div class="pipe-content">
+              <h3>3. NDVI — Vegetation Health Index</h3>
+              <p>
+                Healthy plants absorb red light for photosynthesis and reflect
+                near-infrared (NIR) strongly. NDVI measures this contrast:
+                values above 0.5 indicate active, healthy vegetation (crops,
+                dense greenery). Values near 0 indicate bare soil, buildings, or
+                roads.
+              </p>
+              <div class="formula-box">NDVI = (NIR − Red) / (NIR + Red)</div>
+              <span class="tag formula">Band 8 (NIR) vs Band 4 (Red)</span>
+            </div>
+          </div>
+
+          <div class="pipe-step">
+            <div class="pipe-icon purple">🗺️</div>
+            <div class="pipe-content">
+              <h3>4. ESA WorldCover — Land Use Map</h3>
+              <p>
+                This is a global 10m land use classification map built by ESA
+                using machine learning on satellite data. Each pixel is labelled
+                as one of: <strong>Trees (10)</strong>, Shrubland (20),
+                Grassland (30), <strong>Cropland (40)</strong>, Built-up (50),
+                Bare (60), or Water (80). We check if ESA's model classifies
+                each pixel inside your plot as
+                <strong>Cropland (class 40)</strong>.
+              </p>
+              <span class="tag esa">ESA WorldCover 2021 · ML-classified</span>
+            </div>
+          </div>
+
+          <div class="pipe-step">
+            <div class="pipe-icon orange">✅</div>
+            <div class="pipe-content">
+              <h3>5. Intersection = Cultivated Land</h3>
+              <p>
+                We combine both signals: a pixel is
+                <strong>cultivated</strong> only if ESA says "this is farmland"
+                <em>AND</em> NDVI confirms "something is actively growing." This
+                two-factor check prevents false positives (e.g. fallow farmland
+                or green forests).
+              </p>
+              <div class="formula-box">
+                Cultivated = WorldCover == Cropland AND NDVI &gt; 0.3
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="decision-explain">
+          <h3>📊 Decision Logic</h3>
+          <p>
+            The cultivated percentage is the ratio of cultivated area to total
+            plot area. The confidence score blends this with mean NDVI health:
+          </p>
+          <div class="formula-box">
+            Confidence = 0.7 × cultivated% + 0.3 × mean NDVI
+          </div>
+          <p style="margin-top: 0.5rem">
+            <strong style="color: #68d391">PASS</strong> — Cultivated percentage
+            &gt; 60% (confirmed farming activity)<br />
+            <strong style="color: #ed8936">REVIEW</strong> — Below threshold;
+            may be forest, fallow land, or non-agricultural use
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const dropZone = document.getElementById("dropZone");
+      const fileInput = document.getElementById("fileInput");
+      const fileName = document.getElementById("fileName");
+      const submitBtn = document.getElementById("submitBtn");
+      const processing = document.getElementById("processing");
+      const results = document.getElementById("results");
+      const errorBox = document.getElementById("errorBox");
+      const explanation = document.getElementById("explanation");
+      let selectedFile = null;
+      let mapInstance = null;
+
+      // — Drag & drop —
+      dropZone.addEventListener("click", () => fileInput.click());
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+      dropZone.addEventListener("dragleave", () =>
+        dropZone.classList.remove("dragover"),
+      );
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files.length) setFile(fileInput.files[0]);
+      });
+
+      function setFile(file) {
+        if (!file.name.toLowerCase().endsWith(".kml")) {
+          alert("Please select a .kml file");
+          return;
+        }
+        selectedFile = file;
+        fileName.textContent = file.name;
+        submitBtn.disabled = false;
+      }
+
+      function animateSteps() {
+        const steps = document.querySelectorAll("#stepList li");
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i > 0) steps[i - 1].classList.replace("active", "done");
+          if (i < steps.length) {
+            steps[i].classList.add("active");
+            i++;
+          } else clearInterval(interval);
+        }, 2500);
+        return interval;
+      }
+
+      // — Global state for plot confirmation —
+      let lastValidationData = null;
+      let lastKmlContent = "";
+
+      // — Submit —
+      submitBtn.addEventListener("click", async () => {
+        if (!selectedFile) return;
+        results.classList.remove("active");
+        errorBox.classList.remove("active");
+        explanation.classList.remove("active");
+        processing.classList.add("active");
+        submitBtn.disabled = true;
+        document
+          .querySelectorAll("#stepList li")
+          .forEach((li) => (li.className = ""));
+
+        // Read KML file content for later saving
+        try {
+          lastKmlContent = await selectedFile.text();
+        } catch (_) {
+          lastKmlContent = "";
+        }
+
+        const stepInterval = animateSteps();
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        const startYear = document.getElementById("startYearInput").value;
+        const sm = document.getElementById("startMonth").value;
+        const endYear = document.getElementById("endYearInput").value;
+        const em = document.getElementById("endMonth").value;
+        const cloud = document.getElementById("cloudInput").value;
+        const crop = document.getElementById("cropInput").value;
+
+        try {
+          let url = `/validate_plot?start_year=${startYear}&start_month=${sm}&end_year=${endYear}&end_month=${em}&cloud_threshold=${cloud}`;
+          if (crop) url += `&claimed_crop=${encodeURIComponent(crop)}`;
+          const res = await fetch(url, {
+            method: "POST",
+            body: formData,
+          });
+          clearInterval(stepInterval);
+          document.querySelectorAll("#stepList li").forEach((li) => {
+            li.classList.remove("active");
+            li.classList.add("done");
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.detail || "Unknown error");
+          lastValidationData = data; // Store for confirmation
+          setTimeout(() => {
+            processing.classList.remove("active");
+            showResults(data);
+          }, 600);
+        } catch (err) {
+          clearInterval(stepInterval);
+          processing.classList.remove("active");
+          errorBox.classList.add("active");
+          document.getElementById("errorMsg").textContent = err.message;
+        }
+        submitBtn.disabled = false;
+      });
+
+      function formatAcres(acres) {
+        return acres.toFixed(2) + ' <span class="unit">acres</span>';
+      }
+
+      function showResults(data) {
+        results.classList.add("active");
+        explanation.classList.add("active");
+
+        document.getElementById("plotArea").innerHTML = formatAcres(
+          data.plot_area_acres,
+        );
+        document.getElementById("cropArea").innerHTML = formatAcres(
+          data.cropland_area_acres,
+        );
+        document.getElementById("vegArea").innerHTML = formatAcres(
+          data.active_vegetation_area_acres,
+        );
+        document.getElementById("cultPct").innerHTML =
+          data.cultivated_percentage.toFixed(1) +
+          '<span class="unit"> %</span>';
+
+        // Decision badge
+        const badge = document.getElementById("decisionBadge");
+        badge.textContent = data.decision;
+        badge.className = "badge " + data.decision.toLowerCase();
+
+        // Confidence bar
+        const pct = Math.min(100, data.confidence_score * 100);
+        const bar = document.getElementById("confBar");
+        bar.style.width = pct + "%";
+        bar.className =
+          "conf-bar " + (pct >= 65 ? "high" : pct >= 35 ? "medium" : "low");
+        document.getElementById("confValue").textContent =
+          (data.confidence_score * 100).toFixed(1) + "%";
+
+        // Land class breakdown
+        const CLASS_COLORS = {
+          Trees: "#2d6a4f",
+          Shrubland: "#95d5b2",
+          Grassland: "#d4e09b",
+          Cropland: "#f4a261",
+          "Built-up": "#e76f51",
+          "Bare / Sparse Vegetation": "#c9b99a",
+          "Permanent Water": "#457b9d",
+          "Herbaceous Wetland": "#a8dadc",
+          Mangroves: "#1d3557",
+          "Moss and Lichen": "#b5e48c",
+        };
+
+        if (data.land_classes && Object.keys(data.land_classes).length > 0) {
+          document.getElementById("landClasses").style.display = "block";
+          document.getElementById("dominantBadge").textContent =
+            "🏷️ Dominant: " + data.dominant_class;
+
+          const totalAcres = data.plot_area_acres;
+          const container = document.getElementById("classRows");
+          container.innerHTML = "";
+
+          // Sort classes by area descending
+          const sorted = Object.entries(data.land_classes).sort(
+            (a, b) => b[1] - a[1],
+          );
+
+          for (const [name, acres] of sorted) {
+            const classPct = totalAcres > 0 ? (acres / totalAcres) * 100 : 0;
+            const color = CLASS_COLORS[name] || "#718096";
+            container.innerHTML += `
+              <div class="class-row">
+                <span class="class-dot" style="background:${color}"></span>
+                <span class="class-name">${name}</span>
+                <div class="class-bar-bg">
+                  <div class="class-bar" style="width:${classPct}%;background:${color}"></div>
+                </div>
+                <span class="class-pct">${classPct.toFixed(1)}%</span>
+                <span class="class-acres">${acres.toFixed(2)} ac</span>
+              </div>`;
+          }
+        } else {
+          document.getElementById("landClasses").style.display = "none";
+        }
+
+        // Map preview
+        if (data.polygon_coords && data.polygon_coords.length > 0) {
+          document.getElementById("mapSection").style.display = "block";
+          if (mapInstance) {
+            mapInstance.remove();
+          }
+          mapInstance = L.map("map");
+          L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            {
+              attribution: "&copy; Esri",
+              maxZoom: 19,
+            },
+          ).addTo(mapInstance);
+          const poly = L.polygon(data.polygon_coords, {
+            color: "#63b3ed",
+            weight: 3,
+            fillColor: "#63b3ed",
+            fillOpacity: 0.15,
+          }).addTo(mapInstance);
+          mapInstance.fitBounds(poly.getBounds().pad(0.3));
+        }
+
+        // Satellite + Green mask + SAR preview
+        if (data.satellite_thumbnail && data.green_mask_thumbnail) {
+          document.getElementById("previewSection").style.display = "block";
+          document.getElementById("satelliteImg").src =
+            "data:image/png;base64," + data.satellite_thumbnail;
+          document.getElementById("greenMaskImg").src =
+            "data:image/png;base64," + data.green_mask_thumbnail;
+          document.getElementById("greenAreaBadge").textContent =
+            "🌿 Green Area: " + data.green_area_acres.toFixed(2) + " acres";
+          // SAR thumbnail
+          if (data.sar_thumbnail) {
+            document.getElementById("sarThumbDiv").style.display = "block";
+            document.getElementById("sarImg").src =
+              "data:image/png;base64," + data.sar_thumbnail;
+          } else {
+            document.getElementById("sarThumbDiv").style.display = "none";
+          }
+        } else {
+          document.getElementById("previewSection").style.display = "none";
+        }
+
+        // ML Classification badge
+        const mlBadge = document.getElementById("mlBadge");
+        if (data.agricultural_probability != null) {
+          const prob = (data.agricultural_probability * 100).toFixed(0);
+          if (data.using_ml) {
+            mlBadge.textContent = "🤖 ML: " + prob + "% agricultural";
+            mlBadge.style.background = "rgba(99,179,237,0.15)";
+            mlBadge.style.color = "#63b3ed";
+          } else {
+            mlBadge.textContent = "📊 Fused: " + prob + "% agricultural";
+            mlBadge.style.background = "rgba(246,173,85,0.12)";
+            mlBadge.style.color = "#f6ad55";
+          }
+          mlBadge.style.display = "inline-block";
+        }
+
+        // SAR stats section
+        if (data.sar_crop_score != null) {
+          document.getElementById("sarStatsSection").style.display = "block";
+          document.getElementById("sarScore").textContent =
+            (data.sar_crop_score * 100).toFixed(0) + "%";
+          document.getElementById("vhvvRatio").textContent =
+            data.vh_vv_ratio != null ? data.vh_vv_ratio.toFixed(3) : "N/A";
+          document.getElementById("elevationVal").textContent =
+            (data.elevation_m || 0).toFixed(0) + " m";
+          document.getElementById("slopeVal").textContent =
+            (data.slope_deg || 0).toFixed(1) + "°";
+        } else {
+          document.getElementById("sarStatsSection").style.display = "none";
+        }
+
+        // Yield Feasibility
+        if (data.claimed_crop && data.yield_confidence) {
+          document.getElementById("yieldSection").style.display = "block";
+          document.getElementById("yieldCrop").textContent = data.claimed_crop;
+          document.getElementById("yieldEst").textContent =
+            data.estimated_yield_ton_per_hectare.toFixed(2);
+          document.getElementById("yieldTotal").textContent =
+            data.total_estimated_yield_tons.toFixed(2);
+          const feasPct = (data.yield_feasibility_score * 100).toFixed(0);
+          document.getElementById("yieldFeasVal").textContent = feasPct + "%";
+          document.getElementById("yieldFeasBar").style.width = feasPct + "%";
+
+          const confBadge = document.getElementById("yieldConfBadge");
+          confBadge.textContent = data.yield_confidence;
+          if (data.yield_confidence === "HIGH") {
+            confBadge.style.background = "rgba(72,187,120,0.15)";
+            confBadge.style.color = "#68d391";
+          } else if (data.yield_confidence === "MODERATE") {
+            confBadge.style.background = "rgba(246,224,94,0.15)";
+            confBadge.style.color = "#f6e05e";
+          } else {
+            confBadge.style.background = "rgba(252,129,74,0.15)";
+            confBadge.style.color = "#fc8150";
+          }
+
+          // Weather comparison table
+          if (data.weather_actual && data.parameter_scores) {
+            document.getElementById("weatherComparison").style.display =
+              "block";
+            document.getElementById("weatherPeriod").textContent =
+              "📅 " +
+              (data.weather_actual.period || "") +
+              " (" +
+              (data.weather_actual.days_sampled || 0) +
+              " days)";
+
+            // Update header to show season months if available
+            const seasonLabel = document.getElementById("weatherPeriodLabel");
+            if (data.weather_actual.season_months) {
+              const monthNames = [
+                "",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+              ];
+              const parts = data.weather_actual.season_months.split("-");
+              const startM = monthNames[parseInt(parts[0])] || parts[0];
+              const endM = monthNames[parseInt(parts[1])] || parts[1];
+              seasonLabel.textContent = `(${startM}–${endM} Season)`;
+            } else {
+              seasonLabel.textContent = "(Last 90 Days)";
+            }
+
+            const rows = [
+              {
+                label: "🌡️ Temperature",
+                actual: data.weather_actual.avg_temp_c + " °C",
+                ideal: data.crop_ideal.temp_range_c + " °C",
+                score: data.parameter_scores.temperature,
+              },
+              {
+                label: "🌧️ Rainfall",
+                actual: data.weather_actual.total_rainfall_mm + " mm",
+                ideal: data.crop_ideal.rainfall_range_mm + " mm",
+                score: data.parameter_scores.rainfall,
+              },
+              {
+                label: "💧 Humidity",
+                actual: data.weather_actual.avg_humidity_pct + " %",
+                ideal: data.crop_ideal.humidity_range_pct + " %",
+                score: data.parameter_scores.humidity,
+              },
+              {
+                label: "🏜️ Soil Moisture",
+                actual:
+                  (data.weather_actual.avg_soil_moisture || 0).toFixed(3) +
+                  " m³/m³",
+                ideal:
+                  (data.crop_ideal.soil_moisture_range || "0.15–0.40") +
+                  " m³/m³",
+                score: data.parameter_scores.soil_moisture || 0.5,
+              },
+              {
+                label: "🌿 Vegetation",
+                actual: "NDVI from satellite",
+                ideal: "≥ 0.3 optimal",
+                score: data.parameter_scores.vegetation,
+              },
+            ];
+
+            let html = "";
+            rows.forEach((r) => {
+              const pct = (r.score * 100).toFixed(0);
+              const color =
+                r.score >= 0.7
+                  ? "#68d391"
+                  : r.score >= 0.4
+                    ? "#f6e05e"
+                    : "#fc8150";
+              html += `
+                <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1.2fr; gap:0.5rem; align-items:center; padding:0.45rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.7rem;">
+                  <div style="color:#cbd5e0; font-weight:500;">${r.label}</div>
+                  <div style="color:#e2e8f0; text-align:center;">${r.actual}</div>
+                  <div style="color:#718096; text-align:center; font-size:0.62rem;">${r.ideal}</div>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <div style="flex:1; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
+                      <div style="height:100%; width:${pct}%; background:${color}; border-radius:3px; transition:width 0.6s ease;"></div>
+                    </div>
+                    <span style="color:${color}; font-size:0.65rem; font-weight:600; min-width:2rem; text-align:right;">${pct}%</span>
+                  </div>
+                </div>`;
+            });
+            document.getElementById("comparisonRows").innerHTML = html;
+
+            // Unsuitability / critical-failure warning banner
+            let unsuitBanner = document.getElementById("unsuitabilityBanner");
+            if (!unsuitBanner) {
+              unsuitBanner = document.createElement("div");
+              unsuitBanner.id = "unsuitabilityBanner";
+              document.getElementById("weatherComparison").after(unsuitBanner);
+            }
+
+            const showCritical =
+              data.has_critical_failure || data.is_unsuitable;
+            const hasReasons =
+              data.unsuitability_reasons &&
+              data.unsuitability_reasons.length > 0;
+
+            if (showCritical || hasReasons) {
+              // Pick styling based on severity
+              const isSevere = data.is_unsuitable; // overall < 40%
+              const bgColor = isSevere
+                ? "rgba(229,62,62,0.10)"
+                : "rgba(252,129,74,0.08)";
+              const borderColor = isSevere
+                ? "rgba(229,62,62,0.4)"
+                : "rgba(252,129,74,0.3)";
+              const headColor = isSevere ? "#fc5050" : "#fc8150";
+
+              // Headline text
+              const headline =
+                data.yield_warning ||
+                (isSevere
+                  ? `🚫 ${data.claimed_crop} is NOT RECOMMENDED for this region`
+                  : `⚠️ ${data.claimed_crop} will have POOR YIELD here`);
+
+              let warnHtml = `
+                <div style="margin-top:1rem; background:${bgColor}; border:1px solid ${borderColor}; border-radius:10px; padding:0.8rem 1rem;">
+                  <div style="font-size:0.8rem; font-weight:700; color:${headColor}; margin-bottom:0.4rem;">
+                    ${headline}
+                  </div>`;
+
+              if (hasReasons) {
+                data.unsuitability_reasons.forEach((r) => {
+                  const reasonColor = r.score <= 0.05 ? "#fc5050" : "#fbb040";
+                  warnHtml += `
+                    <div style="font-size:0.68rem; color:#e2e8f0; padding:0.3rem 0; display:flex; align-items:center; gap:0.5rem; border-top:1px solid rgba(255,255,255,0.04);">
+                      <span style="font-size:0.85rem;">${r.icon}</span>
+                      <span style="flex:1;">${r.reason}</span>
+                      <span style="color:${reasonColor}; font-weight:700; font-size:0.65rem; min-width:2rem; text-align:right;">${(r.score * 100).toFixed(0)}%</span>
+                    </div>`;
+                });
+              }
+
+              warnHtml += `</div>`;
+              unsuitBanner.innerHTML = warnHtml;
+              unsuitBanner.style.display = "block";
+            } else {
+              unsuitBanner.innerHTML = "";
+              unsuitBanner.style.display = "none";
+            }
+          }
+        } else {
+          document.getElementById("yieldSection").style.display = "none";
+        }
+
+        // Crop Recommendations (always show if data available)
+        if (data.recommended_crops && data.recommended_crops.length > 0) {
+          document.getElementById("recoSection").style.display = "block";
+          const recoContainer = document.getElementById("recoCards");
+          let recoHtml = "";
+          data.recommended_crops.forEach((crop) => {
+            const pct = crop.suitability_pct;
+            const barColor =
+              pct >= 70 ? "#68d391" : pct >= 40 ? "#f6e05e" : "#fc8150";
+            const rankEmoji =
+              crop.rank === 1
+                ? "🥇"
+                : crop.rank === 2
+                  ? "🥈"
+                  : crop.rank === 3
+                    ? "🥉"
+                    : "#" + crop.rank;
+            const borderColor =
+              crop.rank === 1
+                ? "rgba(255,215,0,0.25)"
+                : crop.rank === 2
+                  ? "rgba(192,192,192,0.2)"
+                  : crop.rank === 3
+                    ? "rgba(205,127,50,0.2)"
+                    : "rgba(99,179,237,0.08)";
+            recoHtml += `
+              <div style="
+                background: linear-gradient(135deg, rgba(26,32,64,0.9), rgba(20,26,46,0.95));
+                border: 1px solid ${borderColor};
+                border-radius: 10px;
+                padding: 0.8rem;
+                text-align: center;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                cursor: default;
+              " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+                <div style="font-size: 1.2rem; margin-bottom: 0.3rem;">${rankEmoji}</div>
+                <div style="color: #e2e8f0; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.3rem;">${crop.crop}</div>
+                <div style="font-size: 1.4rem; font-weight: 700; color: ${barColor}; margin-bottom: 0.3rem;">${pct}%</div>
+                <div style="font-size: 0.55rem; color: #718096; margin-bottom: 0.5rem;">suitability</div>
+                <div style="height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem;">
+                  <div style="height: 100%; width: ${pct}%; background: ${barColor}; border-radius: 3px; transition: width 0.6s ease;"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.2rem; font-size: 0.52rem; color: #a0aec0;">
+                  <div>🌡️ ${(crop.temp_score * 100).toFixed(0)}%</div>
+                  <div>🌧️ ${(crop.rain_score * 100).toFixed(0)}%</div>
+                  <div>💧 ${(crop.humidity_score * 100).toFixed(0)}%</div>
+                  <div>🏜️ ${((crop.soil_score || 0.5) * 100).toFixed(0)}%</div>
+                  <div>🌿 ${(crop.vegetation_score * 100).toFixed(0)}%</div>
+                </div>
+                ${
+                  crop.unsuitability_reasons &&
+                  crop.unsuitability_reasons.length > 0
+                    ? `
+                <div style="margin-top:0.4rem; padding:0.3rem 0.5rem; background:rgba(252,129,74,0.1); border-radius:6px; font-size:0.5rem; color:#fc8150;">
+                  ⚠️ ${crop.unsuitability_reasons.map((r) => r.reason.split(" — ")[0]).join(", ")}
+                </div>`
+                    : ""
+                }
+              </div>`;
+          });
+          recoContainer.innerHTML = recoHtml;
+        } else {
+          document.getElementById("recoSection").style.display = "none";
+        }
+
+        // Show plot confirmation section — only for PASS or REVIEW plots
+        const vDecision =
+          (lastValidationData && lastValidationData.decision) || "";
+        if (vDecision === "PASS" || vDecision === "REVIEW") {
+          document.getElementById("confirmSection").style.display = "block";
+          document.getElementById("confirmPrompt").style.display = "block";
+          document.getElementById("farmerForm").style.display = "none";
+          document.getElementById("confirmResult").style.display = "none";
+        } else {
+          // FAIL — hide the save option, show explanation
+          document.getElementById("confirmSection").style.display = "block";
+          document.getElementById("confirmPrompt").style.display = "none";
+          document.getElementById("farmerForm").style.display = "none";
+          document.getElementById("confirmResult").style.display = "block";
+          document.getElementById("confirmResult").innerHTML = `
+            <div style="text-align:center; padding:1.5rem;">
+              <div style="font-size:2rem; margin-bottom:0.5rem;">🚫</div>
+              <div style="color:#fc8150; font-weight:700; font-size:0.85rem; margin-bottom:0.3rem;">
+                Cannot Register Plot
+              </div>
+              <div style="color:#a0aec0; font-size:0.7rem;">
+                This land did not pass the cultivated-land validation.<br>
+                Only plots with sufficient vegetation and cropland can be registered.
+              </div>
+            </div>`;
+        }
+      }
+
+      // ─── Plot Confirmation Handlers ──────────────────
+
+      document.getElementById("confirmYesBtn").addEventListener("click", () => {
+        document.getElementById("confirmPrompt").style.display = "none";
+        document.getElementById("farmerForm").style.display = "block";
+      });
+
+      document.getElementById("confirmNoBtn").addEventListener("click", () => {
+        document.getElementById("confirmSection").style.display = "none";
+      });
+
+      document
+        .getElementById("savePlotBtn")
+        .addEventListener("click", async () => {
+          const name = document.getElementById("farmerName").value.trim();
+          const phone = document.getElementById("farmerPhone").value.trim();
+          const email = document.getElementById("farmerEmail").value.trim();
+          const label = document.getElementById("plotLabel").value.trim();
+
+          if (!name || !phone) {
+            alert("Please enter your name and phone number.");
+            return;
+          }
+
+          if (!lastValidationData) {
+            alert("No validation data found. Please validate a plot first.");
+            return;
+          }
+
+          // Build polygon GeoJSON from the coordinates
+          const coords = lastValidationData.polygon_coords;
+          const polygonGeoJSON = {
+            type: "Polygon",
+            coordinates: [coords.map((c) => [c[0], c[1]])],
+          };
+
+          const saveBtn = document.getElementById("savePlotBtn");
+          const spinner = document.getElementById("savingSpinner");
+          saveBtn.disabled = true;
+          spinner.style.display = "inline";
+
+          try {
+            const res = await fetch("/confirm_plot", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                farmer_name: name,
+                farmer_phone: phone,
+                farmer_email: email,
+                plot_label: label,
+                polygon_geojson: polygonGeoJSON,
+                kml_data: lastKmlContent,
+                area_acres: lastValidationData.plot_area_acres || 0,
+                cultivated_percentage:
+                  lastValidationData.cultivated_percentage || 100,
+                ndvi_mean: 0,
+                decision: lastValidationData.decision || "",
+                confidence_score: lastValidationData.confidence_score || 0,
+              }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Save failed");
+
+            // Show result
+            document.getElementById("farmerForm").style.display = "none";
+            const resultDiv = document.getElementById("confirmResult");
+            resultDiv.style.display = "block";
+
+            if (data.has_overlap_warning) {
+              let overlapHtml = data.overlaps
+                .map(
+                  (o) => `
+              <div style="background:rgba(255,100,50,0.1);border:1px solid rgba(255,100,50,0.3);border-radius:8px;padding:0.8rem;margin-top:0.5rem">
+                <div style="color:#fc8150;font-weight:600;font-size:0.85rem">⚠️ Overlap: ${(o.overlap_pct * 100).toFixed(1)}%</div>
+                <div style="color:#a0aec0;font-size:0.75rem;margin-top:0.3rem">
+                  Overlaps with plot "${o.existing_plot_label || "Unnamed"}" by farmer ${o.existing_farmer_name || "Unknown"} (${o.existing_farmer_phone || "N/A"})
+                </div>
+              </div>
+            `,
+                )
+                .join("");
+
+              resultDiv.innerHTML = `
+              <div style="text-align:center">
+                <div style="font-size:2rem;margin-bottom:0.5rem">⚠️</div>
+                <h3 style="color:#f6e05e;margin-bottom:0.5rem">Plot Saved — Overlap Detected!</h3>
+                <p style="color:#a0aec0;font-size:0.82rem;margin-bottom:1rem">${data.message}</p>
+                ${overlapHtml}
+                <p style="color:#718096;font-size:0.72rem;margin-top:1rem;font-style:italic">Admin has been notified about this overlap.</p>
+                <a href="mailto:shaanshoukath44@gmail.com?subject=${encodeURIComponent("⚠️ Plot Overlap Report — Plot ID: " + data.plot_id)}&body=${encodeURIComponent(
+                  "OVERLAP REPORT\n\n" +
+                    "New Plot ID: " +
+                    data.plot_id +
+                    "\n" +
+                    "Farmer: " +
+                    document.getElementById("farmerName").value +
+                    "\n" +
+                    "Phone: " +
+                    document.getElementById("farmerPhone").value +
+                    "\n\n" +
+                    "Overlapping Plots:\n" +
+                    data.overlaps
+                      .map(
+                        (o) =>
+                          "  • " +
+                          (o.existing_plot_label || "Unnamed") +
+                          " — " +
+                          (o.overlap_pct * 100).toFixed(1) +
+                          "% overlap (Farmer: " +
+                          (o.existing_farmer_name || "Unknown") +
+                          ", Phone: " +
+                          (o.existing_farmer_phone || "N/A") +
+                          ")",
+                      )
+                      .join("\n") +
+                    "\n\nPlease investigate this overlap.",
+                )}" target="_blank" style="
+                  display:inline-block; margin-top:1rem;
+                  background: linear-gradient(135deg,#e53e3e,#c53030);
+                  color:#fff; border:none; padding:0.7rem 2rem; border-radius:10px;
+                  font-weight:600; cursor:pointer; font-size:0.82rem;
+                  text-decoration:none;
+                  transition: transform 0.2s, box-shadow 0.2s;
+                " onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 15px rgba(229,62,62,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">📧 Report to Admin</a>
+              </div>`;
+            } else {
+              resultDiv.innerHTML = `
+              <div style="text-align:center">
+                <div style="font-size:2rem;margin-bottom:0.5rem">✅</div>
+                <h3 style="color:#68d391;margin-bottom:0.5rem">Plot Saved Successfully!</h3>
+                <p style="color:#a0aec0;font-size:0.82rem">${data.message}</p>
+                <p style="color:#718096;font-size:0.72rem;margin-top:0.8rem">Plot ID: ${data.plot_id}</p>
+              </div>`;
+            }
+          } catch (err) {
+            document.getElementById("farmerForm").style.display = "none";
+            const resultDiv = document.getElementById("confirmResult");
+            resultDiv.style.display = "block";
+            resultDiv.innerHTML = `
+            <div style="text-align:center">
+              <div style="font-size:2rem;margin-bottom:0.5rem">❌</div>
+              <h3 style="color:#fc8181;margin-bottom:0.5rem">Save Failed</h3>
+              <p style="color:#a0aec0;font-size:0.82rem">${err.message}</p>
+            </div>`;
+          }
+          saveBtn.disabled = false;
+          spinner.style.display = "none";
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+geopandas
+shapely
+requests
+python-dotenv
+fastapi
+uvicorn[standard]
+earthengine-api
+pydantic
+python-multipart
+supabase
+xgboost
+scikit-learn
