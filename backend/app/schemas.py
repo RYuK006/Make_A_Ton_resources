@@ -56,21 +56,35 @@ class ProductVariantCreate(ProductVariantBase):
 class ProductVariantResponse(ProductVariantBase):
     id: str
     product_id: str
+    calculated_price: Optional[float] = None
     class Config:
         from_attributes = True
 
 # Product Schemas
 class ProductBase(BaseModel):
     name: str
+    type: str = "Service"
     description: Optional[str] = None
-    base_price: float
+    notes: Optional[str] = None
+    base_price: float = 0.0
+    sales_price: Optional[float] = None
+    cost_price: float = 0.0
     is_active: bool = True
 
-class ProductCreate(ProductBase):
+class ProductCreate(BaseModel):
+    name: str
+    type: Optional[str] = "Service"
+    description: Optional[str] = None
+    notes: Optional[str] = None
+    sales_price: Optional[float] = None
+    base_price: Optional[float] = None
+    cost_price: float = 0.0
+    is_active: bool = True
     variants: Optional[List[ProductVariantCreate]] = []
 
 class ProductResponse(ProductBase):
     id: str
+    sales_price: float = 0.0
     variants: List[ProductVariantResponse] = []
     class Config:
         from_attributes = True
@@ -80,8 +94,11 @@ class PlanBase(BaseModel):
     name: str
     billing_interval: Literal["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
     interval_count: int = 1
+    min_quantity: int = 1
     auto_close: bool = False
     grace_period_days: int = 7
+    valid_from: Optional[date] = None
+    valid_until: Optional[date] = None
 
 class PlanCreate(PlanBase):
     pass
@@ -149,6 +166,21 @@ class DiscountResponse(DiscountBase):
     class Config:
         from_attributes = True
 
+class DiscountValidateRequest(BaseModel):
+    code: str
+    subtotal: float
+    total_qty: int = 1
+    target_date: Optional[date] = None
+
+class DiscountValidateResponse(BaseModel):
+    is_valid: bool
+    code: str
+    discount_type: str
+    value: float
+    discount_amount: float
+    final_amount: float
+    message: str
+
 # Subscription Line Schemas
 class SubscriptionLineCreate(BaseModel):
     product_id: str
@@ -174,7 +206,7 @@ class SubscriptionCreate(BaseModel):
     start_date: Optional[date] = None
 
 class SubscriptionTransitionRequest(BaseModel):
-    action: Literal["QUOTE", "CONFIRM", "CLOSE", "CANCEL"]
+    action: Literal["QUOTE", "CONFIRM", "ACTIVATE", "CLOSE", "CANCEL"]
 
 class SubscriptionResponse(BaseModel):
     id: str
@@ -182,7 +214,7 @@ class SubscriptionResponse(BaseModel):
     customer_id: str
     plan_id: str
     discount_id: Optional[str]
-    status: Literal["DRAFT", "QUOTATION", "ACTIVE", "CLOSED", "CANCELLED"]
+    status: Literal["DRAFT", "QUOTATION", "CONFIRMED", "ACTIVE", "CLOSED", "CANCELLED"]
     start_date: date
     next_billing_date: date
     last_invoice_date: Optional[date] = None
