@@ -1,0 +1,956 @@
+{
+  "products": [
+    {
+      "id": "5596d61b-8fba-4643-89ad-6c78bde03d80",
+      "name": "Brightloop Enterprise ERP",
+      "base_price": 1200.0,
+      "variants": [
+        {
+          "id": "71442009-f54d-4a79-ab80-3f16034554e3",
+          "attribute_name": "Brand Integration",
+          "attribute_value": "Odoo",
+          "price_modifier": 560.0
+        },
+        {
+          "id": "59c14bc6-d38f-49bb-ad91-78ba0048e8e4",
+          "attribute_name": "Brand Integration",
+          "attribute_value": "Native Standalone",
+          "price_modifier": 0.0
+        },
+        {
+          "id": "4a8741c8-e91b-4350-913a-8a4a8a1d195a",
+          "attribute_name": "Cloud Tier",
+          "attribute_value": "High-Availability Multi-Region",
+          "price_modifier": 250.0
+        }
+      ]
+    },
+    {
+      "id": "89fd6925-e620-4b66-9ab2-c8b695794a1e",
+      "name": "Mission-Critical SLA Support Node",
+      "base_price": 450.0,
+      "variants": []
+    },
+    {
+      "id": "241f442b-e181-464f-ae0c-b49e64ca761d",
+      "name": "AI Finance Copilot Addon",
+      "base_price": 199.0,
+      "variants": []
+    },
+    {
+      "id": "dd8e5f1c-c879-4a84-af2e-313cc4b46ec9",
+      "name": "Automated Invoicing & Tax Engine",
+      "base_price": 299.0,
+      "variants": []
+    }
+  ],
+  "plans": [
+    {
+      "id": "3c6d0599-5085-4413-ae4e-9181774164b5",
+      "name": "Monthly Standard",
+      "billing_interval": "MONTHLY",
+      "auto_close": false
+    },
+    {
+      "id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4",
+      "name": "Annual Pro (15% Savings)",
+      "billing_interval": "YEARLY",
+      "auto_close": false
+    },
+    {
+      "id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353",
+      "name": "Weekly High-Frequency",
+      "billing_interval": "WEEKLY",
+      "auto_close": false
+    },
+    {
+      "id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb",
+      "name": "Daily Trial Pass",
+      "billing_interval": "DAILY",
+      "auto_close": true
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "7f691300-a93e-499a-8c7c-151650ed5fc0",
+      "subscription_number": "SUB-2026-00001",
+      "status": "DRAFT",
+      "start_date": "2026-03-13",
+      "next_billing_date": "2026-11-23",
+      "total_recurring_amount": 6200.0,
+      "plan_id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb"
+    },
+    {
+      "id": "551df72b-1272-48db-acc2-432c35d4f3bb",
+      "subscription_number": "SUB-2026-00002",
+      "status": "ACTIVE",
+      "start_date": "2026-01-10",
+      "next_billing_date": "2026-11-30",
+      "total_recurring_amount": 405.0,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "11276f86-e6cc-455c-a0ba-155ebe52f814",
+      "subscription_number": "SUB-2026-00003",
+      "status": "ACTIVE",
+      "start_date": "2026-07-08",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 269.1,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "79a36a39-7ebc-4b9f-a7b5-37cb21e352f4",
+      "subscription_number": "SUB-2026-00004",
+      "status": "CLOSED",
+      "start_date": "2026-08-15",
+      "next_billing_date": "2026-11-22",
+      "total_recurring_amount": 299.0,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "5b68e28c-6a89-4603-a6aa-a2bf5e345209",
+      "subscription_number": "SUB-2026-00005",
+      "status": "ACTIVE",
+      "start_date": "2025-12-21",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 450.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "4dd863b9-e6b8-4e77-9f96-2a8621ff6d75",
+      "subscription_number": "SUB-2026-00006",
+      "status": "ACTIVE",
+      "start_date": "2025-12-25",
+      "next_billing_date": "2026-11-01",
+      "total_recurring_amount": 1978.2,
+      "plan_id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb"
+    },
+    {
+      "id": "d178a7b0-9d9d-4a13-9dc6-ab4d5270d038",
+      "subscription_number": "SUB-2026-00007",
+      "status": "ACTIVE",
+      "start_date": "2025-11-23",
+      "next_billing_date": "2026-11-22",
+      "total_recurring_amount": 2650.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "49842650-f7c3-41a2-ab9b-35055caa2b92",
+      "subscription_number": "SUB-2026-00008",
+      "status": "ACTIVE",
+      "start_date": "2025-12-27",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 1000.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "eeaa8689-8ea7-4efd-8bb1-93a82761bc9d",
+      "subscription_number": "SUB-2026-00009",
+      "status": "ACTIVE",
+      "start_date": "2026-02-08",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 1948.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "461273e2-4b7c-42af-8d78-89275c0a746b",
+      "subscription_number": "SUB-2026-00010",
+      "status": "ACTIVE",
+      "start_date": "2026-07-25",
+      "next_billing_date": "2026-11-19",
+      "total_recurring_amount": 3799.0,
+      "plan_id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb"
+    },
+    {
+      "id": "b339f840-6858-472e-8b85-b27d836a0eab",
+      "subscription_number": "SUB-2026-00011",
+      "status": "DRAFT",
+      "start_date": "2026-04-06",
+      "next_billing_date": "2026-09-25",
+      "total_recurring_amount": 3778.2,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "4fc8a000-99bc-42bb-9343-e7a1b7e21d7d",
+      "subscription_number": "SUB-2026-00012",
+      "status": "ACTIVE",
+      "start_date": "2025-11-07",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 845.75,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "34f7e54f-5857-455b-97ab-452e14371256",
+      "subscription_number": "SUB-2026-00013",
+      "status": "ACTIVE",
+      "start_date": "2026-09-01",
+      "next_billing_date": "2026-11-25",
+      "total_recurring_amount": 1449.0,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "3bccfa98-4af1-4d9f-a024-b70f76a3f093",
+      "subscription_number": "SUB-2026-00014",
+      "status": "QUOTATION",
+      "start_date": "2026-02-23",
+      "next_billing_date": "2026-10-28",
+      "total_recurring_amount": 1446.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "5291a2ce-50d3-4c2c-a54b-823cd1cc2dac",
+      "subscription_number": "SUB-2026-00015",
+      "status": "ACTIVE",
+      "start_date": "2026-04-06",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 1020.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "2fec4db4-9f2c-4f6b-a6ba-04d7e6390d50",
+      "subscription_number": "SUB-2026-00016",
+      "status": "ACTIVE",
+      "start_date": "2026-07-11",
+      "next_billing_date": "2026-11-03",
+      "total_recurring_amount": 649.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "82cb115b-1a50-485b-98a2-bdda5e9a1f5d",
+      "subscription_number": "SUB-2026-00017",
+      "status": "ACTIVE",
+      "start_date": "2026-05-23",
+      "next_billing_date": "2026-11-21",
+      "total_recurring_amount": 847.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "efcaf1a1-c58d-46e3-b0f6-30e4947566be",
+      "subscription_number": "SUB-2026-00018",
+      "status": "ACTIVE",
+      "start_date": "2025-12-07",
+      "next_billing_date": "2027-10-28",
+      "total_recurring_amount": 3998.0,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "5294022c-a009-4eb3-ad1b-3e9faf62251f",
+      "subscription_number": "SUB-2026-00019",
+      "status": "ACTIVE",
+      "start_date": "2026-01-07",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 749.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "037bd605-84e6-4fbf-8df9-203afaca2bd4",
+      "subscription_number": "SUB-2026-00020",
+      "status": "QUOTATION",
+      "start_date": "2026-08-29",
+      "next_billing_date": "2026-09-28",
+      "total_recurring_amount": 269.1,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "3b36d7bf-9e46-4c3c-9814-d7762a8c3ccf",
+      "subscription_number": "SUB-2026-00021",
+      "status": "QUOTATION",
+      "start_date": "2025-12-02",
+      "next_billing_date": "2026-10-10",
+      "total_recurring_amount": 299.0,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "46ea7f91-4c30-4b63-ac72-5063aeff43ae",
+      "subscription_number": "SUB-2026-00022",
+      "status": "ACTIVE",
+      "start_date": "2026-05-07",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 1574.1,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "3dad23db-8a22-46d2-b86e-d67837016304",
+      "subscription_number": "SUB-2026-00023",
+      "status": "QUOTATION",
+      "start_date": "2026-04-20",
+      "next_billing_date": "2026-11-26",
+      "total_recurring_amount": 1273.3,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "c9e2c307-21e6-4a4d-b475-c6102753e624",
+      "subscription_number": "SUB-2026-00024",
+      "status": "ACTIVE",
+      "start_date": "2026-05-19",
+      "next_billing_date": "2026-11-19",
+      "total_recurring_amount": 598.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "012cf297-1d72-416b-88a3-7406933f3a7a",
+      "subscription_number": "SUB-2026-00025",
+      "status": "ACTIVE",
+      "start_date": "2026-03-07",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 2250.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "2ad140ee-395d-4095-b654-a49c21092453",
+      "subscription_number": "SUB-2026-00026",
+      "status": "ACTIVE",
+      "start_date": "2026-03-17",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 1079.1,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "4b3cfb3e-1db0-4625-b73d-ac9616b131e8",
+      "subscription_number": "SUB-2026-00027",
+      "status": "QUOTATION",
+      "start_date": "2026-04-12",
+      "next_billing_date": "2026-11-24",
+      "total_recurring_amount": 199.0,
+      "plan_id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb"
+    },
+    {
+      "id": "49b80e25-c911-4524-8e4b-f17988ea022f",
+      "subscription_number": "SUB-2026-00028",
+      "status": "ACTIVE",
+      "start_date": "2026-07-24",
+      "next_billing_date": "2026-11-22",
+      "total_recurring_amount": 1698.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "7aa21234-58d2-4eca-a1e0-c41f1d08a66b",
+      "subscription_number": "SUB-2026-00029",
+      "status": "ACTIVE",
+      "start_date": "2026-01-26",
+      "next_billing_date": "2026-11-13",
+      "total_recurring_amount": 508.3,
+      "plan_id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb"
+    },
+    {
+      "id": "2dcc4274-1ef5-4acb-be6b-2e459fecfa93",
+      "subscription_number": "SUB-2026-00030",
+      "status": "ACTIVE",
+      "start_date": "2026-02-15",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 1080.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "c4f2c588-d86b-4cdc-af26-9fe2bfda69bd",
+      "subscription_number": "SUB-2026-00031",
+      "status": "ACTIVE",
+      "start_date": "2025-12-21",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 2698.2,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "807607b3-eb34-478a-bb97-36f04d6f9bc4",
+      "subscription_number": "SUB-2026-00032",
+      "status": "ACTIVE",
+      "start_date": "2026-08-16",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 649.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "7e860ed8-2ee5-4339-812d-75b77e2a8026",
+      "subscription_number": "SUB-2026-00033",
+      "status": "ACTIVE",
+      "start_date": "2026-08-24",
+      "next_billing_date": "2027-10-28",
+      "total_recurring_amount": 3419.1,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "6d90fac0-2a83-4401-89f1-f57634b7fb75",
+      "subscription_number": "SUB-2026-00034",
+      "status": "ACTIVE",
+      "start_date": "2026-01-13",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 450.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "a551749c-bf86-4051-8c50-f8c8c689b7f0",
+      "subscription_number": "SUB-2026-00035",
+      "status": "ACTIVE",
+      "start_date": "2026-01-02",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 1571.65,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "338dc62c-2e1c-4f7d-8be2-00495d96f46f",
+      "subscription_number": "SUB-2026-00036",
+      "status": "ACTIVE",
+      "start_date": "2026-04-16",
+      "next_billing_date": "2026-11-01",
+      "total_recurring_amount": 931.6,
+      "plan_id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb"
+    },
+    {
+      "id": "cc45c2f8-dc10-40f2-8496-83ef587f1d1f",
+      "subscription_number": "SUB-2026-00037",
+      "status": "ACTIVE",
+      "start_date": "2026-04-10",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 890.8,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "d9c36ebf-a843-4a19-aaef-7b8fd06b6d1e",
+      "subscription_number": "SUB-2026-00038",
+      "status": "ACTIVE",
+      "start_date": "2026-06-05",
+      "next_billing_date": "2026-11-08",
+      "total_recurring_amount": 597.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "2267b1d4-2e94-40c9-b765-a1f120c1f489",
+      "subscription_number": "SUB-2026-00039",
+      "status": "ACTIVE",
+      "start_date": "2025-11-10",
+      "next_billing_date": "2027-10-28",
+      "total_recurring_amount": 1212.3,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "127ff7d2-ad91-47c8-9b08-5af942d193e9",
+      "subscription_number": "SUB-2026-00040",
+      "status": "ACTIVE",
+      "start_date": "2026-01-17",
+      "next_billing_date": "2026-11-29",
+      "total_recurring_amount": 199.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "f3ca6cc8-26cc-48b3-8b73-76be2270840f",
+      "subscription_number": "SUB-2026-00041",
+      "status": "DRAFT",
+      "start_date": "2026-01-26",
+      "next_billing_date": "2026-09-29",
+      "total_recurring_amount": 2350.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "25c9a1f7-a60e-4b2a-8bdf-0abd931e8cc8",
+      "subscription_number": "SUB-2026-00042",
+      "status": "ACTIVE",
+      "start_date": "2026-04-10",
+      "next_billing_date": "2026-11-22",
+      "total_recurring_amount": 269.1,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "8e8df03c-861a-42a0-bcc9-6b107fbd2691",
+      "subscription_number": "SUB-2026-00043",
+      "status": "ACTIVE",
+      "start_date": "2026-03-23",
+      "next_billing_date": "2026-11-01",
+      "total_recurring_amount": 749.0,
+      "plan_id": "4d9b7b3e-0975-45b8-97d1-532b2058efeb"
+    },
+    {
+      "id": "d1ab2736-f111-4f71-b464-530270f3bc35",
+      "subscription_number": "SUB-2026-00044",
+      "status": "ACTIVE",
+      "start_date": "2026-08-26",
+      "next_billing_date": "2026-11-07",
+      "total_recurring_amount": 450.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "e444a613-7079-4a9e-82ee-5e3e3f9191c0",
+      "subscription_number": "SUB-2026-00045",
+      "status": "ACTIVE",
+      "start_date": "2026-07-11",
+      "next_billing_date": "2026-11-09",
+      "total_recurring_amount": 598.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "141ec54c-79a9-4c08-b381-ea8cd6add3c5",
+      "subscription_number": "SUB-2026-00046",
+      "status": "ACTIVE",
+      "start_date": "2026-06-07",
+      "next_billing_date": "2026-11-26",
+      "total_recurring_amount": 3520.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "511673ab-1fe9-4c01-a0f0-ffab6047a684",
+      "subscription_number": "SUB-2026-00047",
+      "status": "ACTIVE",
+      "start_date": "2025-12-27",
+      "next_billing_date": "2026-11-29",
+      "total_recurring_amount": 2299.0,
+      "plan_id": "f266b57f-b779-471d-9fc7-76bd24ea7bd4"
+    },
+    {
+      "id": "bcfdcb87-2471-4909-a922-df6f4fdf28ed",
+      "subscription_number": "SUB-2026-00048",
+      "status": "ACTIVE",
+      "start_date": "2026-05-07",
+      "next_billing_date": "2026-11-28",
+      "total_recurring_amount": 3520.0,
+      "plan_id": "3c6d0599-5085-4413-ae4e-9181774164b5"
+    },
+    {
+      "id": "b22a054e-382e-4a6e-97ba-36e2f1f26bfd",
+      "subscription_number": "SUB-2026-00049",
+      "status": "QUOTATION",
+      "start_date": "2026-01-17",
+      "next_billing_date": "2026-11-08",
+      "total_recurring_amount": 450.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    },
+    {
+      "id": "182d500f-1d4d-45a0-8800-80232845f459",
+      "subscription_number": "SUB-2026-00050",
+      "status": "ACTIVE",
+      "start_date": "2026-06-30",
+      "next_billing_date": "2026-11-20",
+      "total_recurring_amount": 1295.0,
+      "plan_id": "4f39e91b-bed1-4d9f-8d8a-8a06ea9b3353"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "77324075-5bbc-4914-8206-78ad1b02b1af",
+      "invoice_number": "INV-2026-00002",
+      "status": "POSTED",
+      "due_date": "2026-11-14",
+      "total_amount": 477.9,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "3d371714-c593-4da6-8576-ec42fdfde1de",
+      "invoice_number": "INV-2026-00004",
+      "status": "PAID",
+      "due_date": "2026-11-06",
+      "total_amount": 352.82,
+      "amount_paid": 352.82
+    },
+    {
+      "id": "05cbc34c-3410-441b-8cf6-34f1d6380fa9",
+      "invoice_number": "INV-2026-00005",
+      "status": "PAID",
+      "due_date": "2026-10-01",
+      "total_amount": 531.0,
+      "amount_paid": 531.0
+    },
+    {
+      "id": "198e6e2d-34da-4144-b885-e174a6fb82d1",
+      "invoice_number": "INV-2026-00007",
+      "status": "PAID",
+      "due_date": "2026-10-30",
+      "total_amount": 3127.0,
+      "amount_paid": 3127.0
+    },
+    {
+      "id": "ee193964-266e-465c-a5a5-57b197c756bc",
+      "invoice_number": "INV-2026-00008",
+      "status": "POSTED",
+      "due_date": "2026-08-28",
+      "total_amount": 1180.0,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "4751ddb3-df43-4f01-b8ca-f7054cfa9b10",
+      "invoice_number": "INV-2026-00012",
+      "status": "POSTED",
+      "due_date": "2026-08-25",
+      "total_amount": 997.98,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "47191a07-7d9c-413b-8407-8b36e02d508b",
+      "invoice_number": "INV-2026-00013",
+      "status": "PAID",
+      "due_date": "2026-11-09",
+      "total_amount": 1709.82,
+      "amount_paid": 1709.82
+    },
+    {
+      "id": "5a317f51-9a92-4f96-8986-e73b3fac65d9",
+      "invoice_number": "INV-2026-00015",
+      "status": "POSTED",
+      "due_date": "2026-09-08",
+      "total_amount": 1203.6,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "57db9097-c4b3-4ad6-b5b8-f2bdc8822628",
+      "invoice_number": "INV-2026-00016",
+      "status": "PAID",
+      "due_date": "2026-10-11",
+      "total_amount": 765.82,
+      "amount_paid": 765.82
+    },
+    {
+      "id": "d13e2439-296b-4a90-9a68-0a574b7ea348",
+      "invoice_number": "INV-2026-00018",
+      "status": "POSTED",
+      "due_date": "2026-10-08",
+      "total_amount": 4717.64,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "03b12d7a-df67-45c4-9e85-b49368d93527",
+      "invoice_number": "INV-2026-00019",
+      "status": "POSTED",
+      "due_date": "2026-10-02",
+      "total_amount": 883.82,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "a7148842-7dee-4ed4-9bc2-176d56ecb380",
+      "invoice_number": "INV-2026-00022",
+      "status": "OVERDUE",
+      "due_date": "2026-09-21",
+      "total_amount": 1857.44,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "5ca20519-3e3d-49da-a76b-5befbe0ce928",
+      "invoice_number": "INV-2026-00025",
+      "status": "PAID",
+      "due_date": "2026-10-06",
+      "total_amount": 2655.0,
+      "amount_paid": 2655.0
+    },
+    {
+      "id": "607f8ef7-d273-4f88-ae27-1e09060f63db",
+      "invoice_number": "INV-2026-00026",
+      "status": "POSTED",
+      "due_date": "2026-09-08",
+      "total_amount": 1273.34,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "93f14a80-dd85-4510-84cd-23a81f84f873",
+      "invoice_number": "INV-2026-00028",
+      "status": "PAID",
+      "due_date": "2026-10-26",
+      "total_amount": 2003.64,
+      "amount_paid": 2003.64
+    },
+    {
+      "id": "0405e664-3644-4a48-96f3-cb29f055f4c3",
+      "invoice_number": "INV-2026-00029",
+      "status": "PAID",
+      "due_date": "2026-10-15",
+      "total_amount": 599.79,
+      "amount_paid": 599.79
+    },
+    {
+      "id": "85e0163d-fc40-437b-936b-81ea0d7a9de5",
+      "invoice_number": "INV-2026-00030",
+      "status": "POSTED",
+      "due_date": "2026-09-18",
+      "total_amount": 1274.4,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "17025629-2fd8-4256-9b87-cef1b4aebb69",
+      "invoice_number": "INV-2026-00031",
+      "status": "POSTED",
+      "due_date": "2026-11-05",
+      "total_amount": 3183.88,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "5bc8f537-dd9e-4a2b-824b-d0dd9fc847f8",
+      "invoice_number": "INV-2026-00033",
+      "status": "PAID",
+      "due_date": "2026-09-19",
+      "total_amount": 4034.54,
+      "amount_paid": 4034.54
+    },
+    {
+      "id": "2d6c8b85-99c5-48f9-8283-a1bedc781a53",
+      "invoice_number": "INV-2026-00034",
+      "status": "PAID",
+      "due_date": "2026-09-07",
+      "total_amount": 531.0,
+      "amount_paid": 531.0
+    },
+    {
+      "id": "8eeb67ab-77f5-4055-ad55-e0eed53d211f",
+      "invoice_number": "INV-2026-00035",
+      "status": "POSTED",
+      "due_date": "2026-10-15",
+      "total_amount": 1854.55,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "14ed5146-7947-4d29-a8e7-214343a91b21",
+      "invoice_number": "INV-2026-00036",
+      "status": "PAID",
+      "due_date": "2026-09-15",
+      "total_amount": 1099.29,
+      "amount_paid": 1099.29
+    },
+    {
+      "id": "4d86acca-ca03-4329-b94d-22c877efb0f8",
+      "invoice_number": "INV-2026-00039",
+      "status": "POSTED",
+      "due_date": "2026-09-01",
+      "total_amount": 1430.51,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "2d56c117-ea54-4117-91c8-fbe24d982d1a",
+      "invoice_number": "INV-2026-00040",
+      "status": "POSTED",
+      "due_date": "2026-11-06",
+      "total_amount": 234.82,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "a3dd77b4-e70c-4ba6-b47a-5288aadda67f",
+      "invoice_number": "INV-2026-00042",
+      "status": "PAID",
+      "due_date": "2026-10-30",
+      "total_amount": 317.54,
+      "amount_paid": 317.54
+    },
+    {
+      "id": "c379758d-ddb0-4b71-92f4-ee09be90eebb",
+      "invoice_number": "INV-2026-00043",
+      "status": "POSTED",
+      "due_date": "2026-09-30",
+      "total_amount": 883.82,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "111d470f-59d2-4c75-8f33-c5882366361a",
+      "invoice_number": "INV-2026-00044",
+      "status": "PAID",
+      "due_date": "2026-09-16",
+      "total_amount": 531.0,
+      "amount_paid": 531.0
+    },
+    {
+      "id": "bcc3f575-2f6f-4edc-b380-e414eb329f82",
+      "invoice_number": "INV-2026-00046",
+      "status": "POSTED",
+      "due_date": "2026-11-03",
+      "total_amount": 4153.6,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "83ef3001-c188-48d8-a3de-7bfb362a2f30",
+      "invoice_number": "INV-2026-00047",
+      "status": "POSTED",
+      "due_date": "2026-11-13",
+      "total_amount": 2712.82,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "d75842ee-6361-4fc4-b933-b1d37369b85f",
+      "invoice_number": "INV-2026-00048",
+      "status": "PAID",
+      "due_date": "2026-10-03",
+      "total_amount": 4153.6,
+      "amount_paid": 4153.6
+    },
+    {
+      "id": "3adf2b0d-cbed-4621-8f6e-64951152fbc6",
+      "invoice_number": "INV-2026-00051",
+      "status": "OVERDUE",
+      "due_date": "2026-09-02",
+      "total_amount": 902.7,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "25ba605b-3960-44d8-aee4-5ff3159d12f7",
+      "invoice_number": "INV-2026-00053",
+      "status": "PAID",
+      "due_date": "2026-10-25",
+      "total_amount": 1539.9,
+      "amount_paid": 1539.9
+    },
+    {
+      "id": "53c9f537-7ff4-4327-9947-481c28b49d0e",
+      "invoice_number": "INV-2026-00054",
+      "status": "PAID",
+      "due_date": "2026-11-01",
+      "total_amount": 1250.74,
+      "amount_paid": 1250.74
+    },
+    {
+      "id": "a69eb28d-28ba-4f5a-8392-20c375b3dab7",
+      "invoice_number": "INV-2026-00055",
+      "status": "PAID",
+      "due_date": "2026-10-16",
+      "total_amount": 469.64,
+      "amount_paid": 469.64
+    },
+    {
+      "id": "28191e5d-8e4d-4aa2-912d-938eb372db86",
+      "invoice_number": "INV-2026-00056",
+      "status": "PAID",
+      "due_date": "2026-10-08",
+      "total_amount": 765.82,
+      "amount_paid": 765.82
+    },
+    {
+      "id": "d43219a1-4d89-4c13-ada7-9b4a5f63e6d4",
+      "invoice_number": "INV-2026-00057",
+      "status": "PAID",
+      "due_date": "2026-11-01",
+      "total_amount": 1178.82,
+      "amount_paid": 1178.82
+    },
+    {
+      "id": "3925b97d-dc79-4dcd-8795-eddc952629ac",
+      "invoice_number": "INV-2026-00063",
+      "status": "PAID",
+      "due_date": "2026-10-27",
+      "total_amount": 234.82,
+      "amount_paid": 234.82
+    },
+    {
+      "id": "97616177-8e45-4419-9345-50d16239420c",
+      "invoice_number": "INV-2026-00064",
+      "status": "OVERDUE",
+      "due_date": "2026-09-29",
+      "total_amount": 1840.8,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "e2fbba3a-4408-4a42-8ac5-cc3607088074",
+      "invoice_number": "INV-2026-00065",
+      "status": "OVERDUE",
+      "due_date": "2026-09-13",
+      "total_amount": 799.39,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "7baebbff-2708-4657-90af-ac8580b8f384",
+      "invoice_number": "INV-2026-00066",
+      "status": "POSTED",
+      "due_date": "2026-10-04",
+      "total_amount": 352.82,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "57f69efc-8034-479f-aa0c-e09a0fb0e101",
+      "invoice_number": "INV-2026-00067",
+      "status": "PAID",
+      "due_date": "2026-09-23",
+      "total_amount": 883.82,
+      "amount_paid": 883.82
+    },
+    {
+      "id": "407bcc70-b09a-4356-bb98-f7ef98db8264",
+      "invoice_number": "INV-2026-00070",
+      "status": "POSTED",
+      "due_date": "2026-09-04",
+      "total_amount": 4387.24,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "36b49829-da8c-4bfa-9bb5-544ab629e0de",
+      "invoice_number": "INV-2026-00072",
+      "status": "POSTED",
+      "due_date": "2026-09-19",
+      "total_amount": 2242.0,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "a9d127ca-ea1a-4e20-b211-4bb7cfd586ca",
+      "invoice_number": "INV-2026-00074",
+      "status": "PAID",
+      "due_date": "2026-09-10",
+      "total_amount": 765.82,
+      "amount_paid": 765.82
+    },
+    {
+      "id": "9fbb2b41-5ae7-4cb3-8561-d4fb3098451f",
+      "invoice_number": "INV-2026-00075",
+      "status": "OVERDUE",
+      "due_date": "2026-09-20",
+      "total_amount": 234.82,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "ae492d78-3eef-4e52-b1cc-7ec92b9654ad",
+      "invoice_number": "INV-2026-00077",
+      "status": "POSTED",
+      "due_date": "2026-09-30",
+      "total_amount": 955.8,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "c50ae235-771b-474b-a448-0aa128535ef2",
+      "invoice_number": "INV-2026-00079",
+      "status": "PAID",
+      "due_date": "2026-10-24",
+      "total_amount": 952.61,
+      "amount_paid": 952.61
+    },
+    {
+      "id": "aa0a3837-d69d-46b8-add8-dc1348aaecf2",
+      "invoice_number": "INV-2026-00081",
+      "status": "OVERDUE",
+      "due_date": "2026-09-28",
+      "total_amount": 1653.95,
+      "amount_paid": 0.0
+    },
+    {
+      "id": "2f0c2ba4-c535-4a68-88ca-3de9946c82f9",
+      "invoice_number": "INV-2026-00082",
+      "status": "PAID",
+      "due_date": "2026-10-11",
+      "total_amount": 531.0,
+      "amount_paid": 531.0
+    },
+    {
+      "id": "908d8482-5e80-46b9-bb60-2802988c4aa2",
+      "invoice_number": "INV-2026-00088",
+      "status": "OVERDUE",
+      "due_date": "2026-08-29",
+      "total_amount": 1236.64,
+      "amount_paid": 0.0
+    }
+  ],
+  "metrics": {
+    "mrr": 47809658.59,
+    "arr": 573715903.05,
+    "active_subscribers_count": 3747,
+    "total_outstanding_ar": 6296056.79,
+    "aging_buckets": [
+      {
+        "bucket": "Current (0-30d)",
+        "count": 2339,
+        "total_amount": 3929550.06
+      },
+      {
+        "bucket": "31-60d Overdue",
+        "count": 1170,
+        "total_amount": 1990088.86
+      },
+      {
+        "bucket": "61-90d Overdue",
+        "count": 214,
+        "total_amount": 376417.87
+      },
+      {
+        "bucket": "90d+ Delinquent",
+        "count": 0,
+        "total_amount": 0.0
+      }
+    ],
+    "sla_query_latency_ms": 172.47
+  }
+}
