@@ -565,6 +565,14 @@ def get_invoices(
         inv.balance_due = inv.amount_residual
     return invoices
 
+@app.get("/api/invoices/{inv_id}", response_model=InvoiceResponse)
+def get_invoice_by_id(inv_id: str, db: Session = Depends(get_db)):
+    invoice = db.query(Invoice).filter(Invoice.id == inv_id).first()
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    invoice.balance_due = invoice.amount_residual
+    return invoice
+
 @app.post("/api/invoices/{inv_id}/pay", response_model=PaymentResponse)
 def settle_invoice_payment(inv_id: str, pay_in: PaymentCreate, db: Session = Depends(get_db)):
     invoice = db.query(Invoice).filter(Invoice.id == inv_id).first()
