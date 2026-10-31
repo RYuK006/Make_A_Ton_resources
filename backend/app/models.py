@@ -30,11 +30,22 @@ class Product(Base):
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     name = Column(String(255), nullable=False, index=True)
+    type = Column(String(50), nullable=False, default="Service") # Service, Storable, Consumable
     description = Column(Text, nullable=True)
-    base_price = Column(Float, nullable=False, default=0.0)
+    notes = Column(Text, nullable=True)
+    base_price = Column(Float, nullable=False, default=0.0) # Sales Price
+    cost_price = Column(Float, nullable=False, default=0.0)
     is_active = Column(Boolean, default=True)
 
     variants = relationship("ProductVariant", back_populates="product", cascade="all, delete-orphan")
+
+    @property
+    def sales_price(self) -> float:
+        return self.base_price
+
+    @sales_price.setter
+    def sales_price(self, val: float):
+        self.base_price = val
 
 class ProductVariant(Base):
     __tablename__ = "product_variants"
@@ -58,8 +69,11 @@ class Plan(Base):
     name = Column(String(255), nullable=False)
     billing_interval = Column(String(50), nullable=False) # DAILY, WEEKLY, MONTHLY, YEARLY
     interval_count = Column(Integer, nullable=False, default=1)
+    min_quantity = Column(Integer, default=1)
     auto_close = Column(Boolean, default=False)
     grace_period_days = Column(Integer, default=7)
+    valid_from = Column(Date, nullable=True)
+    valid_until = Column(Date, nullable=True)
 
     subscriptions = relationship("Subscription", back_populates="plan")
 
