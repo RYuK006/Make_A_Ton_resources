@@ -14,9 +14,12 @@ class User(Base):
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     email = Column(String(255), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False, default="")
     full_name = Column(String(255), nullable=False)
-    role = Column(String(50), nullable=False, default="CUSTOMER") # ADMIN, SALES_REP, CUSTOMER
+    role = Column(String(50), nullable=False, default="CUSTOMER") # ADMIN, STAFF, CUSTOMER
     company_name = Column(String(255), nullable=True)
+    reset_token = Column(String(100), nullable=True)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     subscriptions = relationship("Subscription", back_populates="customer")
@@ -38,7 +41,7 @@ class ProductVariant(Base):
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     product_id = Column(String(36), ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
-    attribute_name = Column(String(100), nullable=False) # e.g. "Brand", "Cloud Tier"
+    attribute_name = Column(String(100), nullable=False) # e.g. "Brand Integration", "Cloud Tier"
     attribute_value = Column(String(100), nullable=False) # e.g. "Odoo", "High-Availability"
     price_modifier = Column(Float, nullable=False, default=0.0) # e.g. +560.00
 
@@ -60,6 +63,32 @@ class Plan(Base):
 
     subscriptions = relationship("Subscription", back_populates="plan")
 
+class QuotationTemplate(Base):
+    __tablename__ = "quotation_templates"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    name = Column(String(255), nullable=False)
+    plan_id = Column(String(36), ForeignKey("plans.id"), nullable=False)
+    validity_days = Column(Integer, nullable=False, default=30)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    plan = relationship("Plan")
+    lines = relationship("QuotationTemplateLine", back_populates="template", cascade="all, delete-orphan")
+
+class QuotationTemplateLine(Base):
+    __tablename__ = "quotation_template_lines"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    template_id = Column(String(36), ForeignKey("quotation_templates.id", ondelete="CASCADE"), nullable=False)
+    product_id = Column(String(36), ForeignKey("products.id"), nullable=False)
+    variant_id = Column(String(36), ForeignKey("product_variants.id"), nullable=True)
+    quantity = Column(Integer, nullable=False, default=1)
+    unit_price = Column(Float, nullable=False, default=0.0)
+
+    template = relationship("QuotationTemplate", back_populates="lines")
+    product = relationship("Product")
+    variant = relationship("ProductVariant")
+
 class Discount(Base):
     __tablename__ = "discounts"
 
@@ -68,9 +97,12 @@ class Discount(Base):
     discount_type = Column(String(50), nullable=False) # PERCENTAGE, FIXED
     value = Column(Float, nullable=False) # 15 for 15% or 200 for $200
     min_order_amount = Column(Float, default=0.0)
+    min_quantity = Column(Integer, default=1)
+    valid_from = Column(Date, nullable=True)
     valid_until = Column(Date, nullable=True)
     max_uses = Column(Integer, nullable=True)
-    times_used = Column(Integer, default=0)
+    used_count = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
 
 class Subscription(Base):
     __tablename__ = "subscriptions"
@@ -122,13 +154,14 @@ class Invoice(Base):
     subscription_id = Column(String(36), ForeignKey("subscriptions.id"), nullable=False, index=True)
     customer_id = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
     idempotency_key = Column(String(64), unique=True, nullable=False, index=True) # SHA256(sub_id + billing_date)
-    status = Column(String(50), nullable=False, default="DRAFT", index=True) # DRAFT, POSTED, PAID, OVERDUE, CANCELLED
+    status = Column(String(50), nullable=False, default="DRAFT", index=True) # DRAFT, POSTED, PARTIALLY_PAID, PAID, OVERDUE, CANCELLED
     issue_date = Column(Date, nullable=False, default=date.today)
     due_date = Column(Date, nullable=False, index=True)
     subtotal = Column(Float, nullable=False, default=0.0)
     tax_amount = Column(Float, nullable=False, default=0.0)
     total_amount = Column(Float, nullable=False, default=0.0)
     amount_paid = Column(Float, nullable=False, default=0.0)
+    amount_residual = Column(Float, nullable=False, default=0.0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     subscription = relationship("Subscription", back_populates="invoices")
@@ -158,8 +191,10 @@ class Payment(Base):
     id = Column(String(36), primary_key=True, default=generate_uuid)
     invoice_id = Column(String(36), ForeignKey("invoices.id", ondelete="CASCADE"), nullable=False, index=True)
     amount = Column(Float, nullable=False)
-    payment_method = Column(String(50), nullable=False) # CARD, UPI, ACH, BANK_TRANSFER
+    payment_method = Column(String(50), nullable=False) # Cash, Bank, Stripe, UPI
     transaction_ref = Column(String(100), unique=True, nullable=False)
+    notes = Column(Text, nullable=True)
+    payment_date = Column(Date, default=date.today)
     payment_timestamp = Column(DateTime, default=datetime.utcnow)
 
     invoice = relationship("Invoice", back_populates="payments")

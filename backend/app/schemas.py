@@ -2,21 +2,47 @@ from datetime import date, datetime
 from typing import List, Optional, Literal
 from pydantic import BaseModel, Field
 
-# User Schemas
+# User & Auth Schemas
 class UserBase(BaseModel):
     email: str
     full_name: str
-    role: Literal["ADMIN", "SALES_REP", "CUSTOMER"] = "CUSTOMER"
+    role: Literal["ADMIN", "STAFF", "CUSTOMER"] = "CUSTOMER"
     company_name: Optional[str] = None
 
-class UserCreate(UserBase):
-    pass
+class UserRegisterRequest(BaseModel):
+    email: str
+    password: str
+    full_name: str
+    company_name: Optional[str] = None
+
+class UserLoginRequest(BaseModel):
+    email: str
+    password: str
+
+class StaffCreateRequest(BaseModel):
+    email: str
+    password: str
+    full_name: str
+    company_name: Optional[str] = None
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ForgotPasswordResponse(BaseModel):
+    message: str
+    reset_token: str
+    reset_url: str
 
 class UserResponse(UserBase):
     id: str
+    is_active: bool
     created_at: datetime
     class Config:
         from_attributes = True
+
+class UserLoginResponse(BaseModel):
+    token: str
+    user: UserResponse
 
 # Product Variant Schemas
 class ProductVariantBase(BaseModel):
@@ -65,21 +91,61 @@ class PlanResponse(PlanBase):
     class Config:
         from_attributes = True
 
+# Quotation Template Schemas
+class QuotationTemplateLineCreate(BaseModel):
+    product_id: str
+    variant_id: Optional[str] = None
+    quantity: int = 1
+    unit_price: float
+
+class QuotationTemplateLineResponse(BaseModel):
+    id: str
+    template_id: str
+    product_id: str
+    variant_id: Optional[str] = None
+    quantity: int
+    unit_price: float
+    class Config:
+        from_attributes = True
+
+class QuotationTemplateCreate(BaseModel):
+    name: str
+    plan_id: str
+    validity_days: int = 30
+    lines: List[QuotationTemplateLineCreate] = []
+
+class QuotationTemplateResponse(BaseModel):
+    id: str
+    name: str
+    plan_id: str
+    validity_days: int
+    created_at: datetime
+    lines: List[QuotationTemplateLineResponse] = []
+    class Config:
+        from_attributes = True
+
+class SubscriptionFromTemplateRequest(BaseModel):
+    customer_id: str
+    discount_code: Optional[str] = None
+
 # Discount Schemas
 class DiscountBase(BaseModel):
     code: str
     discount_type: Literal["PERCENTAGE", "FIXED"]
     value: float
     min_order_amount: float = 0.0
+    min_quantity: int = 1
+    valid_from: Optional[date] = None
     valid_until: Optional[date] = None
     max_uses: Optional[int] = None
+    is_active: bool = True
 
 class DiscountCreate(DiscountBase):
     pass
 
 class DiscountResponse(DiscountBase):
     id: str
-    times_used: int
+    used_count: int
     class Config:
         from_attributes = True
 
@@ -119,6 +185,7 @@ class SubscriptionResponse(BaseModel):
     status: Literal["DRAFT", "QUOTATION", "ACTIVE", "CLOSED", "CANCELLED"]
     start_date: date
     next_billing_date: date
+    last_invoice_date: Optional[date] = None
     expiration_date: Optional[date]
     total_recurring_amount: float
     lines: List[SubscriptionLineResponse] = []
@@ -139,8 +206,10 @@ class InvoiceLineResponse(BaseModel):
 
 class PaymentCreate(BaseModel):
     amount: float
-    payment_method: Literal["CARD", "UPI", "ACH", "BANK_TRANSFER"]
+    payment_method: str = "Cash" # Cash, Bank, Stripe, UPI
     transaction_ref: Optional[str] = None
+    notes: Optional[str] = None
+    payment_date: Optional[date] = None
 
 class PaymentResponse(BaseModel):
     id: str
@@ -148,6 +217,8 @@ class PaymentResponse(BaseModel):
     amount: float
     payment_method: str
     transaction_ref: str
+    notes: Optional[str] = None
+    payment_date: Optional[date] = None
     payment_timestamp: datetime
     class Config:
         from_attributes = True
@@ -158,13 +229,14 @@ class InvoiceResponse(BaseModel):
     subscription_id: str
     customer_id: str
     idempotency_key: str
-    status: Literal["DRAFT", "POSTED", "PAID", "OVERDUE", "CANCELLED"]
+    status: Literal["DRAFT", "POSTED", "PARTIALLY_PAID", "PAID", "OVERDUE", "CANCELLED"]
     issue_date: date
     due_date: date
     subtotal: float
     tax_amount: float
     total_amount: float
     amount_paid: float
+    amount_residual: float
     balance_due: float
     lines: List[InvoiceLineResponse] = []
     payments: List[PaymentResponse] = []

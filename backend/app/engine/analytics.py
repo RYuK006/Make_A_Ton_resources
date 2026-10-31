@@ -55,9 +55,9 @@ def get_dashboard_metrics(db: Session, as_of_date: date = None) -> Dict[str, Any
                 ELSE '90d+ Delinquent'
             END AS bucket,
             COUNT(id) AS inv_count,
-            COALESCE(SUM(total_amount - amount_paid), 0.0) AS outstanding_amount
+            COALESCE(SUM(amount_residual), 0.0) AS outstanding_amount
         FROM invoices
-        WHERE status IN ('POSTED', 'OVERDUE') AND total_amount > amount_paid
+        WHERE status IN ('POSTED', 'PARTIALLY_PAID', 'OVERDUE') AND amount_residual > 0
         GROUP BY bucket
     """)
 
