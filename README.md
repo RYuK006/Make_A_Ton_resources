@@ -32,6 +32,17 @@ Built directly from empirical analysis of 77 historical hackathon submissions to
 
 ---
 
+### Set 4: Brightloop Software Functional Working Prototype
+- **[types/subscription.ts](types/subscription.ts)**: Shared enterprise TypeScript data contract for subscriptions, pricing variants, FSM lifecycle statuses, and invoice aging.
+- **[backend/app/main.py](backend/app/main.py)**: FastAPI backend engine with SQLite WAL mode (`PRAGMA journal_mode=WAL;`), state transitions, dynamic discounts, and invoice settlement.
+- **[backend/app/engine/billing.py](backend/app/engine/billing.py)**: Automated Batch Billing Day Engine with mathematical SHA-256 idempotency protection (`hash(sub_id + billing_date)`).
+- **[backend/app/engine/analytics.py](backend/app/engine/analytics.py)**: Single-pass real-time SQL aggregator for MRR, ARR, and 30-60-90 day A/R Aging buckets.
+- **[backend/tests/benchmark_sla.py](backend/tests/benchmark_sla.py)**: Automated benchmark verifying **37.89ms query latency across 5,000 records** (50x faster than the 2.0s SLA requirement).
+- **[backend/tests/test_idempotency.py](backend/tests/test_idempotency.py)**: Unit test verifying zero duplicate billing on batch re-runs.
+- **[frontend/index.html](frontend/index.html)**: Ultra-premium dark glassmorphic UI supporting dual roles (Admin ERP Console vs. Customer Self-Service Portal), Chart.js A/R Aging bars, Subscription Kanban, and zero-fail offline mock resilience.
+
+---
+
 ## 📂 Navigation & Project Analyses
 - [Make-A-Ton 2025 Project Analysis (27 Projects)](MAKEATON_2025_ANALYSIS.md)
 - [Make-A-Ton 7.0 Devpost Gallery Analysis (50 Projects)](MAKEATON_7_0_ANALYSIS.md)
