@@ -50,17 +50,33 @@ def seed_database(target_sub_count: int = 5000):
 
     # Users
     admin = User(
+        email="admin@brightloop.com",
+        hashed_password=hash_password("Admin@Brightloop123!"),
+        full_name="Chief Executive Admin (Marc Demo)",
+        role="ADMIN",
+        company_name="Brightloop Software HQ",
+        is_active=True
+    )
+    admin_io = User(
         email="admin@brightloop.io",
         hashed_password=hash_password("Admin@Brightloop123!"),
-        full_name="Chief Executive Admin",
+        full_name="Executive Admin",
         role="ADMIN",
         company_name="Brightloop Software HQ",
         is_active=True
     )
     staff_user = User(
+        email="staff@brightloop.com",
+        hashed_password=hash_password("Staff@Brightloop123!"),
+        full_name="Sarah Connor (Staff Operations)",
+        role="STAFF",
+        company_name="Brightloop Operations Team",
+        is_active=True
+    )
+    sales_io = User(
         email="sales@brightloop.io",
         hashed_password=hash_password("Staff@Brightloop123!"),
-        full_name="Sarah Jenkins (Senior Billing Lead)",
+        full_name="Sarah Jenkins (Billing Lead)",
         role="STAFF",
         company_name="Brightloop Operations Team",
         is_active=True
@@ -73,7 +89,15 @@ def seed_database(target_sub_count: int = 5000):
         company_name="ClientCorp International",
         is_active=True
     )
-    db.add_all([admin, staff_user, demo_customer])
+    demo_cust_com = User(
+        email="customer@clientcorp.com",
+        hashed_password=hash_password("Customer@Clientcorp123!"),
+        full_name="ClientCorp International",
+        role="CUSTOMER",
+        company_name="ClientCorp International",
+        is_active=True
+    )
+    db.add_all([admin, admin_io, staff_user, sales_io, demo_customer, demo_cust_com])
     db.flush()
 
     # Generate corporate customers
