@@ -1,14 +1,21 @@
 import random
 import uuid
 import time
+import hashlib
 from datetime import date, timedelta, datetime
 from sqlalchemy.orm import Session
 from .database import engine, Base, SessionLocal
 from .models import (
     User, Product, ProductVariant, Plan, Discount,
-    Subscription, SubscriptionLine, Invoice, InvoiceLine, Payment
+    Subscription, SubscriptionLine, Invoice, InvoiceLine, Payment,
+    QuotationTemplate, QuotationTemplateLine
 )
 from .engine.billing import compute_idempotency_key
+
+def hash_password(password: str) -> str:
+    salt = uuid.uuid4().hex[:16]
+    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000).hex()
+    return f"{salt}${key}"
 
 def seed_database(target_sub_count: int = 5000):
     print(f"Initializing database tables...")
@@ -20,32 +27,53 @@ def seed_database(target_sub_count: int = 5000):
     # 1. Clean existing records if any
     existing_count = db.query(Subscription).count()
     if existing_count >= target_sub_count:
-        print(f"Database already populated with {existing_count} subscriptions. Skipping re-seed.")
+        print(f"Database already populated with {existing_count} subscriptions. Verifying schema integrity...")
+        # Check if users have hashed passwords, if not update them
+        admin_check = db.query(User).filter(User.email == "admin@brightloop.io").first()
+        if admin_check and (not admin_check.hashed_password or admin_check.role == "SALES_REP"):
+            print("Updating seeded users with compliant passwords and roles...")
+            admin_check.hashed_password = hash_password("Admin@Brightloop123!")
+            admin_check.role = "ADMIN"
+            sales = db.query(User).filter(User.email == "sales@brightloop.io").first()
+            if sales:
+                sales.hashed_password = hash_password("Staff@Brightloop123!")
+                sales.role = "STAFF"
+            demo = db.query(User).filter(User.email == "aaron@clientcorp.com").first()
+            if demo:
+                demo.hashed_password = hash_password("Customer@Clientcorp123!")
+                demo.role = "CUSTOMER"
+            db.commit()
         db.close()
         return
 
-    print("Seeding Users, Products, Variants, Plans, and Discounts...")
+    print("Seeding Users with strict hashed passwords & RBAC...")
 
     # Users
     admin = User(
         email="admin@brightloop.io",
+        hashed_password=hash_password("Admin@Brightloop123!"),
         full_name="Chief Executive Admin",
         role="ADMIN",
-        company_name="Brightloop Software HQ"
+        company_name="Brightloop Software HQ",
+        is_active=True
     )
-    sales_rep = User(
+    staff_user = User(
         email="sales@brightloop.io",
-        full_name="Sarah Jenkins (Senior Sales Rep)",
-        role="SALES_REP",
-        company_name="Brightloop Sales Team"
+        hashed_password=hash_password("Staff@Brightloop123!"),
+        full_name="Sarah Jenkins (Senior Billing Lead)",
+        role="STAFF",
+        company_name="Brightloop Operations Team",
+        is_active=True
     )
     demo_customer = User(
         email="aaron@clientcorp.com",
+        hashed_password=hash_password("Customer@Clientcorp123!"),
         full_name="Aaron Alex Mathew",
         role="CUSTOMER",
-        company_name="ClientCorp International"
+        company_name="ClientCorp International",
+        is_active=True
     )
-    db.add_all([admin, sales_rep, demo_customer])
+    db.add_all([admin, staff_user, demo_customer])
     db.flush()
 
     # Generate corporate customers
@@ -53,9 +81,11 @@ def seed_database(target_sub_count: int = 5000):
     for i in range(1, 350):
         c = User(
             email=f"billing.lead_{i}@enterprise{i}.com",
+            hashed_password=hash_password("Customer@Clientcorp123!"),
             full_name=f"Finance Lead {i}",
             role="CUSTOMER",
-            company_name=f"Enterprise {i} Holdings"
+            company_name=f"Enterprise {i} Holdings",
+            is_active=True
         )
         db.add(c)
         customer_users.append(c)
@@ -76,7 +106,7 @@ def seed_database(target_sub_count: int = 5000):
     )
     p_copilot = Product(
         name="AI Finance Copilot Addon",
-        description="Autonomous LLM agent performing accounts receivable aging audit and analytics.",
+        description="Autonomous ledger agent performing accounts receivable aging audit and analytics.",
         base_price=199.0,
         is_active=True
     )
@@ -113,17 +143,100 @@ def seed_database(target_sub_count: int = 5000):
 
     # Plans
     plan_monthly = Plan(name="Monthly Standard", billing_interval="MONTHLY", interval_count=1, auto_close=False, grace_period_days=7)
-    plan_annual = Plan(name="Annual Pro (15% Savings)", billing_interval="YEARLY", interval_count=1, auto_close=False, grace_period_days=14)
-    plan_weekly = Plan(name="Weekly High-Frequency", billing_interval="WEEKLY", interval_count=1, auto_close=False, grace_period_days=3)
+    plan_annual = Plan(name="Annual Growth (Pro)", billing_interval="YEARLY", interval_count=1, auto_close=True, grace_period_days=15)
+    plan_weekly = Plan(name="Weekly Micro-Billing", billing_interval="WEEKLY", interval_count=1, auto_close=False, grace_period_days=3)
     plan_daily = Plan(name="Daily Trial Pass", billing_interval="DAILY", interval_count=1, auto_close=True, grace_period_days=1)
     db.add_all([plan_monthly, plan_annual, plan_weekly, plan_daily])
     db.flush()
 
-    # Discounts
-    disc_mak = Discount(code="MAKEATON15", discount_type="PERCENTAGE", value=15.0, min_order_amount=500.0)
-    disc_odoo = Discount(code="ODOOPARTNER", discount_type="FIXED", value=200.0, min_order_amount=1000.0)
-    disc_early = Discount(code="EARLYBIRD", discount_type="PERCENTAGE", value=10.0, min_order_amount=100.0)
-    db.add_all([disc_mak, disc_odoo, disc_early])
+    # Quotation Templates
+    tmpl_enterprise = QuotationTemplate(
+        name="Enterprise Cloud Bundle (Odoo Edition)",
+        plan_id=plan_monthly.id,
+        validity_days=30
+    )
+    tmpl_starter = QuotationTemplate(
+        name="SaaS Starter Pack",
+        plan_id=plan_annual.id,
+        validity_days=14
+    )
+    db.add_all([tmpl_enterprise, tmpl_starter])
+    db.flush()
+
+    tmpl_line1 = QuotationTemplateLine(
+        template_id=tmpl_enterprise.id,
+        product_id=p_erp.id,
+        variant_id=v_odoo.id,
+        quantity=1,
+        unit_price=1760.0 # 1200 + 560
+    )
+    tmpl_line2 = QuotationTemplateLine(
+        template_id=tmpl_enterprise.id,
+        product_id=p_support.id,
+        variant_id=None,
+        quantity=1,
+        unit_price=450.0
+    )
+    tmpl_line3 = QuotationTemplateLine(
+        template_id=tmpl_starter.id,
+        product_id=p_tax.id,
+        variant_id=None,
+        quantity=1,
+        unit_price=299.0
+    )
+    db.add_all([tmpl_line1, tmpl_line2, tmpl_line3])
+    db.flush()
+
+    # Discounts with rules
+    disc_mak = Discount(
+        code="MAKEATON15",
+        discount_type="PERCENTAGE",
+        value=15.0,
+        min_order_amount=500.0,
+        min_quantity=1,
+        valid_from=date(2026, 1, 1),
+        valid_until=date(2026, 12, 31),
+        max_uses=1000,
+        used_count=12,
+        is_active=True
+    )
+    disc_odoo = Discount(
+        code="ODOOPARTNER",
+        discount_type="FIXED",
+        value=200.0,
+        min_order_amount=1000.0,
+        min_quantity=1,
+        valid_from=date(2026, 1, 1),
+        valid_until=date(2026, 12, 31),
+        max_uses=500,
+        used_count=45,
+        is_active=True
+    )
+    disc_early = Discount(
+        code="EARLYBIRD",
+        discount_type="PERCENTAGE",
+        value=10.0,
+        min_order_amount=100.0,
+        min_quantity=1,
+        valid_from=date(2026, 1, 1),
+        valid_until=date(2026, 12, 31),
+        max_uses=200,
+        used_count=18,
+        is_active=True
+    )
+    disc_exp = Discount(
+        code="EXPIRED50",
+        discount_type="PERCENTAGE",
+        value=50.0,
+        min_order_amount=50.0,
+        min_quantity=1,
+        valid_from=date(2025, 1, 1),
+        valid_until=date(2025, 12, 31),
+        max_uses=5,
+        used_count=5,
+        is_active=False
+    )
+    db.add_all([disc_mak, disc_odoo, disc_early, disc_exp])
     db.flush()
 
     print(f"Generating {target_sub_count} realistic subscriptions and historical invoices...")
@@ -141,7 +254,6 @@ def seed_database(target_sub_count: int = 5000):
     batch_subs = []
     batch_lines = []
     batch_invoices = []
-    batch_inv_lines = []
     batch_payments = []
 
     statuses = ["ACTIVE"] * 75 + ["QUOTATION"] * 15 + ["DRAFT"] * 5 + ["CLOSED"] * 5
@@ -215,16 +327,25 @@ def seed_database(target_sub_count: int = 5000):
             tax_amt = round(total_rec * 0.18, 2)
             tot_amt = round(total_rec + tax_amt, 2)
 
-            # Assign aging status based on days overdue
+            # Assign aging status based on days overdue & payments
             days_overdue = (today - due_date).days
-            if days_overdue <= 0:
-                inv_status = random.choice(["POSTED", "PAID"])
-            elif days_overdue <= 30:
-                inv_status = random.choice(["POSTED", "PAID", "PAID"])
+            roll = random.random()
+            if roll < 0.45:
+                inv_status = "PAID"
+                amt_paid = tot_amt
+                amount_residual = 0.0
+            elif roll < 0.65:
+                inv_status = "PARTIALLY_PAID"
+                amt_paid = round(tot_amt * random.uniform(0.2, 0.7), 2)
+                amount_residual = round(tot_amt - amt_paid, 2)
+            elif days_overdue > 30:
+                inv_status = "OVERDUE"
+                amt_paid = 0.0
+                amount_residual = tot_amt
             else:
-                inv_status = random.choice(["OVERDUE", "POSTED", "PAID"])
-
-            amt_paid = tot_amt if inv_status == "PAID" else 0.0
+                inv_status = "POSTED"
+                amt_paid = 0.0
+                amount_residual = tot_amt
 
             invoice = Invoice(
                 id=inv_id,
@@ -238,18 +359,21 @@ def seed_database(target_sub_count: int = 5000):
                 subtotal=round(total_rec, 2),
                 tax_amount=tax_amt,
                 total_amount=tot_amt,
-                amount_paid=amt_paid
+                amount_paid=amt_paid,
+                amount_residual=amount_residual
             )
             batch_invoices.append(invoice)
 
-            # Add payment if paid
-            if inv_status == "PAID":
+            # Add payment if paid or partially paid
+            if amt_paid > 0:
                 batch_payments.append(
                     Payment(
                         invoice_id=inv_id,
-                        amount=tot_amt,
-                        payment_method=random.choice(["CARD", "UPI", "ACH"]),
-                        transaction_ref=f"TXN-{uuid.uuid4().hex[:12].upper()}"
+                        amount=amt_paid,
+                        payment_method=random.choice(["CARD", "UPI", "ACH", "Cash"]),
+                        transaction_ref=f"TXN-{uuid.uuid4().hex[:12].upper()}",
+                        notes="Seed historical payment settlement",
+                        payment_date=inv_date
                     )
                 )
 
