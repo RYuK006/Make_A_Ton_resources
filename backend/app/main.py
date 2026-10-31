@@ -18,8 +18,9 @@ from .models import (
 from .schemas import (
     UserRegisterRequest, UserLoginRequest, UserLoginResponse, UserResponse,
     StaffCreateRequest, ForgotPasswordRequest, ForgotPasswordResponse,
-    ProductCreate, ProductResponse,
-    PlanResponse, DiscountCreate, DiscountResponse,
+    ProductCreate, ProductResponse, ProductVariantCreate, ProductVariantResponse,
+    PlanCreate, PlanResponse, DiscountCreate, DiscountResponse,
+    DiscountValidateRequest, DiscountValidateResponse,
     QuotationTemplateCreate, QuotationTemplateResponse, QuotationTemplateLineResponse,
     SubscriptionFromTemplateRequest,
     SubscriptionCreate, SubscriptionResponse, SubscriptionTransitionRequest,
@@ -362,20 +363,30 @@ def create_subscription_from_template(
 
 @app.get("/api/products", response_model=List[ProductResponse])
 def get_products(db: Session = Depends(get_db)):
-    return db.query(Product).filter(Product.is_active == True).all()
+    products = db.query(Product).filter(Product.is_active == True).all()
+    for p in products:
+        p.sales_price = p.base_price
+        for v in p.variants:
+            v.calculated_price = round(p.base_price + v.price_modifier, 2)
+    return products
 
 @app.post("/api/products", response_model=ProductResponse)
 def create_product(product_in: ProductCreate, db: Session = Depends(get_db)):
+    sales_p = product_in.sales_price if product_in.sales_price is not None else (product_in.base_price or 0.0)
+    notes_val = product_in.notes or product_in.description
     p = Product(
         name=product_in.name,
-        description=product_in.description,
-        base_price=product_in.base_price,
+        type=product_in.type or "Service",
+        description=notes_val,
+        notes=notes_val,
+        base_price=sales_p,
+        cost_price=product_in.cost_price or 0.0,
         is_active=product_in.is_active
     )
     db.add(p)
     db.flush()
 
-    for v in product_in.variants:
+    for v in (product_in.variants or []):
         variant = ProductVariant(
             product_id=p.id,
             attribute_name=v.attribute_name,
@@ -386,11 +397,49 @@ def create_product(product_in: ProductCreate, db: Session = Depends(get_db)):
 
     db.commit()
     db.refresh(p)
+    p.sales_price = p.base_price
+    for v in p.variants:
+        v.calculated_price = round(p.base_price + v.price_modifier, 2)
     return p
+
+@app.post("/api/products/{product_id}/variants", response_model=ProductVariantResponse)
+def add_product_variant(product_id: str, variant_in: ProductVariantCreate, db: Session = Depends(get_db)):
+    prod = db.query(Product).filter(Product.id == product_id).first()
+    if not prod:
+        raise HTTPException(status_code=404, detail=f"Product '{product_id}' not found.")
+
+    v = ProductVariant(
+        product_id=prod.id,
+        attribute_name=variant_in.attribute_name,
+        attribute_value=variant_in.attribute_value,
+        price_modifier=variant_in.price_modifier
+    )
+    db.add(v)
+    db.commit()
+    db.refresh(v)
+    v.calculated_price = round(prod.base_price + v.price_modifier, 2)
+    return v
 
 @app.get("/api/plans", response_model=List[PlanResponse])
 def get_plans(db: Session = Depends(get_db)):
     return db.query(Plan).all()
+
+@app.post("/api/plans", response_model=PlanResponse)
+def create_plan(plan_in: PlanCreate, db: Session = Depends(get_db)):
+    plan = Plan(
+        name=plan_in.name,
+        billing_interval=plan_in.billing_interval,
+        interval_count=plan_in.interval_count,
+        min_quantity=plan_in.min_quantity,
+        auto_close=plan_in.auto_close,
+        grace_period_days=plan_in.grace_period_days,
+        valid_from=plan_in.valid_from,
+        valid_until=plan_in.valid_until
+    )
+    db.add(plan)
+    db.commit()
+    db.refresh(plan)
+    return plan
 
 @app.get("/api/discounts", response_model=List[DiscountResponse])
 def get_discounts(db: Session = Depends(get_db)):
@@ -418,6 +467,49 @@ def create_discount(disc_in: DiscountCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(disc)
     return disc
+
+@app.post("/api/discounts/validate", response_model=DiscountValidateResponse)
+def validate_discount_endpoint(req: DiscountValidateRequest, db: Session = Depends(get_db)):
+    code_clean = req.code.upper().strip()
+    discount = db.query(Discount).filter(Discount.code == code_clean).first()
+    if not discount:
+        raise HTTPException(status_code=400, detail=f"Discount code '{req.code}' is invalid or does not exist.")
+
+    if not discount.is_active:
+        raise HTTPException(status_code=400, detail=f"Discount code '{discount.code}' is inactive.")
+
+    check_date = req.target_date or date.today()
+    if discount.valid_from and check_date < discount.valid_from:
+        raise HTTPException(status_code=400, detail=f"Discount code '{discount.code}' is not valid until {discount.valid_from}.")
+
+    if discount.valid_until and check_date > discount.valid_until:
+        raise HTTPException(status_code=400, detail=f"Discount code '{discount.code}' expired on {discount.valid_until}.")
+
+    if discount.max_uses is not None and discount.used_count >= discount.max_uses:
+        raise HTTPException(status_code=400, detail=f"Coupon usage limit reached for '{discount.code}'.")
+
+    if discount.min_order_amount > 0 and req.subtotal < discount.min_order_amount:
+        raise HTTPException(status_code=400, detail=f"Minimum spend of ${discount.min_order_amount:.2f} required.")
+
+    if discount.min_quantity > 1 and req.total_qty < discount.min_quantity:
+        raise HTTPException(status_code=400, detail=f"Minimum quantity of {discount.min_quantity} items required.")
+
+    if discount.discount_type == "PERCENTAGE":
+        deduction = round(req.subtotal * (discount.value / 100.0), 2)
+    else:
+        deduction = round(min(discount.value, req.subtotal), 2)
+
+    final = round(max(0.0, req.subtotal - deduction), 2)
+
+    return DiscountValidateResponse(
+        is_valid=True,
+        code=discount.code,
+        discount_type=discount.discount_type,
+        value=discount.value,
+        discount_amount=deduction,
+        final_amount=final,
+        message=f"Coupon {discount.code} successfully applied (-${deduction:.2f})"
+    )
 
 # ============================================================================
 # SUBSCRIPTIONS & FSM
@@ -511,6 +603,21 @@ def create_subscription(sub_in: SubscriptionCreate, db: Session = Depends(get_db
     db.refresh(sub)
     return sub
 
+def calculate_next_cadence_date(from_date: date, plan: Optional[Plan]) -> date:
+    if not plan:
+        return from_date + timedelta(days=30)
+    interval = (plan.billing_interval or "MONTHLY").upper()
+    count = plan.interval_count or 1
+    if interval == "DAILY":
+        return from_date + timedelta(days=1 * count)
+    elif interval == "WEEKLY":
+        return from_date + timedelta(weeks=1 * count)
+    elif interval == "MONTHLY":
+        return from_date + timedelta(days=30 * count)
+    elif interval == "YEARLY":
+        return from_date + timedelta(days=365 * count)
+    return from_date + timedelta(days=30)
+
 @app.post("/api/subscriptions/{sub_id}/transition", response_model=SubscriptionResponse)
 def transition_subscription(sub_id: str, req: SubscriptionTransitionRequest, db: Session = Depends(get_db)):
     sub = db.query(Subscription).filter(Subscription.id == sub_id).first()
@@ -519,26 +626,61 @@ def transition_subscription(sub_id: str, req: SubscriptionTransitionRequest, db:
 
     action = req.action.upper()
     current = sub.status
+    today = date.today()
 
     if action == "QUOTE":
         if current != "DRAFT":
-            raise HTTPException(status_code=400, detail=f"Cannot quote from status {current}. Must be DRAFT.")
+            raise HTTPException(status_code=400, detail=f"Cannot transition to QUOTATION from status '{current}'. Must be in DRAFT.")
+        
+        # Freeze line item unit prices
+        total_rec = 0.0
+        for line in sub.lines:
+            line.line_total = round(line.quantity * line.unit_price_frozen, 2)
+            total_rec += line.line_total
+        
+        sub.total_recurring_amount = round(total_rec, 2)
         sub.status = "QUOTATION"
+
     elif action == "CONFIRM":
-        if current not in ("DRAFT", "QUOTATION"):
-            raise HTTPException(status_code=400, detail=f"Cannot activate from status {current}.")
+        if current not in ("QUOTATION", "DRAFT"):
+            raise HTTPException(status_code=400, detail=f"Cannot confirm quote from status '{current}'.")
+
+        # Verify today <= expiration_date
+        if sub.expiration_date and today > sub.expiration_date:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Quotation expired on {sub.expiration_date.isoformat()}"
+            )
+
+        sub.status = "CONFIRMED"
+
+    elif action == "ACTIVATE":
+        if current not in ("CONFIRMED", "QUOTATION"):
+            raise HTTPException(status_code=400, detail=f"Cannot activate subscription from status '{current}'. Must be in CONFIRMED state.")
+
+        # Check expiration date if coming from QUOTATION
+        if sub.expiration_date and today > sub.expiration_date:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Quotation expired on {sub.expiration_date.isoformat()}"
+            )
+
         sub.status = "ACTIVE"
-        sub.start_date = date.today()
-        # Set next billing date according to plan
-        sub.next_billing_date = date.today()
+        sub.start_date = today
+        sub.next_billing_date = calculate_next_cadence_date(today, sub.plan)
+
     elif action == "CLOSE":
         if current != "ACTIVE":
-            raise HTTPException(status_code=400, detail=f"Cannot close inactive subscription {current}.")
+            raise HTTPException(status_code=400, detail=f"Cannot close subscription from status '{current}'. Must be ACTIVE.")
         sub.status = "CLOSED"
+
     elif action == "CANCEL":
+        if current == "CLOSED":
+            raise HTTPException(status_code=400, detail="Cannot cancel an already closed subscription.")
         sub.status = "CANCELLED"
+
     else:
-        raise HTTPException(status_code=400, detail="Invalid transition action.")
+        raise HTTPException(status_code=400, detail=f"Invalid transition action '{action}'.")
 
     db.commit()
     db.refresh(sub)
