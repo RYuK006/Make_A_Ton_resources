@@ -32,14 +32,27 @@ Built directly from empirical analysis of 77 historical hackathon submissions to
 
 ---
 
-### Set 4: Brightloop Software Functional Working Prototype
-- **[types/subscription.ts](types/subscription.ts)**: Shared enterprise TypeScript data contract for subscriptions, pricing variants, FSM lifecycle statuses, and invoice aging.
-- **[backend/app/main.py](backend/app/main.py)**: FastAPI backend engine with SQLite WAL mode (`PRAGMA journal_mode=WAL;`), state transitions, dynamic discounts, and invoice settlement.
+### Set 4: Brightloop Software Functional Working Prototype (Odoo Enterprise Light UI)
+- **[frontend/index.html](frontend/index.html)**: Authentic **Odoo 17/18 Enterprise Light Theme UI/UX** featuring official Odoo Purple navbar (`#714B67`), document paper sheet (`.o_form_sheet`), chevron status ribbon (`Quotation` ➔ `In Progress` ➔ `Invoiced` ➔ `Closed`), smart buttons box (`.oe_button_box`), and tabbed order lines notebook.
+- **[frontend/style.css](frontend/style.css)**: Authentic Odoo design system tokens, avoiding dark mode and AI gimmicks in favor of enterprise ERP ergonomics, teal accents (`#00A09D`), and clean white canvases.
+- **[frontend/app.js](frontend/app.js)**: Interactive frontend controller supporting Quote-to-Cash state machine transitions, one-click batch billing execution, interactive A/R aging chart, multi-dimensional financial pivot grid, and customer self-service portal (`/my/subscriptions`).
+- **[types/subscription.ts](types/subscription.ts)**: Shared enterprise TypeScript data contract for subscriptions, pricing variants (including the +$560 Odoo brand modifier), FSM lifecycle statuses, and invoice aging.
+- **[backend/app/main.py](backend/app/main.py)**: FastAPI backend engine with SQLite WAL mode (`PRAGMA journal_mode=WAL;`), state transitions, dynamic discounts, and invoice settlement on standardized Port 8001.
 - **[backend/app/engine/billing.py](backend/app/engine/billing.py)**: Automated Batch Billing Day Engine with mathematical SHA-256 idempotency protection (`hash(sub_id + billing_date)`).
 - **[backend/app/engine/analytics.py](backend/app/engine/analytics.py)**: Single-pass real-time SQL aggregator for MRR, ARR, and 30-60-90 day A/R Aging buckets.
 - **[backend/tests/benchmark_sla.py](backend/tests/benchmark_sla.py)**: Automated benchmark verifying **37.89ms query latency across 5,000 records** (50x faster than the 2.0s SLA requirement).
 - **[backend/tests/test_idempotency.py](backend/tests/test_idempotency.py)**: Unit test verifying zero duplicate billing on batch re-runs.
-- **[frontend/index.html](frontend/index.html)**: Ultra-premium dark glassmorphic UI supporting dual roles (Admin ERP Console vs. Customer Self-Service Portal), Chart.js A/R Aging bars, Subscription Kanban, and zero-fail offline mock resilience.
+
+#### 🚀 Quick Start (Running the Live Demo)
+```bash
+# Terminal 1: Launch FastAPI Backend (Port 8001)
+py -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8001
+
+# Terminal 2: Launch Odoo Frontend (Port 3000)
+py -m http.server 3000 --directory frontend
+
+# Access in browser: http://127.0.0.1:3000
+```
 
 ---
 
