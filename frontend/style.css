@@ -227,6 +227,30 @@ body {
   border: 1px solid transparent;
 }
 
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn .spinner-inline {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  border-top-color: #FFFFFF;
+  animation: odooBtnSpin 0.65s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.btn-secondary .spinner-inline {
+  border-color: rgba(33, 37, 41, 0.2);
+  border-top-color: var(--odoo-primary);
+}
+
+@keyframes odooBtnSpin {
+  to { transform: rotate(360deg); }
+}
+
 .btn-primary {
   background-color: var(--odoo-primary);
   color: #FFFFFF;
@@ -301,6 +325,7 @@ body {
   border-right: none;
   cursor: pointer;
   user-select: none;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
 }
 
 .o_arrow_button:first-child {
@@ -316,6 +341,12 @@ body {
   background-color: var(--odoo-primary);
   color: #FFFFFF;
   border-color: var(--odoo-primary);
+}
+
+.o_arrow_button.o_arrow_confirmed {
+  background-color: #1D4ED8;
+  color: #FFFFFF;
+  border-color: #1D4ED8;
 }
 
 .o_arrow_button.o_arrow_in_progress {
@@ -520,12 +551,13 @@ body {
   margin-bottom: 10px;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: all 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .o_kanban_record:hover {
+  transform: translateY(-2px);
   border-color: var(--odoo-primary-light);
-  box-shadow: 0 2px 8px rgba(113, 75, 103, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .o_kanban_title {
@@ -1282,4 +1314,276 @@ body {
   padding-top: 8px;
   margin-top: 8px;
 }
+
+/* ============================================================================ */
+/* MINIMAL ENTERPRISE UI/UX ANIMATIONS & UTILITIES                              */
+/* ============================================================================ */
+
+/* 1. Subtle View Fade & Micro-Slide Transition */
+.o_view_container {
+  animation: odooViewFadeIn 0.12s cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes odooViewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 2. Authentic Odoo Toast Notification System */
+.o_toast_container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.o_toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 320px;
+  max-width: 440px;
+  padding: 12px 18px;
+  background: #FFFFFF;
+  border: 1px solid var(--odoo-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  font-size: 0.875rem;
+  color: var(--odoo-text-main);
+  animation: odooToastSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.o_toast.success {
+  border-left: 4px solid var(--odoo-success);
+}
+
+.o_toast.error {
+  border-left: 4px solid var(--odoo-danger);
+}
+
+.o_toast.warning {
+  border-left: 4px solid var(--odoo-warning);
+}
+
+.o_toast.info {
+  border-left: 4px solid var(--odoo-teal);
+}
+
+.o_toast_icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.o_toast_body {
+  flex: 1;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.o_toast_close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--odoo-text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.o_toast_close:hover {
+  opacity: 1;
+}
+
+@keyframes odooToastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.o_toast_dismissing {
+  opacity: 0 !important;
+  transform: translateX(100%) !important;
+}
+
+/* 3. Catalog Manager & Live Variant Price Calculator */
+.o_catalog_toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.o_calc_box {
+  background: #F8F9FA;
+  border: 1px solid var(--odoo-border);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+
+.o_variant_pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.o_variant_pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--odoo-border);
+  background: #FFFFFF;
+  color: var(--odoo-text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.o_variant_pill:hover {
+  border-color: var(--odoo-primary-light);
+  background: #FAF8FA;
+}
+
+.o_variant_pill.active {
+  background-color: var(--odoo-primary);
+  border-color: var(--odoo-primary);
+  color: #FFFFFF;
+}
+
+.o_variant_pill.active .o_pill_mod {
+  color: #F3E8FF;
+}
+
+.o_pill_mod {
+  font-size: 0.75rem;
+  color: var(--odoo-text-muted);
+}
+
+.o_badge_odoo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background-color: #FBF0F6;
+  border: 1px solid #714B67;
+  color: #714B67;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* 4. Modal Overlays & Cards */
+.o_modal_overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: odooModalFadeIn 0.15s ease;
+}
+
+@keyframes odooModalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.o_modal_card {
+  background: #FFFFFF;
+  border-radius: 8px;
+  border: 1px solid var(--odoo-border);
+  width: 100%;
+  max-width: 540px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  animation: odooModalSlideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes odooModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.o_modal_header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--odoo-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FAF8FA;
+}
+
+.o_modal_title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--odoo-primary);
+}
+
+.o_modal_body {
+  padding: 20px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.o_modal_footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--odoo-border);
+  background: #F8F9FA;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* 5. Discount Order Line Highlight */
+.o_discount_tr {
+  background: #F0FDF4 !important;
+  color: #166534;
+  animation: odooDiscountHighlight 0.25s ease;
+}
+
+@keyframes odooDiscountHighlight {
+  from {
+    background-color: #BBF7D0;
+  }
+  to {
+    background-color: #F0FDF4;
+  }
+}
+
 
