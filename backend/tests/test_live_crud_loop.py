@@ -212,11 +212,17 @@ def run_test_suite():
     assert status == 200 and quote_res["status"] == "QUOTATION", f"Quote transition failed: {quote_res}"
     print(f"  ✓ State: DRAFT -> QUOTATION (Line item pricing locked at ${quote_res['total_recurring_amount']:.2f})")
 
-    status, active_res = request("POST", f"/subscriptions/{subscription_id}/transition", {
+    status, confirm_res = request("POST", f"/subscriptions/{subscription_id}/transition", {
         "action": "CONFIRM"
     })
-    assert status == 200 and active_res["status"] == "ACTIVE", f"Confirm transition failed: {active_res}"
-    print(f"  ✓ State: QUOTATION -> ACTIVE (Start date: {active_res['start_date']}, Next billing: {active_res['next_billing_date']})")
+    assert status == 200 and confirm_res["status"] == "CONFIRMED", f"Confirm transition failed: {confirm_res}"
+    print(f"  ✓ State: QUOTATION -> CONFIRMED")
+
+    status, active_res = request("POST", f"/subscriptions/{subscription_id}/transition", {
+        "action": "ACTIVATE"
+    })
+    assert status == 200 and active_res["status"] == "ACTIVE", f"Activate transition failed: {active_res}"
+    print(f"  ✓ State: CONFIRMED -> ACTIVE (Start date: {active_res['start_date']}, Next billing: {active_res['next_billing_date']})")
 
     # 5. Phase 3 & 4: Batch Billing Run & Idempotency
     print("\n[Step 8] Triggering Batch Billing Run for Active Subscriptions...")
