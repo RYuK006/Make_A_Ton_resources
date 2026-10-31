@@ -867,16 +867,24 @@ function loadSubscriptionToForm(sub) {
 
   updateFormStatusRibbon(sub.status);
 
+  // Reset coupon input
+  const discInput = document.getElementById("form-discount-code");
+  const discIcon = document.getElementById("discount-status-icon");
+  if (discInput) discInput.value = sub.discount_code || "";
+  if (discIcon) discIcon.textContent = sub.discount_code ? "✓ Active Coupon" : "";
+
   // Render lines
   const linesTbody = document.getElementById("form-lines-tbody");
+  let subtotal = 0;
   if (linesTbody) {
     linesTbody.innerHTML = "";
     const lines = sub.lines || [];
     if (lines.length === 0) {
+      subtotal = sub.total_recurring_amount;
       linesTbody.innerHTML = `
         <tr>
           <td style="font-weight: 600;">Brightloop Enterprise ERP</td>
-          <td><span class="o_tag o_tag_purple">Brand Integration: Odoo (+$560.00)</span></td>
+          <td><span class="o_badge_odoo">Brand: Odoo (+ $560.00)</span></td>
           <td>1.00</td>
           <td>$${sub.total_recurring_amount.toFixed(2)}</td>
           <td>18% GST</td>
@@ -885,10 +893,21 @@ function loadSubscriptionToForm(sub) {
       `;
     } else {
       lines.forEach(l => {
+        const prod = liveProducts.find(p => p.id === l.product_id);
+        const prodName = prod ? prod.name : "Enterprise Cloud Service";
+        let variantDesc = "Standard Configuration";
+        if (prod && l.variant_id) {
+          const v = prod.variants.find(vr => vr.id === l.variant_id);
+          if (v) {
+            const isOdoo = v.attribute_value && v.attribute_value.toLowerCase().includes("odoo");
+            variantDesc = `${isOdoo ? '★ ' : ''}${v.attribute_name}: ${v.attribute_value} (+ $${v.price_modifier.toFixed(2)})`;
+          }
+        }
+        subtotal += l.line_total;
         linesTbody.innerHTML += `
           <tr>
-            <td style="font-weight: 600;">Brightloop Enterprise Service</td>
-            <td><span class="o_tag o_tag_teal">${l.variant_id ? 'Configured Variant' : 'Base Service'}</span></td>
+            <td style="font-weight: 600;">${prodName}</td>
+            <td><span class="o_tag ${variantDesc.includes('Odoo') ? 'o_badge_odoo' : 'o_tag_teal'}">${variantDesc}</span></td>
             <td>${l.quantity.toFixed(2)}</td>
             <td>$${l.unit_price_frozen.toFixed(2)}</td>
             <td>18% GST</td>
@@ -899,136 +918,741 @@ function loadSubscriptionToForm(sub) {
     }
   }
 
-  const subtotal = sub.total_recurring_amount / 1.18;
-  const tax = sub.total_recurring_amount - subtotal;
+  const tax = subtotal * 0.18;
+  const total = subtotal + tax;
   const subEl = document.getElementById("form-subtotal");
   const taxEl = document.getElementById("form-tax");
   const totEl = document.getElementById("form-total");
 
   if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
   if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-  if (totEl) totEl.textContent = `$${sub.total_recurring_amount.toFixed(2)}`;
+  if (totEl) totEl.textContent = `$${total.toFixed(2)}`;
 }
 
+// ----------------------------------------------------------------------------
+// 6. PHASE 3 & TRANSITIONS (DRAFT -> QUOTATION -> CONFIRMED -> ACTIVE -> CLOSED)
+// ----------------------------------------------------------------------------
 function updateFormStatusRibbon(status) {
-  const steps = ["draft", "quotation", "active", "closed"];
+  const steps = ["draft", "quotation", "confirmed", "active", "closed"];
+  const currentStatusUpper = (status || "DRAFT").toUpperCase();
+
   steps.forEach(s => {
     const el = document.getElementById(`status-step-${s}`);
     if (el) {
       el.className = "o_arrow_button";
-      if (s === status.toLowerCase()) el.classList.add("o_arrow_active");
+      if (s === currentStatusUpper.toLowerCase()) {
+        el.classList.add("o_arrow_active");
+        if (currentStatusUpper === "CONFIRMED") el.classList.add("o_arrow_confirmed");
+        if (currentStatusUpper === "ACTIVE") el.classList.add("o_arrow_in_progress");
+      }
     }
   });
 
+  // Action buttons visibility
+  const btnQuote = document.getElementById("form-btn-quote");
   const btnConfirm = document.getElementById("form-btn-confirm");
+  const btnActivate = document.getElementById("form-btn-activate");
   const btnInvoice = document.getElementById("form-btn-invoice");
+  const btnClose = document.getElementById("form-btn-close");
+  const btnCancel = document.getElementById("form-btn-cancel");
 
-  if (btnConfirm && btnInvoice) {
-    if (status === "DRAFT" || status === "QUOTATION") {
-      btnConfirm.style.display = "inline-block";
-      btnInvoice.style.display = "none";
-    } else if (status === "ACTIVE") {
-      btnConfirm.style.display = "none";
-      btnInvoice.style.display = "inline-block";
+  if (btnQuote) btnQuote.style.display = (currentStatusUpper === "DRAFT") ? "inline-flex" : "none";
+  if (btnConfirm) btnConfirm.style.display = (currentStatusUpper === "QUOTATION") ? "inline-flex" : "none";
+  if (btnActivate) btnActivate.style.display = (currentStatusUpper === "CONFIRMED") ? "inline-flex" : "none";
+  if (btnInvoice) btnInvoice.style.display = (currentStatusUpper === "ACTIVE") ? "inline-flex" : "none";
+  if (btnClose) btnClose.style.display = (currentStatusUpper === "ACTIVE") ? "inline-flex" : "none";
+  if (btnCancel) btnCancel.style.display = (currentStatusUpper !== "CLOSED" && currentStatusUpper !== "CANCELLED") ? "inline-flex" : "none";
+
+  // Expiration Warning Banner
+  const expAlert = document.getElementById("form-expiration-alert");
+  const expDateVal = document.getElementById("form-expiration-date-val");
+  const todayStr = new Date().toISOString().split("T")[0];
+  let isExpired = false;
+
+  if (currentSubscription && currentSubscription.expiration_date) {
+    if (currentSubscription.expiration_date < todayStr) {
+      isExpired = true;
+      if (expDateVal) expDateVal.textContent = currentSubscription.expiration_date;
+      if (expAlert && (currentStatusUpper === "DRAFT" || currentStatusUpper === "QUOTATION")) {
+        expAlert.style.display = "block";
+      } else if (expAlert) {
+        expAlert.style.display = "none";
+      }
+    } else if (expAlert) {
+      expAlert.style.display = "none";
+    }
+  } else if (expAlert) {
+    expAlert.style.display = "none";
+  }
+
+  if (btnConfirm) {
+    if (isExpired && currentStatusUpper === "QUOTATION") {
+      btnConfirm.disabled = true;
+      btnConfirm.title = `Quotation expired on ${currentSubscription.expiration_date}. Confirmation is blocked.`;
+      btnConfirm.style.opacity = "0.6";
+      btnConfirm.style.cursor = "not-allowed";
     } else {
-      btnConfirm.style.display = "none";
-      btnInvoice.style.display = "none";
+      btnConfirm.disabled = false;
+      btnConfirm.title = "";
+      btnConfirm.style.opacity = "1";
+      btnConfirm.style.cursor = "pointer";
     }
   }
 }
 
-// ----------------------------------------------------------------------------
-// 6. PHASE 3 & TRANSITIONS (DRAFT -> QUOTATION -> ACTIVE)
-// ----------------------------------------------------------------------------
-async function confirmActiveSubscription() {
-  const btn = document.getElementById("form-btn-confirm");
+async function actionTransitionQuote() {
+  if (!currentSubscription) {
+    showOdooToast("Please create or select a quotation first.", "warning");
+    return;
+  }
+  const btn = document.getElementById("form-btn-quote");
+  const origText = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-inline"></span> Freezing Pricing...`;
+  }
+  try {
+    const res = await authFetch(`${API_BASE}/subscriptions/${currentSubscription.id}/transition`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "QUOTE" })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to send quotation.");
+    currentSubscription = data;
+    loadSubscriptionToForm(data);
+    await fetchLiveSubscriptions();
+    showOdooToast(`✓ Quotation #${data.subscription_number} generated! Line item pricing frozen.`, "success");
+  } catch (err) {
+    showOdooToast(`Transition Error: ${err.message}`, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText || "Send Quotation";
+    }
+  }
+}
 
-  // If creating new from template
+async function actionTransitionConfirm() {
+  const btn = document.getElementById("form-btn-confirm");
+  const origText = btn ? btn.innerHTML : "";
+
+  // If drafting from template
   if (!currentSubscription) {
     const tmplSelect = document.getElementById("form-template-select");
     const tmplId = tmplSelect ? tmplSelect.value : (liveTemplates[0] ? liveTemplates[0].id : null);
     const discCode = document.getElementById("form-discount-code") ? document.getElementById("form-discount-code").value.trim() : null;
 
     if (!tmplId) {
-      alert("Please select a Quotation Template first.");
+      showOdooToast("Please select a Quotation Template first.", "warning");
       return;
     }
-
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-inline"></span> Creating from Template...`;
+    }
     try {
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Creating from Template...";
-      }
-
-      // Find customer
       let custId = currentUser.id;
       if (!custId) {
-        const firstCust = liveSubscriptions[0] ? liveSubscriptions[0].customer_id : null;
-        custId = firstCust;
+        custId = liveSubscriptions[0] ? liveSubscriptions[0].customer_id : "test-customer-001";
       }
-
       const res = await authFetch(`${API_BASE}/subscriptions/from-template/${tmplId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer_id: custId,
-          discount_code: discCode || null
-        })
+        body: JSON.stringify({ customer_id: custId, discount_code: discCode || null })
       });
-
       const newSub = await res.json();
       if (!res.ok) throw new Error(newSub.detail || "Failed to create subscription from template.");
-
       currentSubscription = newSub;
-      alert(`✓ Subscription ${newSub.subscription_number} created from template in DRAFT status! Now confirming to ACTIVE contract.`);
+      loadSubscriptionToForm(newSub);
+      showOdooToast(`✓ Subscription #${newSub.subscription_number} created in DRAFT status!`, "success");
+      
+      // Auto-transition DRAFT -> QUOTATION
+      await actionTransitionQuote();
+      return;
     } catch (err) {
-      alert(`Template Error: ${err.message}`);
+      showOdooToast(`Template Error: ${err.message}`, "error");
       if (btn) {
         btn.disabled = false;
-        btn.textContent = "Confirm Quotation";
+        btn.innerHTML = origText || "Confirm Quotation";
       }
       return;
     }
   }
 
-  // Live transition via backend endpoint
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-inline"></span> Confirming Quote...`;
+  }
   try {
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "Confirming Contract...";
-    }
-
-    // Step 1: DRAFT -> QUOTATION (if draft)
-    if (currentSubscription.status === "DRAFT") {
-      await authFetch(`${API_BASE}/subscriptions/${currentSubscription.id}/transition`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "QUOTE" })
-      });
-    }
-
-    // Step 2: QUOTATION -> ACTIVE
     const res = await authFetch(`${API_BASE}/subscriptions/${currentSubscription.id}/transition`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "CONFIRM" })
     });
-
     const updated = await res.json();
-    if (!res.ok) throw new Error(updated.detail || "Transition failed.");
-
+    if (!res.ok) throw new Error(updated.detail || "Quotation confirmation failed.");
     currentSubscription = updated;
     loadSubscriptionToForm(updated);
     await fetchLiveSubscriptions();
-    alert(`✓ Subscription ${updated.subscription_number} is now ACTIVE! Start date and next billing dates have been advanced.`);
+    showOdooToast(`✓ Quotation #${updated.subscription_number} confirmed! Ready for activation.`, "success");
   } catch (err) {
-    alert(`Transition Error: ${err.message}`);
+    showOdooToast(`Confirmation Blocked: ${err.message}`, "error");
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Confirm Quotation";
+      btn.innerHTML = origText || "Confirm Quotation";
     }
   }
+}
+
+async function actionTransitionActivate() {
+  if (!currentSubscription) return;
+  const btn = document.getElementById("form-btn-activate");
+  const origText = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-inline"></span> Activating Contract...`;
+  }
+  try {
+    const res = await authFetch(`${API_BASE}/subscriptions/${currentSubscription.id}/transition`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "ACTIVATE" })
+    });
+    const updated = await res.json();
+    if (!res.ok) throw new Error(updated.detail || "Contract activation failed.");
+    currentSubscription = updated;
+    loadSubscriptionToForm(updated);
+    await fetchLiveSubscriptions();
+    showOdooToast(`✓ Contract #${updated.subscription_number} is now ACTIVE! Start date and billing cadence set.`, "success");
+  } catch (err) {
+    showOdooToast(`Activation Failed: ${err.message}`, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText || "Activate Contract";
+    }
+  }
+}
+
+async function actionTransitionClose() {
+  if (!currentSubscription) return;
+  const btn = document.getElementById("form-btn-close");
+  const origText = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-inline"></span> Closing Contract...`;
+  }
+  try {
+    const res = await authFetch(`${API_BASE}/subscriptions/${currentSubscription.id}/transition`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "CLOSE" })
+    });
+    const updated = await res.json();
+    if (!res.ok) throw new Error(updated.detail || "Subscription closure failed.");
+    currentSubscription = updated;
+    loadSubscriptionToForm(updated);
+    await fetchLiveSubscriptions();
+    showOdooToast(`✓ Subscription #${updated.subscription_number} closed.`, "info");
+  } catch (err) {
+    showOdooToast(`Closure Failed: ${err.message}`, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText || "Close Subscription";
+    }
+  }
+}
+
+function confirmActiveSubscription() {
+  actionTransitionConfirm();
+}
+
+// ----------------------------------------------------------------------------
+// MODULE 5: ADVANCED DISCOUNT & PROMOTION RULE ENGINE
+// ----------------------------------------------------------------------------
+let currentDiscountData = null;
+
+async function handleDiscountInput(code) {
+  const codeClean = (code || "").trim().toUpperCase();
+  const statusIcon = document.getElementById("discount-status-icon");
+  const linesTbody = document.getElementById("form-lines-tbody");
+  const subEl = document.getElementById("form-subtotal");
+  const taxEl = document.getElementById("form-tax");
+  const totEl = document.getElementById("form-total");
+
+  // Remove existing discount lines if present
+  if (linesTbody) {
+    const existing = linesTbody.querySelectorAll(".o_discount_tr");
+    existing.forEach(el => el.remove());
+  }
+
+  // Calculate current subtotal from non-discount lines
+  let untaxedTotal = 0;
+  let totalQty = 0;
+  if (linesTbody) {
+    const rows = linesTbody.querySelectorAll("tr:not(.o_discount_tr)");
+    rows.forEach(r => {
+      const cells = r.querySelectorAll("td");
+      if (cells.length >= 6) {
+        const qty = parseFloat(cells[2].textContent) || 1;
+        const lineTotal = parseFloat(cells[5].textContent.replace(/[^0-9.-]+/g, "")) || 0;
+        untaxedTotal += lineTotal;
+        totalQty += qty;
+      }
+    });
+  }
+
+  if (untaxedTotal === 0 && currentSubscription) {
+    untaxedTotal = currentSubscription.total_recurring_amount / 1.18;
+    totalQty = 1;
+  }
+
+  if (!codeClean) {
+    currentDiscountData = null;
+    if (statusIcon) statusIcon.textContent = "";
+    const tax = untaxedTotal * 0.18;
+    const total = untaxedTotal + tax;
+    if (subEl) animateNumber(subEl, parseFloat(subEl.textContent.replace(/[^0-9.-]+/g, "")) || 0, untaxedTotal);
+    if (taxEl) animateNumber(taxEl, parseFloat(taxEl.textContent.replace(/[^0-9.-]+/g, "")) || 0, tax);
+    if (totEl) animateNumber(totEl, parseFloat(totEl.textContent.replace(/[^0-9.-]+/g, "")) || 0, total);
+    return;
+  }
+
+  if (statusIcon) {
+    statusIcon.innerHTML = `<span class="spinner-inline" style="width:10px;height:10px;border-width:2px;border-top-color:var(--odoo-primary);"></span> Validating...`;
+  }
+
+  try {
+    const res = await authFetch(`${API_BASE}/discounts/validate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code: codeClean,
+        subtotal: untaxedTotal,
+        total_qty: Math.max(1, Math.round(totalQty))
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || "Invalid coupon.");
+    }
+
+    currentDiscountData = data;
+    if (statusIcon) {
+      statusIcon.innerHTML = `<span style="color: var(--odoo-success);">✓ -$${data.discount_amount.toFixed(2)}</span>`;
+    }
+
+    // Inject animated green discount line in order lines table
+    if (linesTbody) {
+      const discountRow = document.createElement("tr");
+      discountRow.className = "o_discount_tr";
+      discountRow.innerHTML = `
+        <td style="font-weight: 700; color: #166534;">🏷️ Coupon: ${data.code}</td>
+        <td><span class="o_tag o_tag_green">Promotion (-${data.value}${data.discount_type === 'PERCENTAGE' ? '%' : '$'})</span></td>
+        <td>1.00</td>
+        <td>-$${data.discount_amount.toFixed(2)}</td>
+        <td>Exempt</td>
+        <td style="text-align: right; font-weight: 700; color: #16A34A;">-$${data.discount_amount.toFixed(2)}</td>
+      `;
+      linesTbody.appendChild(discountRow);
+    }
+
+    // Animate subtotal and total balance rolling down
+    const newUntaxed = Math.max(0, untaxedTotal - data.discount_amount);
+    const newTax = newUntaxed * 0.18;
+    const newTotal = newUntaxed + newTax;
+
+    const oldSub = parseFloat(subEl ? subEl.textContent.replace(/[^0-9.-]+/g, "") : 0) || untaxedTotal;
+    const oldTot = parseFloat(totEl ? totEl.textContent.replace(/[^0-9.-]+/g, "") : 0) || (untaxedTotal * 1.18);
+
+    if (subEl) animateNumber(subEl, oldSub, newUntaxed);
+    if (taxEl) animateNumber(taxEl, oldSub * 0.18, newTax);
+    if (totEl) animateNumber(totEl, oldTot, newTotal);
+
+    showOdooToast(`✓ Promotion applied: ${data.code} (-$${data.discount_amount.toFixed(2)})`, "success");
+
+  } catch (err) {
+    currentDiscountData = null;
+    if (statusIcon) {
+      statusIcon.innerHTML = `<span style="color: var(--odoo-danger);">✕ Rejected</span>`;
+    }
+    const tax = untaxedTotal * 0.18;
+    const total = untaxedTotal + tax;
+    if (subEl) animateNumber(subEl, parseFloat(subEl.textContent.replace(/[^0-9.-]+/g, "")) || 0, untaxedTotal);
+    if (taxEl) animateNumber(taxEl, parseFloat(taxEl.textContent.replace(/[^0-9.-]+/g, "")) || 0, tax);
+    if (totEl) animateNumber(totEl, parseFloat(totEl.textContent.replace(/[^0-9.-]+/g, "")) || 0, total);
+
+    showOdooToast(`HTTP 400: ${err.message}`, "error");
+  }
+}
+
+// ----------------------------------------------------------------------------
+// MODULE 2: PRODUCT CATALOG & DYNAMIC VARIANT SIMULATOR
+// ----------------------------------------------------------------------------
+let selectedCalcVariants = new Set();
+let currentCalcProduct = null;
+
+function renderProductsView() {
+  const tbody = document.getElementById("odoo-products-tbody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+  if (!liveProducts || liveProducts.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--odoo-text-muted);">No products found in catalog.</td></tr>`;
+    return;
+  }
+
+  liveProducts.forEach(p => {
+    const variants = p.variants || [];
+    let varBadges = variants.map(v => {
+      const isOdoo = v.attribute_value && v.attribute_value.toLowerCase().includes("odoo");
+      const badgeClass = isOdoo ? "o_badge_odoo" : "o_tag o_tag_purple";
+      const modStr = v.price_modifier >= 0 ? `+ $${v.price_modifier.toFixed(2)}` : `- $${Math.abs(v.price_modifier).toFixed(2)}`;
+      const calcPrice = v.calculated_price !== undefined && v.calculated_price !== null ? v.calculated_price : (p.base_price + v.price_modifier);
+      return `<div style="margin: 3px 0;">
+        <span class="${badgeClass}">
+          ${v.attribute_name}: ${v.attribute_value} (${modStr} = $${calcPrice.toFixed(2)})
+        </span>
+      </div>`;
+    }).join("");
+
+    if (!varBadges) {
+      varBadges = `<span style="color: var(--odoo-text-muted); font-size: 0.8rem;">No custom variants</span>`;
+    }
+
+    const typeTag = p.type === "Service" ? "o_tag_teal" : "o_tag_purple";
+
+    tbody.innerHTML += `
+      <tr>
+        <td style="font-weight: 700; color: var(--odoo-primary); font-size: 0.95rem;">
+          ${p.name}
+          ${p.notes ? `<div style="font-size: 0.75rem; color: var(--odoo-text-muted); font-weight: 400;">${p.notes}</div>` : ''}
+        </td>
+        <td><span class="o_tag ${typeTag}">${p.type || 'Service'}</span></td>
+        <td style="font-weight: 700;">$${(p.sales_price || p.base_price || 0).toFixed(2)}</td>
+        <td style="color: var(--odoo-text-muted);">$${(p.cost_price || 0).toFixed(2)}</td>
+        <td>${varBadges}</td>
+        <td style="text-align: right;">
+          <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 10px;" onclick="openAddVariantModal('${p.id}')">
+            ➕ Add Variant
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  populateCalcProductDropdown();
+}
+
+function populateCalcProductDropdown() {
+  const select = document.getElementById("calc-product-select");
+  const targetProductSelect = document.getElementById("var-target-product");
+
+  if (select) {
+    const currentVal = select.value;
+    select.innerHTML = "";
+    liveProducts.forEach(p => {
+      select.innerHTML += `<option value="${p.id}">${p.name} ($${(p.sales_price || p.base_price).toFixed(2)})</option>`;
+    });
+    if (currentVal && liveProducts.some(p => p.id === currentVal)) {
+      select.value = currentVal;
+    } else if (liveProducts.length > 0) {
+      select.value = liveProducts[0].id;
+    }
+  }
+
+  if (targetProductSelect) {
+    targetProductSelect.innerHTML = "";
+    liveProducts.forEach(p => {
+      targetProductSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+    });
+  }
+
+  handleCalcProductChange();
+}
+
+function handleCalcProductChange() {
+  const select = document.getElementById("calc-product-select");
+  if (!select) return;
+  const pId = select.value;
+  currentCalcProduct = liveProducts.find(p => p.id === pId) || liveProducts[0];
+  selectedCalcVariants.clear();
+
+  if (!currentCalcProduct) return;
+
+  // Auto-select Odoo variant if available
+  if (currentCalcProduct.variants && currentCalcProduct.variants.length > 0) {
+    const odooVar = currentCalcProduct.variants.find(v => v.attribute_value && v.attribute_value.toLowerCase().includes("odoo"));
+    if (odooVar) {
+      selectedCalcVariants.add(odooVar.id);
+    } else {
+      selectedCalcVariants.add(currentCalcProduct.variants[0].id);
+    }
+  }
+
+  renderVariantCalculatorPills();
+}
+
+function renderVariantCalculatorPills() {
+  const pillsContainer = document.getElementById("calc-variant-pills");
+  const basePriceEl = document.getElementById("calc-base-price");
+  const modifierSumEl = document.getElementById("calc-modifier-sum");
+  const totalPriceEl = document.getElementById("calc-total-price");
+
+  if (!pillsContainer || !currentCalcProduct) return;
+
+  pillsContainer.innerHTML = "";
+  const variants = currentCalcProduct.variants || [];
+
+  if (variants.length === 0) {
+    pillsContainer.innerHTML = `<span style="font-size: 0.8rem; color: var(--odoo-text-muted);">No variants available for this template. Use "+ Add Variant" to add one.</span>`;
+  } else {
+    variants.forEach(v => {
+      const isSelected = selectedCalcVariants.has(v.id);
+      const isOdoo = v.attribute_value && v.attribute_value.toLowerCase().includes("odoo");
+      const modSign = v.price_modifier >= 0 ? `+ $${v.price_modifier.toFixed(2)}` : `- $${Math.abs(v.price_modifier).toFixed(2)}`;
+
+      const pill = document.createElement("div");
+      pill.className = `o_variant_pill ${isSelected ? 'active' : ''}`;
+      pill.innerHTML = `
+        <span>${isOdoo ? '★ ' : ''}${v.attribute_name}: ${v.attribute_value}</span>
+        <span class="o_pill_mod">(${modSign})</span>
+      `;
+      pill.onclick = () => {
+        if (selectedCalcVariants.has(v.id)) {
+          selectedCalcVariants.delete(v.id);
+        } else {
+          selectedCalcVariants.add(v.id);
+        }
+        renderVariantCalculatorPills();
+      };
+      pillsContainer.appendChild(pill);
+    });
+  }
+
+  const basePrice = currentCalcProduct.sales_price || currentCalcProduct.base_price || 0;
+  let modifierSum = 0;
+  selectedCalcVariants.forEach(vId => {
+    const v = variants.find(vr => vr.id === vId);
+    if (v) modifierSum += v.price_modifier;
+  });
+
+  const totalCalculated = Math.max(0, basePrice + modifierSum);
+
+  if (basePriceEl) basePriceEl.textContent = `$${basePrice.toFixed(2)}`;
+  if (modifierSumEl) {
+    modifierSumEl.textContent = `${modifierSum >= 0 ? '+' : '-'}$${Math.abs(modifierSum).toFixed(2)}`;
+    modifierSumEl.style.color = modifierSum >= 0 ? "var(--odoo-teal)" : "var(--odoo-danger)";
+  }
+  if (totalPriceEl) {
+    const oldVal = parseFloat(totalPriceEl.textContent.replace(/[^0-9.-]+/g, "")) || basePrice;
+    animateNumber(totalPriceEl, oldVal, totalCalculated, 250);
+  }
+}
+
+// Modals: Product Creation
+function openCreateProductModal() {
+  const modal = document.getElementById("modal-create-product");
+  if (modal) modal.style.display = "flex";
+}
+
+function closeCreateProductModal() {
+  const modal = document.getElementById("modal-create-product");
+  if (modal) modal.style.display = "none";
+}
+
+async function submitCreateProduct() {
+  const nameInput = document.getElementById("prod-new-name");
+  const typeInput = document.getElementById("prod-new-type");
+  const salesPriceInput = document.getElementById("prod-new-sales-price");
+  const costPriceInput = document.getElementById("prod-new-cost-price");
+  const notesInput = document.getElementById("prod-new-notes");
+  const attrInput = document.getElementById("prod-new-var-attr");
+  const valInput = document.getElementById("prod-new-var-val");
+  const modInput = document.getElementById("prod-new-var-mod");
+  const btn = document.getElementById("btn-save-product");
+
+  const name = nameInput ? nameInput.value.trim() : "";
+  if (!name) {
+    showOdooToast("Product name is required.", "warning");
+    return;
+  }
+
+  const salesPrice = parseFloat(salesPriceInput ? salesPriceInput.value : 0) || 0;
+  const costPrice = parseFloat(costPriceInput ? costPriceInput.value : 0) || 0;
+  const prodType = typeInput ? typeInput.value : "Service";
+  const notes = notesInput ? notesInput.value.trim() : "";
+
+  const variants = [];
+  if (attrInput && valInput && attrInput.value.trim() && valInput.value.trim()) {
+    variants.push({
+      attribute_name: attrInput.value.trim(),
+      attribute_value: valInput.value.trim(),
+      price_modifier: parseFloat(modInput ? modInput.value : 0) || 0
+    });
+  }
+
+  const origText = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-inline"></span> Saving...`;
+  }
+
+  try {
+    const res = await authFetch(`${API_BASE}/products`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        type: prodType,
+        sales_price: salesPrice,
+        base_price: salesPrice,
+        cost_price: costPrice,
+        notes: notes || null,
+        description: notes || null,
+        variants
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to create product.");
+
+    closeCreateProductModal();
+    if (nameInput) nameInput.value = "";
+    await fetchLiveProducts();
+    showOdooToast(`✓ Product '${data.name}' created successfully!`, "success");
+  } catch (err) {
+    showOdooToast(`Product Error: ${err.message}`, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText || "Save Product";
+    }
+  }
+}
+
+// Modals: Add Variant
+function openAddVariantModal(productId) {
+  const modal = document.getElementById("modal-add-variant");
+  const targetSelect = document.getElementById("var-target-product");
+  if (modal) modal.style.display = "flex";
+  if (targetSelect && productId) targetSelect.value = productId;
+}
+
+function closeAddVariantModal() {
+  const modal = document.getElementById("modal-add-variant");
+  if (modal) modal.style.display = "none";
+}
+
+async function submitAddVariant() {
+  const targetSelect = document.getElementById("var-target-product");
+  const attrInput = document.getElementById("var-attr-name");
+  const valInput = document.getElementById("var-attr-value");
+  const modInput = document.getElementById("var-price-mod");
+  const btn = document.getElementById("btn-save-variant");
+
+  const productId = targetSelect ? targetSelect.value : null;
+  const attrName = attrInput ? attrInput.value.trim() : "";
+  const attrValue = valInput ? valInput.value.trim() : "";
+  const priceMod = parseFloat(modInput ? modInput.value : 0) || 0;
+
+  if (!productId || !attrName || !attrValue) {
+    showOdooToast("Product, Attribute Name, and Attribute Value are required.", "warning");
+    return;
+  }
+
+  const origText = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-inline"></span> Adding...`;
+  }
+
+  try {
+    const res = await authFetch(`${API_BASE}/products/${productId}/variants`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        attribute_name: attrName,
+        attribute_value: attrValue,
+        price_modifier: priceMod
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to add variant.");
+
+    closeAddVariantModal();
+    if (attrInput) attrInput.value = "";
+    if (valInput) valInput.value = "";
+    await fetchLiveProducts();
+    showOdooToast(`✓ Variant '${data.attribute_name}: ${data.attribute_value}' added (+ $${data.price_modifier.toFixed(2)})!`, "success");
+  } catch (err) {
+    showOdooToast(`Variant Error: ${err.message}`, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText || "Save Variant";
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// TOAST NOTIFICATION & NUMBER ROLLER UTILITIES
+// ----------------------------------------------------------------------------
+function showOdooToast(message, type = "info", duration = 3500) {
+  const container = document.getElementById("odoo-toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `o_toast ${type}`;
+
+  const icons = {
+    success: "✓",
+    error: "✕",
+    warning: "⚠️",
+    info: "ℹ"
+  };
+
+  toast.innerHTML = `
+    <span class="o_toast_icon" style="color: ${type === 'success' ? 'var(--odoo-success)' : (type === 'error' ? 'var(--odoo-danger)' : (type === 'warning' ? 'var(--odoo-warning)' : 'var(--odoo-teal)'))}; font-weight: 700;">
+      ${icons[type] || 'ℹ'}
+    </span>
+    <span class="o_toast_body">${message}</span>
+    <button class="o_toast_close" onclick="this.parentElement.remove()">✕</button>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("o_toast_dismissing");
+    setTimeout(() => {
+      if (toast.parentElement) toast.remove();
+    }, 200);
+  }, duration);
+}
+
+function animateNumber(element, startVal, endVal, durationMs = 280, prefix = "$", decimals = 2) {
+  if (!element) return;
+  const startTime = performance.now();
+  const diff = endVal - startVal;
+
+  function step(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / durationMs, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const current = startVal + (diff * ease);
+    element.textContent = `${prefix}${current.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      element.textContent = `${prefix}${endVal.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+    }
+  }
+  requestAnimationFrame(step);
 }
 
 async function createSingleInvoice() {
@@ -1312,8 +1936,8 @@ function renderKanbanView() {
 
   liveSubscriptions.forEach((sub, idx) => {
     counts[sub.status] = (counts[sub.status] || 0) + 1;
-    const groupEl = groups[sub.status];
-    if (!groupEl || groupEl.children.length >= 25) return; // Cap kanban cards per column for crisp UI speed
+    const targetGroup = (sub.status === "CONFIRMED") ? groups.QUOTATION : groups[sub.status];
+    if (!targetGroup || targetGroup.children.length >= 25) return; // Cap kanban cards per column for crisp UI speed
 
     const record = document.createElement("div");
     record.className = "o_kanban_record";
@@ -1323,11 +1947,14 @@ function renderKanbanView() {
       navigateTo("form");
     };
 
+    const statusTagClass = sub.status === 'ACTIVE' ? 'o_tag_green' : (sub.status === 'CONFIRMED' ? 'o_tag_purple' : (sub.status === 'QUOTATION' ? 'o_tag_teal' : 'o_tag_purple'));
+    const statusLabel = sub.status === 'CONFIRMED' ? 'CONFIRMED' : (sub.plan_name || 'Standard');
+
     record.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
         <span class="o_kanban_ref">${sub.subscription_number}</span>
-        <span class="o_tag ${sub.status === 'ACTIVE' ? 'o_tag_green' : (sub.status === 'QUOTATION' ? 'o_tag_teal' : 'o_tag_purple')}">
-          ${sub.plan_name || 'Standard'}
+        <span class="o_tag ${statusTagClass}">
+          ${statusLabel}
         </span>
       </div>
       <div class="o_kanban_title">${sub.customer_name || 'ClientCorp Account'}</div>
@@ -1340,7 +1967,7 @@ function renderKanbanView() {
       </div>
     `;
 
-    groupEl.appendChild(record);
+    targetGroup.appendChild(record);
   });
 
   if (document.getElementById("kcount-draft")) document.getElementById("kcount-draft").textContent = counts.DRAFT;
