@@ -24,6 +24,13 @@ Built directly from empirical analysis of 77 historical hackathon submissions to
 
 ---
 
+### Set 3: Subscription Management System & Sprint Execution Plans
+- **[SUBSCRIPTION_MANAGEMENT_SYSTEM_ANALYSIS.md](SUBSCRIPTION_MANAGEMENT_SYSTEM_ANALYSIS.md)**: Deep architectural breakdown of the Brightloop Software / Odoo subscription challenge, ERD, pricing rules, batch billing idempotency, and historical Make-A-Ton comparison (*KOLPAY*, *SaveSense*, *Snow*).
+- **[EIGHT_HOUR_THREE_PERSON_PLAN.md](EIGHT_HOUR_THREE_PERSON_PLAN.md)**: Optimized **8-Hour Championship Sprint Plan** for a 3-person team, featuring 15-minute schema lock, SQLite WAL setup, Hour 1 seed scale, parallel workstreams, and a 180s stage pitch.
+- **[THREE_PERSON_EXECUTION_PLAN.md](THREE_PERSON_EXECUTION_PLAN.md)**: Extended 24-hour 3-person team execution plan.
+
+---
+
 ## 📂 Navigation & Project Analyses
 - [Make-A-Ton 2025 Project Analysis (27 Projects)](MAKEATON_2025_ANALYSIS.md)
 - [Make-A-Ton 7.0 Devpost Gallery Analysis (50 Projects)](MAKEATON_7_0_ANALYSIS.md)
