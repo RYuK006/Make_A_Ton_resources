@@ -1003,7 +1003,7 @@ async function confirmActiveSubscription() {
       await authFetch(`${API_BASE}/subscriptions/${currentSubscription.id}/transition`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "SEND_QUOTE" })
+        body: JSON.stringify({ action: "QUOTE" })
       });
     }
 
