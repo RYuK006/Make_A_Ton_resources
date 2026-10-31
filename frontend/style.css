@@ -1181,3 +1181,105 @@ body {
   height: 1px;
   background: var(--odoo-border);
 }
+
+/* Auth Tabs & Registration Modal */
+.o_auth_tabs {
+  display: flex;
+  border-bottom: 2px solid var(--odoo-border);
+  margin-bottom: 16px;
+  gap: 4px;
+}
+
+.o_auth_tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--odoo-text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s ease;
+}
+
+.o_auth_tab.active {
+  color: var(--odoo-primary);
+  border-bottom-color: var(--odoo-primary);
+  font-weight: 700;
+}
+
+/* Live Password Validation Checklist */
+.pwd-hints-box {
+  background: #F8F9FA;
+  border: 1px solid var(--odoo-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+}
+
+.pwd-hints-title {
+  font-weight: 700;
+  color: var(--odoo-text-main);
+  margin-bottom: 6px;
+}
+
+.pwd-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--odoo-text-muted);
+  margin-bottom: 3px;
+  transition: color 0.15s ease;
+}
+
+.pwd-hint.valid {
+  color: var(--odoo-success);
+  font-weight: 600;
+}
+
+.pwd-hint.valid::before {
+  content: "✓";
+  color: var(--odoo-success);
+}
+
+.pwd-hint.invalid {
+  color: var(--odoo-danger);
+}
+
+.pwd-hint.invalid::before {
+  content: "✕";
+  color: var(--odoo-danger);
+}
+
+/* Odoo Payment Widget under Invoice Total */
+.o_payment_widget {
+  background: #E8F5E9;
+  border: 1px solid #A5D6A7;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: #2E7D32;
+}
+
+.o_payment_widget_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.o_residual_callout {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--odoo-teal);
+  border-top: 2px dashed var(--odoo-border);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
