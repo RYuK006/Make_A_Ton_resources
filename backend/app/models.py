@@ -83,6 +83,7 @@ class Subscription(Base):
     status = Column(String(50), nullable=False, default="DRAFT", index=True) # DRAFT, QUOTATION, ACTIVE, CLOSED, CANCELLED
     start_date = Column(Date, nullable=False, default=date.today)
     next_billing_date = Column(Date, nullable=False, index=True)
+    last_invoice_date = Column(Date, nullable=True, index=True)
     expiration_date = Column(Date, nullable=True)
     total_recurring_amount = Column(Float, nullable=False, default=0.0)
     created_at = Column(DateTime, default=datetime.utcnow)
